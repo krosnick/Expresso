@@ -1,0 +1,33 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: sans-serif;
+}
+
+div {
+  width: 220px;
+  padding: 20px;
+  margin: 10px;
+  line-height: 2;
+  background-color: yellow;
+  text-align: center;
+  display: inline-block;
+}
+
+.complete {
+  border-style: solid;
+}
+
+.written {
+  border-style: dashed;
+}
+
+.incomplete {
+  border-style: dotted;
+}
+
+.writing, .review {
+  border-bottom: 6px solid red;
+}

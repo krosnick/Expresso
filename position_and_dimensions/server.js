@@ -18,9 +18,15 @@ app.use(express.static(path.join(__dirname, '')));
 
 var views = [];
 
-// For now hardcode starting info
-views.push('<div class="myBox"></div>');
+var originalView = {
+	"viewHTMLString": '<div class="myBox"></div>',
+	"width": undefined,
+	"height": undefined
+}
 
+// For now hardcode starting info
+//views.push('<div class="myBox"></div>');
+views.push(originalView);
 
 
 app.get('/',function(req,res){
@@ -32,10 +38,13 @@ app.get('/',function(req,res){
 });
 
 app.post('/cloneOriginal', function(req, res) {
+
+	var widthHeightData = req.body;
+
 	//var original = views[0];
 	var firstClone = views.length == 1;
 	
-	views.push(createNewViewHTML());
+	views.push(createNewView(widthHeightData));
 	//views.push(original);
 	//views.push("test" + views.length);
 	var newViewId = views.length - 1;
@@ -47,53 +56,38 @@ app.post('/cloneOriginal', function(req, res) {
 });
 
 app.post('/view', function(req, res){
-//app.get('/view/:id', function(req, res){
-	//console.log(req);
-	console.log(req.body);
-	var viewId = req.body.viewId;
-	console.log(viewId);
-	var viewHTMLString = views[viewId];
-	console.log(viewHTMLString);
+
+	var oldViewId = req.body.oldView.oldViewId;
+	var oldViewWidth = req.body.oldView.oldViewWidth;
+	var oldViewHeight = req.body.oldView.oldViewHeight;
+
+	views[parseInt(oldViewId)]["width"] = parseInt(oldViewWidth);
+	views[parseInt(oldViewId)]["height"] = parseInt(oldViewHeight);
+
+	var viewId = parseInt(req.body.newViewId);
 	res.json({
-		"viewHTMLString": viewHTMLString
+		"view": views[viewId]
 	});
 });
 
-var createNewViewHTML = function(){
+var createNewView = function(widthHeightData){
 	var original = views[0];
-	//var newView = "<div class='viewClone'>" + original + "</div>";
-	//return newView;
-	return original;
+	var width = original["width"];
+	var height = original["height"];
+	if(width == undefined){
+		width = widthHeightData["width"];
+	}
+	if(height == undefined){
+		height = widthHeightData["height"];
+	}
+	var newView = {
+		"viewHTMLString": original["viewHTMLString"],
+		"width": width,
+		"height": height
+	};
+	return newView;
+	/*var original = views[0];
+	return original;*/
 }
-
-/*app.get('/view', function(req, res){
-//app.get('/view/:id', function(req, res){
-	var paramId = req.params.id;
-	console.log(paramId);
-	//console.log(req);
-	console.log(req.body);
-	var viewId = req.body.viewId;
-	console.log(viewId);
-	var viewHTMLString = views[viewId];
-	console.log(viewHTMLString);
-	res.json({
-		"viewHTMLString": viewHTMLString
-	});
-});
-
-//app.get('/view', function(req, res){
-app.get('/view/:id', function(req, res){
-	var paramId = req.params.id;
-	console.log(paramId);
-	//console.log(req);
-	console.log(req.body);
-	var viewId = req.body.viewId;
-	console.log(viewId);
-	var viewHTMLString = views[viewId];
-	console.log(viewHTMLString);
-	res.json({
-		"viewHTMLString": viewHTMLString
-	});
-});*/
 
 app.listen(8080);

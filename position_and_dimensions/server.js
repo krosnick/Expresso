@@ -19,13 +19,11 @@ app.use(express.static(path.join(__dirname, '')));
 var views = [];
 
 var originalView = {
-	"viewHTMLString": '<div class="myBox"></div>',
+	"viewHTMLString": '<div class="myBox modifiable"></div>',
 	"width": undefined,
 	"height": undefined
 }
 
-// For now hardcode starting info
-//views.push('<div class="myBox"></div>');
 views.push(originalView);
 
 

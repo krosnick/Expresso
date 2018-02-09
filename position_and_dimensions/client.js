@@ -104,6 +104,10 @@ var updateView = function(viewId){
     		$("#userPageClone").css("visibility", "visible");
 
     		$("#userPageClone").resizable();
+
+    		// Make modifiable elements (i.e., the box right now) draggable and resizable; should only be the case for clones
+    		$(".modifiable").draggable();
+    		$(".modifiable").resizable();
     	}
     });
 }

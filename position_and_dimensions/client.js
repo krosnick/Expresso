@@ -61,20 +61,8 @@ $(document).ready(function() {
     // Probably should have a timer to send updated element data to server to be saved
     window.setInterval(function(){
     	if(dataChanged){
-    		var currentViewWidthHeight = getCurrentViewWidthHeight();
-			var currentViewWidth = currentViewWidthHeight["width"];
-			var currentViewHeight = currentViewWidthHeight["height"];
-			var elementsData;
-			elementsData = captureElementData();
+			var viewData = captureElementAndPageData();
 			dataChanged = false;
-			var viewData = {
-		    	"oldView": {
-		    		"oldViewId": currentViewId,
-		    		"oldViewWidth": currentViewWidth,
-		    		"oldViewHeight": currentViewHeight,
-		    		"elementsData": elementsData
-			    }
-			};
 
     		// Send update to server
     		$.ajax({
@@ -112,18 +100,29 @@ var captureElementData = function(){
 	return uiElementsData;
 }
 
+var captureElementAndPageData = function(){
+	var currentViewWidthHeight = getCurrentViewWidthHeight();
+	var currentViewWidth = currentViewWidthHeight["width"];
+	var currentViewHeight = currentViewWidthHeight["height"];
+	var elementsData;
+	elementsData = captureElementData();
+	var viewData = {
+    	"oldView": {
+    		"oldViewId": currentViewId,
+    		"oldViewWidth": currentViewWidth,
+    		"oldViewHeight": currentViewHeight,
+    		"elementsData": elementsData
+	    }
+	};
+	return viewData;
+}
+
 var makeFontBold = function(elementToBeBold, elementsNotToBeBold){
 	elementsNotToBeBold.css("font-weight", "normal");
 	elementToBeBold.css("font-weight", "bold");
 }
 
 var getCurrentViewWidthHeight = function(){
-	/*var containerElement;
-	if(currentViewId == 0){
-		containerElement = $("#userPageOriginal");
-	}else{
-		containerElement = $("#userPageClone");
-	}*/
 	var containerElement = $(".userPage");
 	var width = containerElement.width();
 	var height = containerElement.height();
@@ -134,21 +133,10 @@ var getCurrentViewWidthHeight = function(){
 }
 
 var updateView = function(viewId){
-	var currentViewWidthHeight = getCurrentViewWidthHeight();
-	var currentViewWidth = currentViewWidthHeight["width"];
-	var currentViewHeight = currentViewWidthHeight["height"];
-	var elementsData = captureElementData();
+	var viewData = captureElementAndPageData();
+	viewData["newViewId"] = parseInt(viewId);
 	dataChanged = false;
-	
-	var viewData = {
-    	"newViewId": parseInt(viewId),
-    	"oldView": {
-    		"oldViewId": currentViewId,
-    		"oldViewWidth": currentViewWidth,
-    		"oldViewHeight": currentViewHeight,
-    		"elementsData": elementsData
-	    }
-	};
+
     $.ajax({
         type: "POST",
         url: "/view",
@@ -185,9 +173,7 @@ var renderView = function(viewData){
 		$(".userPageContent").append(element);
 	});
 
-	// Make modifiable elements (i.e., the box right now) draggable and resizable; should only be the case for clones
-	/*$(".modifiable").draggable();
-	$(".modifiable").resizable();*/
+	// Make pageElement elements (i.e., the box right now) draggable and resizable
 	$(".pageElement").draggable();
 	$(".pageElement").resizable();
 };

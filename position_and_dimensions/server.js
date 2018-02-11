@@ -13,22 +13,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '')));
 
 
-
-
-
-/*var views = [];
-
-var originalView = {
-	"viewHTMLString": '<div class="myBox modifiable"></div>',
-	"width": undefined,
-	"height": undefined
-};*/
-
 app.get('/',function(req,res){
 	var options = {
 		root: __dirname
 	};
-	//res.sendFile('index.html', options);
 	res.render("index");
 });
 
@@ -38,53 +26,7 @@ app.get('/currentData',function(req,res){
 	});
 });
 
-/*app.post('/cloneOriginal', function(req, res) {
-
-	var widthHeightData = req.body;
-
-	//var original = views[0];
-	var firstClone = views.length == 1;
-	
-	views.push(createNewView(widthHeightData));
-	//views.push(original);
-	//views.push("test" + views.length);
-	var newViewId = views.length - 1;
-	
-	res.json({
-		"newViewId": newViewId,
-		"firstClone": firstClone
-	});
-});*/
-
 app.post('/cloneOriginal', function(req, res) {
-
-	/*var widthHeightData = req.body;
-
-	//var original = views[0];
-	var firstClone = views.length == 1;
-	
-	views.push(createNewView(widthHeightData));
-	//views.push(original);
-	//views.push("test" + views.length);
-	var newViewId = views.length - 1;
-	
-	res.json({
-		"newViewId": newViewId,
-		"firstClone": firstClone
-	});*/
-
-	/*var oldViewId = req.body.oldView.oldViewId;
-	var oldViewWidth = req.body.oldView.oldViewWidth;
-	var oldViewHeight = req.body.oldView.oldViewHeight;
-
-	// Updating page width and height of previously displayed view
-	views[parseInt(oldViewId)]["pageWidth"] = parseInt(oldViewWidth);
-	views[parseInt(oldViewId)]["pageHeight"] = parseInt(oldViewHeight);*/
-
-	// Clone original view
-	/*var original = views[0];
-	var clonedView = Object.assign({}, original);
-	clonedView["id"]*/
 	var clonedView = cloneViewObj();
 	views.push(clonedView);
 
@@ -96,23 +38,7 @@ app.post('/cloneOriginal', function(req, res) {
 
 app.post('/view', function(req, res){
 
-	var oldViewId = req.body.oldView.oldViewId;
-	var oldViewWidth = req.body.oldView.oldViewWidth;
-	var oldViewHeight = req.body.oldView.oldViewHeight;
-	var oldViewElementsData = req.body.oldView.elementsData;
-	
-	updateElementAndPageData(oldViewId, oldViewWidth, oldViewHeight, oldViewElementsData);
-
-	/*var oldViewIdAsInt = parseInt(oldViewId);
-	var oldViewServerObj = views[oldViewIdAsInt];
-	// Updating page width and height of previously displayed view
-	oldViewServerObj["pageWidth"] = parseInt(oldViewWidth);
-	oldViewServerObj["pageHeight"] = parseInt(oldViewHeight);
-
-	// Updating elements of previously displayed view, if there are changes
-	if(oldViewElementsData){ // if undefined, then no updates have been made
-		oldViewServerObj["elements"] = oldViewElementsData;
-	}*/
+	updateElementAndPageData(req.body.oldView);
 
 	var viewId = parseInt(req.body.newViewId);
 	res.json({
@@ -121,12 +47,7 @@ app.post('/view', function(req, res){
 });
 
 app.post("/updateData", function(req, res){
-	var oldViewId = req.body.oldView.oldViewId;
-	var oldViewWidth = req.body.oldView.oldViewWidth;
-	var oldViewHeight = req.body.oldView.oldViewHeight;
-	var oldViewElementsData = req.body.oldView.elementsData;
-	
-	updateElementAndPageData(oldViewId, oldViewWidth, oldViewHeight, oldViewElementsData);
+	updateElementAndPageData(req.body.oldView);
 
 	res.end();
 });
@@ -137,25 +58,13 @@ app.listen(8080);
 
 // ------------ Helpers ------------
 
-/*var createNewView = function(widthHeightData){
-	var original = views[0];
-	var width = original["width"];
-	var height = original["height"];
-	if(width == undefined){
-		width = widthHeightData["width"];
-	}
-	if(height == undefined){
-		height = widthHeightData["height"];
-	}
-	var newView = {
-		"viewHTMLString": original["viewHTMLString"],
-		"width": width,
-		"height": height
-	};
-	return newView;
-};*/
+var updateElementAndPageData = function(viewObj){
 
-var updateElementAndPageData = function(viewId, viewWidth, viewHeight, viewElementsData){
+	var viewId = viewObj.oldViewId;
+	var viewWidth = viewObj.oldViewWidth;
+	var viewHeight = viewObj.oldViewHeight;
+	var viewElementsData = viewObj.elementsData;
+
 	var oldViewIdAsInt = parseInt(viewId);
 	var oldViewServerObj = views[oldViewIdAsInt];
 	// Updating page width and height of previously displayed view

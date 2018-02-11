@@ -101,7 +101,9 @@ app.post('/view', function(req, res){
 	var oldViewHeight = req.body.oldView.oldViewHeight;
 	var oldViewElementsData = req.body.oldView.elementsData;
 	
-	var oldViewIdAsInt = parseInt(oldViewId);
+	updateElementAndPageData(oldViewId, oldViewWidth, oldViewHeight, oldViewElementsData);
+
+	/*var oldViewIdAsInt = parseInt(oldViewId);
 	var oldViewServerObj = views[oldViewIdAsInt];
 	// Updating page width and height of previously displayed view
 	oldViewServerObj["pageWidth"] = parseInt(oldViewWidth);
@@ -110,12 +112,23 @@ app.post('/view', function(req, res){
 	// Updating elements of previously displayed view, if there are changes
 	if(oldViewElementsData){ // if undefined, then no updates have been made
 		oldViewServerObj["elements"] = oldViewElementsData;
-	}
+	}*/
 
 	var viewId = parseInt(req.body.newViewId);
 	res.json({
 		"view": views[viewId]
 	});
+});
+
+app.post("/updateData", function(req, res){
+	var oldViewId = req.body.oldView.oldViewId;
+	var oldViewWidth = req.body.oldView.oldViewWidth;
+	var oldViewHeight = req.body.oldView.oldViewHeight;
+	var oldViewElementsData = req.body.oldView.elementsData;
+	
+	updateElementAndPageData(oldViewId, oldViewWidth, oldViewHeight, oldViewElementsData);
+
+	res.end();
 });
 
 app.listen(8080);
@@ -141,6 +154,19 @@ app.listen(8080);
 	};
 	return newView;
 };*/
+
+var updateElementAndPageData = function(viewId, viewWidth, viewHeight, viewElementsData){
+	var oldViewIdAsInt = parseInt(viewId);
+	var oldViewServerObj = views[oldViewIdAsInt];
+	// Updating page width and height of previously displayed view
+	oldViewServerObj["pageWidth"] = parseInt(viewWidth);
+	oldViewServerObj["pageHeight"] = parseInt(viewHeight);
+
+	// Updating elements of previously displayed view, if there are changes
+	if(viewElementsData){ // if undefined, then no updates have been made
+		oldViewServerObj["elements"] = viewElementsData;
+	}
+};
 
 var createElementObj = function(id, x, y, width, height, color){
 	return {

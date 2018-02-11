@@ -1,5 +1,5 @@
 var currentViewId = 0;
-var elementChanged = false;
+var dataChanged = false;
 
 $(document).ready(function() {
     // Get views from server
@@ -51,14 +51,39 @@ $(document).ready(function() {
 		updateView(viewId);
 	});
 
-    $(".userPage").on("resize drag", ".modifiable", function(event){
+    $("body").on("resize drag", ".modifiable", function(event){
     	// On resize or drag
-    	elementChanged = true;
+    	dataChanged = true;
     });
 
     $(".userPage").resizable();
 
     // Probably should have a timer to send updated element data to server to be saved
+    window.setInterval(function(){
+    	if(dataChanged){
+    		var currentViewWidthHeight = getCurrentViewWidthHeight();
+			var currentViewWidth = currentViewWidthHeight["width"];
+			var currentViewHeight = currentViewWidthHeight["height"];
+			var elementsData;
+			elementsData = captureElementData();
+			dataChanged = false;
+			var viewData = {
+		    	"oldView": {
+		    		"oldViewId": currentViewId,
+		    		"oldViewWidth": currentViewWidth,
+		    		"oldViewHeight": currentViewHeight,
+		    		"elementsData": elementsData
+			    }
+			};
+
+    		// Send update to server
+    		$.ajax({
+		        type: "POST",
+		        url: "/updateData",
+		        data: viewData
+		    });
+    	}
+    }, 1000);
 });
 
 // Capture element width/height/x/y data
@@ -112,11 +137,9 @@ var updateView = function(viewId){
 	var currentViewWidthHeight = getCurrentViewWidthHeight();
 	var currentViewWidth = currentViewWidthHeight["width"];
 	var currentViewHeight = currentViewWidthHeight["height"];
-	var elementsData;
-	if(elementChanged){
-		elementsData = captureElementData();
-		elementChanged = false;
-	}
+	var elementsData = captureElementData();
+	dataChanged = false;
+	
 	var viewData = {
     	"newViewId": parseInt(viewId),
     	"oldView": {
@@ -163,8 +186,10 @@ var renderView = function(viewData){
 	});
 
 	// Make modifiable elements (i.e., the box right now) draggable and resizable; should only be the case for clones
-	$(".modifiable").draggable();
-	$(".modifiable").resizable();
+	/*$(".modifiable").draggable();
+	$(".modifiable").resizable();*/
+	$(".pageElement").draggable();
+	$(".pageElement").resizable();
 };
 
 var createDOMElement = function(elementData){

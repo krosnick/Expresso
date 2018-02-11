@@ -16,16 +16,13 @@ app.use(express.static(path.join(__dirname, '')));
 
 
 
-var views = [];
+/*var views = [];
 
 var originalView = {
 	"viewHTMLString": '<div class="myBox modifiable"></div>',
 	"width": undefined,
 	"height": undefined
-}
-
-views.push(originalView);
-
+};*/
 
 app.get('/',function(req,res){
 	var options = {
@@ -33,6 +30,12 @@ app.get('/',function(req,res){
 	};
 	//res.sendFile('index.html', options);
 	res.render("index");
+});
+
+app.get('/currentData',function(req,res){
+	res.json({
+		"views": views
+	});
 });
 
 app.post('/cloneOriginal', function(req, res) {
@@ -68,7 +71,13 @@ app.post('/view', function(req, res){
 	});
 });
 
-var createNewView = function(widthHeightData){
+app.listen(8080);
+
+
+
+// ------------ Helpers ------------
+
+/*var createNewView = function(widthHeightData){
 	var original = views[0];
 	var width = original["width"];
 	var height = original["height"];
@@ -84,8 +93,40 @@ var createNewView = function(widthHeightData){
 		"height": height
 	};
 	return newView;
-	/*var original = views[0];
-	return original;*/
-}
+};*/
 
-app.listen(8080);
+var createElementObj = function(id, x, y, width, height, color){
+	return {
+		"id": id,
+		"x": x,
+		"y": y,
+		"width": width,
+		"height": height,
+		"color": color
+	};
+};
+
+var createViewObj = function(pageWidth, pageHeight){
+	var newView = {
+		"elements": [],
+		"pageWidth": pageWidth,
+		"pageHeight": pageHeight,
+		"id": viewCounter
+	};
+	viewCounter++;
+	return newView;
+};
+
+var views = [];
+var viewCounter = 0;
+
+var view0 = createViewObj(1680, 800);
+view0["elements"].push(createElementObj(0, 100, 40, 400, 250, "blue"));
+view0["elements"].push(createElementObj(1, 600, 300, 300, 400, "red"));
+
+var view1= createViewObj(840, 800);
+view1["elements"].push(createElementObj(0, 100, 40, 400, 250, "blue"));
+view1["elements"].push(createElementObj(1, 600, 300, 300, 400, "red"));
+
+views.push(view0);
+views.push(view1);

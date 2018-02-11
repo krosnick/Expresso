@@ -84,10 +84,8 @@ app.post('/cloneOriginal', function(req, res) {
 	// Clone original view
 	/*var original = views[0];
 	var clonedView = Object.assign({}, original);
-	console.log(clonedView);
 	clonedView["id"]*/
 	var clonedView = cloneViewObj();
-	console.log(clonedView);
 	views.push(clonedView);
 
 	// Send back to client
@@ -101,10 +99,18 @@ app.post('/view', function(req, res){
 	var oldViewId = req.body.oldView.oldViewId;
 	var oldViewWidth = req.body.oldView.oldViewWidth;
 	var oldViewHeight = req.body.oldView.oldViewHeight;
-
+	var oldViewElementsData = req.body.oldView.elementsData;
+	
+	var oldViewIdAsInt = parseInt(oldViewId);
+	var oldViewServerObj = views[oldViewIdAsInt];
 	// Updating page width and height of previously displayed view
-	views[parseInt(oldViewId)]["pageWidth"] = parseInt(oldViewWidth);
-	views[parseInt(oldViewId)]["pageHeight"] = parseInt(oldViewHeight);
+	oldViewServerObj["pageWidth"] = parseInt(oldViewWidth);
+	oldViewServerObj["pageHeight"] = parseInt(oldViewHeight);
+
+	// Updating elements of previously displayed view, if there are changes
+	if(oldViewElementsData){ // if undefined, then no updates have been made
+		oldViewServerObj["elements"] = oldViewElementsData;
+	}
 
 	var viewId = parseInt(req.body.newViewId);
 	res.json({

@@ -1,4 +1,5 @@
 var currentViewId = 0;
+var elementChanged = false;
 
 $(document).ready(function() {
     // Get views from server
@@ -24,36 +25,11 @@ $(document).ready(function() {
     // Possibly want to use templates later (store views in json, then render in template)
 
     $("#cloneButton").on("click", function(event){
-		/*$.ajax({
-	        type: "POST",
-	        url: "/cloneOriginal",
-	        data: getCurrentViewWidthHeight()
-	    }).done(function(data) {
-
-	    	// data should be the new view id
-	    	var newViewId = data.newViewId;
-	    	var addOriginalLink = data.firstClone;
-	    	
-	    	if(addOriginalLink){
-	    		$("#originalView").css("visibility", "visible");
-	    	}
-
-	    	// Add link for new view
-	    	addViewMenuItem(newViewId);
-
-	    	// Make this link bold
-	    	makeFontBold($("#view" + newViewId + " a"), $(".clone a"));
-	    	
-	    	// Render this view in the UI; server should include the view (html string?) in the response object
-	        updateView(newViewId);
-	    });*/
 	    $.ajax({
 	        type: "POST",
 	        url: "/cloneOriginal"
 	    }).done(function(data) {
 
-	    	console.log("After cloneOriginal");
-	    	console.log(data);
 	    	var newCloneId = data["view"]["id"];
 	    	// Add link for this new clone
 	    	addViewMenuItem(newCloneId);
@@ -75,10 +51,41 @@ $(document).ready(function() {
 		updateView(viewId);
 	});
 
-    //$("#userPageOriginal").resizable();
-	//$("#userPageClone").resizable();
-	$(".userPage").resizable();
+    $(".userPage").on("resize drag", ".modifiable", function(event){
+    	// On resize or drag
+    	elementChanged = true;
+    });
+
+    $(".userPage").resizable();
+
+    // Probably should have a timer to send updated element data to server to be saved
 });
+
+// Capture element width/height/x/y data
+var captureElementData = function(){
+	var uiElements = $(".pageElement");
+	var uiElementsData = [];
+	for(var i = 0; i < uiElements.length; i++){
+		var uiElementId = uiElements[i].id;
+		var jqueryUIElement = $("#" + uiElementId);
+		var elementId = jqueryUIElement.attr("elementId");
+		var elementWidth = jqueryUIElement.css("width");
+		var elementHeight = jqueryUIElement.css("height");
+		var elementX = jqueryUIElement.css("left");
+		var elementY = jqueryUIElement.css("top");
+		var elementColor = jqueryUIElement.css("background-color");
+		var uiElementData = {
+			"id": elementId,
+			"width": elementWidth,
+			"height": elementHeight,
+			"x": elementX,
+			"y": elementY,
+			"color": elementColor
+		};
+		uiElementsData.push(uiElementData);
+	}
+	return uiElementsData;
+}
 
 var makeFontBold = function(elementToBeBold, elementsNotToBeBold){
 	elementsNotToBeBold.css("font-weight", "normal");
@@ -105,12 +112,18 @@ var updateView = function(viewId){
 	var currentViewWidthHeight = getCurrentViewWidthHeight();
 	var currentViewWidth = currentViewWidthHeight["width"];
 	var currentViewHeight = currentViewWidthHeight["height"];
+	var elementsData;
+	if(elementChanged){
+		elementsData = captureElementData();
+		elementChanged = false;
+	}
 	var viewData = {
     	"newViewId": parseInt(viewId),
     	"oldView": {
     		"oldViewId": currentViewId,
     		"oldViewWidth": currentViewWidth,
-    		"oldViewHeight": currentViewHeight
+    		"oldViewHeight": currentViewHeight,
+    		"elementsData": elementsData
 	    }
 	};
     $.ajax({
@@ -118,43 +131,11 @@ var updateView = function(viewId){
         url: "/view",
         data: viewData
     }).done(function(data) {
-    	console.log(data);
     	currentViewId = viewId;
-
-    	/*var viewWidth = data["view"]["pageWidth"];
-    	var viewHeight = data["view"]["pageHeight"];*/
 
     	renderView(data["view"]);
 
     	$(".userPage").resizable();
-
-    	/*if(viewId == 0){ // original view
-    		// Make #userPageOriginal node visible
-    		$("#userPageOriginal").css("visibility", "visible");
-
-    		// Make clone node hidden
-    		$("#userPageClone").css("visibility", "hidden");
-    	}else{
-    		var viewWidth = data["view"]["width"];
-    		var viewHeight = data["view"]["height"];
-
-    		$("#userPageClone").css("width", viewWidth);
-    		$("#userPageClone").css("height", viewHeight);
-
-    		// Replace the contents of #userPageClone with the HTML returned
-    		var viewHTMLString = data["view"]["viewHTMLString"];
-    		$("#userPageCloneContent").html(viewHTMLString);
-
-    		// Make #userPageClone visible and hide #userPageOriginal (original view)
-    		$("#userPageOriginal").css("visibility", "hidden");
-    		$("#userPageClone").css("visibility", "visible");
-
-    		$("#userPageClone").resizable();
-
-    		// Make modifiable elements (i.e., the box right now) draggable and resizable; should only be the case for clones
-    		$(".modifiable").draggable();
-    		$(".modifiable").resizable();
-    	}*/
     });
 };
 
@@ -166,29 +147,18 @@ var addViewMenuItem = function(viewId){
 };
 
 var renderView = function(viewData){
-	console.log(viewData);
 	var viewWidth = viewData["pageWidth"];
 	var viewHeight = viewData["pageHeight"];
 
-	/*$("#userPageClone").css("width", viewWidth);
-	$("#userPageClone").css("height", viewHeight);*/
 	$(".userPage").css("width", viewWidth);
 	$(".userPage").css("height", viewHeight);
 
-	/*// Replace the contents of #userPageClone with the HTML returned
-	var viewHTMLString = viewData["viewHTMLString"];*/
 	// Construct DOM for this view. Render each element
 	var elementsData = viewData["elements"];
-	/*var elements = $();
-
-	elementsData.forEach(function(elementData){
-		elements.after(createDOMElement(elementData));
-	});*/
-
+	
 	$(".userPageContent").empty();
 	elementsData.forEach(function(elementData){
 		var element = createDOMElement(elementData);
-		//console.log(element);
 		$(".userPageContent").append(element);
 	});
 
@@ -199,6 +169,7 @@ var renderView = function(viewData){
 
 var createDOMElement = function(elementData){
 	var element = $("<div></div>").attr("id", "element" + elementData["id"]);
+	element.attr("elementId", elementData["id"]);
 	element.css("left", elementData["x"]);
 	element.css("top", elementData["y"]);
 	element.css("width", elementData["width"]);

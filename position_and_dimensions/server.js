@@ -38,7 +38,7 @@ app.get('/currentData',function(req,res){
 	});
 });
 
-app.post('/cloneOriginal', function(req, res) {
+/*app.post('/cloneOriginal', function(req, res) {
 
 	var widthHeightData = req.body;
 
@@ -54,6 +54,46 @@ app.post('/cloneOriginal', function(req, res) {
 		"newViewId": newViewId,
 		"firstClone": firstClone
 	});
+});*/
+
+app.post('/cloneOriginal', function(req, res) {
+
+	/*var widthHeightData = req.body;
+
+	//var original = views[0];
+	var firstClone = views.length == 1;
+	
+	views.push(createNewView(widthHeightData));
+	//views.push(original);
+	//views.push("test" + views.length);
+	var newViewId = views.length - 1;
+	
+	res.json({
+		"newViewId": newViewId,
+		"firstClone": firstClone
+	});*/
+
+	/*var oldViewId = req.body.oldView.oldViewId;
+	var oldViewWidth = req.body.oldView.oldViewWidth;
+	var oldViewHeight = req.body.oldView.oldViewHeight;
+
+	// Updating page width and height of previously displayed view
+	views[parseInt(oldViewId)]["pageWidth"] = parseInt(oldViewWidth);
+	views[parseInt(oldViewId)]["pageHeight"] = parseInt(oldViewHeight);*/
+
+	// Clone original view
+	/*var original = views[0];
+	var clonedView = Object.assign({}, original);
+	console.log(clonedView);
+	clonedView["id"]*/
+	var clonedView = cloneViewObj();
+	console.log(clonedView);
+	views.push(clonedView);
+
+	// Send back to client
+	res.json({
+		"view": clonedView
+	});
 });
 
 app.post('/view', function(req, res){
@@ -62,6 +102,7 @@ app.post('/view', function(req, res){
 	var oldViewWidth = req.body.oldView.oldViewWidth;
 	var oldViewHeight = req.body.oldView.oldViewHeight;
 
+	// Updating page width and height of previously displayed view
 	views[parseInt(oldViewId)]["pageWidth"] = parseInt(oldViewWidth);
 	views[parseInt(oldViewId)]["pageHeight"] = parseInt(oldViewHeight);
 
@@ -117,6 +158,14 @@ var createViewObj = function(pageWidth, pageHeight){
 	return newView;
 };
 
+var cloneViewObj = function(){
+	var original = views[0];
+	var clonedView = Object.assign({}, original);
+	clonedView["id"] = viewCounter;
+	viewCounter++;
+	return clonedView;
+}
+
 var views = [];
 var viewCounter = 0;
 
@@ -126,7 +175,7 @@ view0["elements"].push(createElementObj(1, 600, 300, 300, 400, "red"));
 
 var view1= createViewObj(840, 800);
 view1["elements"].push(createElementObj(0, 100, 40, 400, 250, "blue"));
-view1["elements"].push(createElementObj(1, 600, 300, 300, 400, "red"));
+view1["elements"].push(createElementObj(1, 400, 300, 300, 400, "red"));
 
 views.push(view0);
 views.push(view1);

@@ -24,7 +24,7 @@ $(document).ready(function() {
     // Possibly want to use templates later (store views in json, then render in template)
 
     $("#cloneButton").on("click", function(event){
-		$.ajax({
+		/*$.ajax({
 	        type: "POST",
 	        url: "/cloneOriginal",
 	        data: getCurrentViewWidthHeight()
@@ -39,10 +39,6 @@ $(document).ready(function() {
 	    	}
 
 	    	// Add link for new view
-	    	/*var newViewText = "Clone " + newViewId;
-	    	var newViewIdString = "view" + newViewId;
-	    	var newViewObject = $('<span class="clone" id="' + newViewIdString + '" viewId=' + newViewId + '><a href="#">' + newViewText + '</a></span>');
-	    	$("#demoCSSMenu").append(newViewObject);*/
 	    	addViewMenuItem(newViewId);
 
 	    	// Make this link bold
@@ -50,6 +46,24 @@ $(document).ready(function() {
 	    	
 	    	// Render this view in the UI; server should include the view (html string?) in the response object
 	        updateView(newViewId);
+	    });*/
+	    $.ajax({
+	        type: "POST",
+	        url: "/cloneOriginal"
+	    }).done(function(data) {
+
+	    	console.log("After cloneOriginal");
+	    	console.log(data);
+	    	var newCloneId = data["view"]["id"];
+	    	// Add link for this new clone
+	    	addViewMenuItem(newCloneId);
+
+	    	// Make this link bold
+			makeFontBold($("#view" + newCloneId + " a"), $(".clone a"));
+			
+			// Render this view in the UI
+			updateView(newCloneId);
+	    	
 	    });
 	});
 
@@ -57,7 +71,7 @@ $(document).ready(function() {
     	var viewId = $(event.target).parent().attr("viewId"); // need to call "parent()" because $(event.target) is the <a> element and its parent has the "viewId" attribute 
     	// Make this link bold
 		makeFontBold($(event.target), $(".clone a"));
-		// Render this view in the UI, so probably need to ask server for the view
+		// Render this view in the UI
 		updateView(viewId);
 	});
 

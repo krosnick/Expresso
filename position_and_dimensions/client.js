@@ -104,10 +104,16 @@ var updateView = function(viewId){
         url: "/view",
         data: viewData
     }).done(function(data) {
-    	
+    	console.log(data);
     	currentViewId = viewId;
 
+    	/*var viewWidth = data["view"]["pageWidth"];
+    	var viewHeight = data["view"]["pageHeight"];*/
+
     	renderView(data["view"]);
+
+    	$(".userPage").resizable();
+
     	/*if(viewId == 0){ // original view
     		// Make #userPageOriginal node visible
     		$("#userPageOriginal").css("visibility", "visible");

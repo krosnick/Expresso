@@ -62,8 +62,8 @@ app.post('/view', function(req, res){
 	var oldViewWidth = req.body.oldView.oldViewWidth;
 	var oldViewHeight = req.body.oldView.oldViewHeight;
 
-	views[parseInt(oldViewId)]["width"] = parseInt(oldViewWidth);
-	views[parseInt(oldViewId)]["height"] = parseInt(oldViewHeight);
+	views[parseInt(oldViewId)]["pageWidth"] = parseInt(oldViewWidth);
+	views[parseInt(oldViewId)]["pageHeight"] = parseInt(oldViewHeight);
 
 	var viewId = parseInt(req.body.newViewId);
 	res.json({

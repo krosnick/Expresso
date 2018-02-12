@@ -93,10 +93,13 @@ body {
 	border: 1px solid black;
 }
 
-.pageElement.ui-selected {
+/*.pageElement.ui-selected {
 	border: 3px solid black;
 }
-
 .pageElement.ui-selecting {
 	border: 3px solid black;
+}*/
+
+#selectedElementRules {
+	display: none;
 }

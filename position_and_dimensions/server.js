@@ -22,7 +22,8 @@ app.get('/',function(req,res){
 
 app.get('/currentData',function(req,res){
 	res.json({
-		"views": views
+		"views": views,
+		"elementRules": elementRules
 	});
 });
 
@@ -32,7 +33,8 @@ app.post('/cloneOriginal', function(req, res) {
 
 	// Send back to client
 	res.json({
-		"view": clonedView
+		"view": clonedView,
+		"elementRules": elementRules
 	});
 });
 
@@ -42,7 +44,8 @@ app.post('/view', function(req, res){
 
 	var viewId = parseInt(req.body.newViewId);
 	res.json({
-		"view": views[viewId]
+		"view": views[viewId],
+		"elementRules": elementRules
 	});
 });
 
@@ -107,6 +110,8 @@ var cloneViewObj = function(){
 	return clonedView;
 }
 
+// ------------ State ------------
+// View raw data
 var views = [];
 var viewCounter = 0;
 
@@ -119,3 +124,78 @@ views.push(view0);
 view1["elements"].push(createElementObj(0, 100, 40, 400, 250, "blue"));
 view1["elements"].push(createElementObj(1, 400, 300, 300, 400, "red"));
 views.push(view1);*/
+
+// Rules
+var elementRules = {};
+// give a default rule for each property of each element (probably constant)
+var viewPageWidth = views[0]["pageWidth"];
+var viewPageHeight = views[0]["pageHeight"];
+for(var i = 0; i < views[0]["elements"].length; i++){
+	var elementObj = views[0]["elements"][i];
+
+	var elementRuleObj = {};
+	elementRuleObj["id"] = elementObj["id"];
+	// Element x
+	elementRuleObj["x"] = {
+		"rule": "constant", // could be "constant", "ratio", or "inconsistent"
+		"value": elementObj["x"] // if "rule" were "ratio", "value" would be elementObj["x"]/viewPageWidth
+	};
+
+	// Element y
+	elementRuleObj["y"] = {
+		"rule": "constant",
+		"value": elementObj["y"]
+	};
+
+	// Element width
+	elementRuleObj["width"] = {
+		"rule": "constant",
+		"value": elementObj["width"]
+	};
+
+	// Element height
+	elementRuleObj["height"] = {
+		"rule": "constant",
+		"value": elementObj["height"]
+	};
+
+	elementRules[elementObj["id"]] = elementRuleObj;
+	//elementRules.push(elementRuleObj);
+}
+/*var elementRules = [];
+// give a default rule for each property of each element (probably constant)
+var viewPageWidth = views[0]["pageWidth"];
+var viewPageHeight = views[0]["pageHeight"];
+for(var i = 0; i < views[0]["elements"].length; i++){
+	var elementObj = views[0]["elements"][i];
+
+	var elementRuleObj = {};
+	elementRuleObj["id"] = elementObj["id"];
+	// Element x
+	elementRuleObj["x"] = {
+		"rule": "constant", // could be "constant", "ratio", or "inconsistent"
+		"value": elementObj["x"] // if "rule" were "ratio", "value" would be elementObj["x"]/viewPageWidth
+	};
+
+	// Element y
+	elementRuleObj["y"] = {
+		"rule": "constant",
+		"value": elementObj["y"]
+	};
+
+	// Element width
+	elementRuleObj["width"] = {
+		"rule": "constant",
+		"value": elementObj["width"]
+	};
+
+	// Element height
+	elementRuleObj["height"] = {
+		"rule": "constant",
+		"value": elementObj["height"]
+	};
+
+	elementRules.push(elementRuleObj);
+}*/
+
+// When elements get updated in view, do we update elementRules?

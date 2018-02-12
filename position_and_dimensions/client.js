@@ -3,6 +3,7 @@ var dataChanged = false;
 var elementPositionInfoId = "elementPositionInfo";
 var elementDimensionsInfoId = "elementDimensionsInfo";
 var pageDimensionsInfoId = "pageDimensionsInfo";
+var allElementRules;
 
 $(document).ready(function() {
     // Get views from server
@@ -11,7 +12,8 @@ $(document).ready(function() {
         type: "GET",
         url: "/currentData"
     }).done(function(data) {
-    	var views = data.views;
+    	var views = data["views"];
+    	allElementRules = data["elementRules"];
 
     	// Show menu of views at the bottom
     	views.forEach(function(view){
@@ -34,6 +36,8 @@ $(document).ready(function() {
 	        url: "/cloneOriginal"
 	    }).done(function(data) {
 
+	    	allElementRules = data["elementRules"];
+
 	    	var newCloneId = data["view"]["id"];
 	    	// Add link for this new clone
 	    	addViewMenuItem(newCloneId);
@@ -55,9 +59,28 @@ $(document).ready(function() {
 		updateView(viewId);
 	});
 
+    $("body").on("resizestart dragstart", ".modifiable", function(event){
+    	// On resize or drag
+    	dataChanged = true;
+
+    	$("#selectedElementRules").css("display", "block");
+    });
+
+    $("body").on("resizestop dragstop", ".modifiable", function(event){
+    	// On resize or drag
+    	dataChanged = true;
+
+    	$("#selectedElementRules").css("display", "none");
+    });
+
     $("body").on("resize drag", ".modifiable", function(event){
     	// On resize or drag
     	dataChanged = true;
+
+    	var selectedElement = $(event.target);
+    	var selectedElementNum = selectedElement.attr("elementId");
+    	var selectedElementRules = allElementRules[selectedElementNum];
+    	updateRulesMenu(selectedElement, selectedElementRules);
     });
 
 
@@ -101,11 +124,22 @@ $(document).ready(function() {
 
     // ------------- Behavior on element selected  -------------
     $("body").on("selectableselected", ".userPageContent", function(event, ui){
-    	console.log("Selected!");
+
+    	var selectedElementActualId = ui.selected.id;
+    	var selectedElement = $("#" + selectedElementActualId);
+    	var selectedElementNum = selectedElement.attr("elementId");
+    	var selectedElementRules = allElementRules[selectedElementNum];
+    	updateRulesMenu(selectedElement, selectedElementRules);
+
+    	$("#selectedElementRules").css("display", "block");
     });
-    $("body").on("selectableselecting", ".userPageContent", function(event, ui){
+    $("body").on("selectableunselected", ".userPageContent", function(event, ui){
+    	//console.log("Unselected!");
+    	$("#selectedElementRules").css("display", "none");
+    });
+    /*$("body").on("selectableselecting", ".userPageContent", function(event, ui){
     	console.log("Selecting!");
-    });
+    });*/
 
     // ------------- Behavior on page resize  -------------
     $("body").on("resize", ".userPage", function(event){
@@ -116,6 +150,8 @@ $(document).ready(function() {
 
     $(".userPage").resizable();
     $(".userPageContent").selectable();
+
+    //$("#elementWidthRules input").checkboxradio();
 
     // Probably should have a timer to send updated element data to server to be saved
     window.setInterval(function(){
@@ -132,6 +168,79 @@ $(document).ready(function() {
     	}
     }, 1000);
 });
+
+var updateRulesMenu = function(jQueryElement, elementRules){
+	// Set radio button constant + ratio text values
+    // Set selected radio button
+
+    // width, height, x, y
+
+    // Width
+    // Calculate current constant, current ratio
+    var currentWidthConstant = jQueryElement.width();
+    var currentPageWidth = $(".userPage").width();
+    var currentWidthRatio = 1.0 * currentWidthConstant / currentPageWidth * 100;
+    $("#radio-width-constant-value").text(currentWidthConstant + "px");
+    $("#radio-width-ratio-value").text(currentWidthRatio + "% of page width");
+
+    if(elementRules["width"]["rule"] === "constant"){
+    	$("#radio-width-constant").attr("checked", true);
+    }else if(elementRules["width"]["rule"] === "ratio"){
+    	$("#radio-width-ratio").attr("checked", true);
+    }else{
+    	// Something is wrong, or indicate "inconsistent rule"
+    	console.log("Inconsistent rule");
+    }
+    // If doesn't match value in elementRules...?
+
+    // Height
+    var currentHeightConstant = jQueryElement.height();
+    var currentPageHeight = $(".userPage").height();
+    var currentHeightRatio = 1.0 * currentHeightConstant / currentPageHeight * 100;
+    $("#radio-height-constant-value").text(currentHeightConstant + "px");
+    $("#radio-height-ratio-value").text(currentHeightRatio + "% of page height");
+
+    if(elementRules["height"]["rule"] === "constant"){
+    	$("#radio-height-constant").attr("checked", true);
+    }else if(elementRules["height"]["rule"] === "ratio"){
+    	$("#radio-height-ratio").attr("checked", true);
+    }else{
+    	// Something is wrong, or indicate "inconsistent rule"
+    	console.log("Inconsistent rule");
+    }
+
+    // x
+    var currentXConstant = jQueryElement.offset().left;
+    var currentPageWidth = $(".userPage").width();
+    var currentXRatio = 1.0 * currentXConstant / currentPageWidth * 100;
+    $("#radio-x-constant-value").text(currentXConstant + "px");
+    $("#radio-x-ratio-value").text(currentXRatio + "% of page width");
+
+    if(elementRules["x"]["rule"] === "constant"){
+    	$("#radio-x-constant").attr("checked", true);
+    }else if(elementRules["x"]["rule"] === "ratio"){
+    	$("#radio-x-ratio").attr("checked", true);
+    }else{
+    	// Something is wrong, or indicate "inconsistent rule"
+    	console.log("Inconsistent rule");
+    }
+
+    // y
+    var currentYConstant = jQueryElement.offset().top;
+    var currentPageHeight = $(".userPage").height();
+    var currentYRatio = 1.0 * currentYConstant / currentPageHeight * 100;
+    $("#radio-y-constant-value").text(currentYConstant + "px");
+    $("#radio-y-ratio-value").text(currentYRatio + "% of page height");
+
+    if(elementRules["y"]["rule"] === "constant"){
+    	$("#radio-y-constant").attr("checked", true);
+    }else if(elementRules["y"]["rule"] === "ratio"){
+    	$("#radio-y-ratio").attr("checked", true);
+    }else{
+    	// Something is wrong, or indicate "inconsistent rule"
+    	console.log("Inconsistent rule");
+    }
+}
 
 var updatePageDimensionsLabel = function(){
 	var element = $(".userPage");
@@ -207,6 +316,8 @@ var updateView = function(viewId){
         url: "/view",
         data: viewData
     }).done(function(data) {
+    	allElementRules = data["elementRules"];
+
     	currentViewId = viewId;
 
     	renderView(data["view"]);

@@ -1,3 +1,7 @@
+body {
+	background-color: gray;
+}
+
 #demoCSSMenu {
 	height: 50px;
     bottom: 0px;
@@ -26,7 +30,10 @@
     left: 0px;
 	top: 0px;
     width: 100%;
-	height: calc(100% - 50px);	
+    max-width: 100%;
+	height: calc(100% - 50px);
+	max-height: calc(100% - 50px);
+	background-color: white;
 }
 
 #userPageClone {

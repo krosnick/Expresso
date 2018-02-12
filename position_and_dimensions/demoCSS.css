@@ -36,6 +36,11 @@ body {
 	background-color: white;
 }
 
+.userPageContent {
+	width: 100%;
+	height: 100%;
+}
+
 #userPageClone {
 	visibility: hidden;
 }
@@ -76,4 +81,12 @@ body {
 	color: black;
 	padding: 2px;
 	border: 1px solid black;
+}
+
+.pageElement.ui-selected {
+	border: 3px solid black;
+}
+
+.pageElement.ui-selecting {
+	border: 3px solid black;
 }

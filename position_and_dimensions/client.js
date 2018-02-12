@@ -23,6 +23,7 @@ $(document).ready(function() {
 		// Render view 0 by default
 		renderView(views[0]);
 		$(".userPage").resizable();
+		$(".userPageContent").selectable();
     });
 
     // Possibly want to use templates later (store views in json, then render in template)
@@ -98,6 +99,14 @@ $(document).ready(function() {
     // -------------------------------------------------------
 
 
+    // ------------- Behavior on element selected  -------------
+    $("body").on("selectableselected", ".userPageContent", function(event, ui){
+    	console.log("Selected!");
+    });
+    $("body").on("selectableselecting", ".userPageContent", function(event, ui){
+    	console.log("Selecting!");
+    });
+
     // ------------- Behavior on page resize  -------------
     $("body").on("resize", ".userPage", function(event){
     	// Show page's width, height
@@ -106,6 +115,7 @@ $(document).ready(function() {
     // ----------------------------------------------------
 
     $(".userPage").resizable();
+    $(".userPageContent").selectable();
 
     // Probably should have a timer to send updated element data to server to be saved
     window.setInterval(function(){
@@ -202,6 +212,7 @@ var updateView = function(viewId){
     	renderView(data["view"]);
 
     	$(".userPage").resizable();
+    	$(".userPageContent").selectable();
     });
 };
 
@@ -233,6 +244,8 @@ var renderView = function(viewData){
 	// Make pageElement elements (i.e., the box right now) draggable and resizable
 	$(".pageElement").draggable();
 	$(".pageElement").resizable();
+	//$(".pageElement").selectable();
+	//$(".userPageContent").selectable();
 };
 
 var createDOMElement = function(elementData){

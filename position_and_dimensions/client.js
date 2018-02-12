@@ -1,7 +1,8 @@
 var currentViewId = 0;
 var dataChanged = false;
-var elementDragInfoId = "elementDragInfo";
-var elementResizeInfoId = "elementResizeInfo";
+var elementPositionInfoId = "elementPositionInfo";
+var elementDimensionsInfoId = "elementDimensionsInfo";
+var pageDimensionsInfoId = "pageDimensionsInfo";
 
 $(document).ready(function() {
     // Get views from server
@@ -62,18 +63,18 @@ $(document).ready(function() {
     // ------------- Behavior on element drag  -------------
     $("body").on("dragstart", ".pageElement", function(event, ui){
     	// Create a relatively positioned box containing the (x, y) coordinates?
-    	var dragInfo = $("<div id=" + elementDragInfoId + "></div>");
+    	var dragInfo = $("<div id=" + elementPositionInfoId + "></div>");
     	$(event.target).append(dragInfo);
     });
     $("body").on("drag", ".pageElement", function(event){
     	// Update element's (x, y) position in the box shown
     	var element = $(event.target);
     	var coords = "(" + element.css("left") + ", " + element.css("top") + ")";
-    	$("#" + elementDragInfoId).text(coords);
+    	$("#" + elementPositionInfoId).text(coords);
     });
     $("body").on("dragstop", ".pageElement", function(event, ui){
     	// Remove the relatively positioned box containing the (x, y) coordinates
-    	$("#" + elementDragInfoId).remove();
+    	$("#" + elementPositionInfoId).remove();
     });
     // -----------------------------------------------------
 
@@ -81,24 +82,28 @@ $(document).ready(function() {
     // ------------- Behavior on element resize  -------------
     $("body").on("resizestart", ".pageElement", function(event, ui){
     	// Create a relatively positioned box containing the (x, y) coordinates?
-    	var resizeInfo = $("<div id=" + elementResizeInfoId + "></div>");
+    	var resizeInfo = $("<div id=" + elementDimensionsInfoId + "></div>");
     	$(event.target).append(resizeInfo);
     });
     $("body").on("resize", ".pageElement", function(event){
     	// Update element's width, height in the box shown
     	var element = $(event.target);
     	var dimensions = "width: " + element.css("width") + ", height: " + element.css("height");
-    	$("#" + elementResizeInfoId).text(dimensions);
+    	$("#" + elementDimensionsInfoId).text(dimensions);
     });
     $("body").on("resizestop", ".pageElement", function(event, ui){
     	// Remove the relatively positioned box containing the dimensions
-    	$("#" + elementResizeInfoId).remove();
+    	$("#" + elementDimensionsInfoId).remove();
     });
     // -------------------------------------------------------
 
+
+    // ------------- Behavior on page resize  -------------
     $("body").on("resize", ".userPage", function(event){
     	// Show page's width, height
+    	updatePageDimensionsLabel();
     });
+    // ----------------------------------------------------
 
     $(".userPage").resizable();
 
@@ -117,6 +122,12 @@ $(document).ready(function() {
     	}
     }, 1000);
 });
+
+var updatePageDimensionsLabel = function(){
+	var element = $(".userPage");
+	var dimensions = "width: " + element.css("width") + ", height: " + element.css("height");
+    $("#" + pageDimensionsInfoId).text(dimensions);
+};
 
 // Capture element width/height/x/y data
 var captureElementData = function(){
@@ -207,6 +218,8 @@ var renderView = function(viewData){
 
 	$(".userPage").css("width", viewWidth);
 	$(".userPage").css("height", viewHeight);
+
+	updatePageDimensionsLabel();
 
 	// Construct DOM for this view. Render each element
 	var elementsData = viewData["elements"];

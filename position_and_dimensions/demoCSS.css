@@ -41,7 +41,7 @@
 	position: absolute !important;
 }
 
-#elementDragInfo {
+#elementPositionInfo {
 	position: absolute;
 	top: 10px;
 	left: 10px;
@@ -51,7 +51,17 @@
 	border: 1px solid black;
 }
 
-#elementResizeInfo {
+#elementDimensionsInfo {
+	position: absolute;
+	bottom: 10px;
+	right: 10px;
+	background-color: white;
+	color: black;
+	padding: 2px;
+	border: 1px solid black;
+}
+
+#pageDimensionsInfo {
 	position: absolute;
 	bottom: 10px;
 	right: 10px;

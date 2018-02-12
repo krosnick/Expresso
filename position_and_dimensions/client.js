@@ -1,5 +1,7 @@
 var currentViewId = 0;
 var dataChanged = false;
+var elementDragInfoId = "elementDragInfo";
+var elementResizeInfoId = "elementResizeInfo";
 
 $(document).ready(function() {
     // Get views from server
@@ -54,6 +56,48 @@ $(document).ready(function() {
     $("body").on("resize drag", ".modifiable", function(event){
     	// On resize or drag
     	dataChanged = true;
+    });
+
+
+    // ------------- Behavior on element drag  -------------
+    $("body").on("dragstart", ".pageElement", function(event, ui){
+    	// Create a relatively positioned box containing the (x, y) coordinates?
+    	var dragInfo = $("<div id=" + elementDragInfoId + "></div>");
+    	$(event.target).append(dragInfo);
+    });
+    $("body").on("drag", ".pageElement", function(event){
+    	// Update element's (x, y) position in the box shown
+    	var element = $(event.target);
+    	var coords = "(" + element.css("left") + ", " + element.css("top") + ")";
+    	$("#" + elementDragInfoId).text(coords);
+    });
+    $("body").on("dragstop", ".pageElement", function(event, ui){
+    	// Remove the relatively positioned box containing the (x, y) coordinates
+    	$("#" + elementDragInfoId).remove();
+    });
+    // -----------------------------------------------------
+
+
+    // ------------- Behavior on element resize  -------------
+    $("body").on("resizestart", ".pageElement", function(event, ui){
+    	// Create a relatively positioned box containing the (x, y) coordinates?
+    	var resizeInfo = $("<div id=" + elementResizeInfoId + "></div>");
+    	$(event.target).append(resizeInfo);
+    });
+    $("body").on("resize", ".pageElement", function(event){
+    	// Update element's width, height in the box shown
+    	var element = $(event.target);
+    	var dimensions = "width: " + element.css("width") + ", height: " + element.css("height");
+    	$("#" + elementResizeInfoId).text(dimensions);
+    });
+    $("body").on("resizestop", ".pageElement", function(event, ui){
+    	// Remove the relatively positioned box containing the dimensions
+    	$("#" + elementResizeInfoId).remove();
+    });
+    // -------------------------------------------------------
+
+    $("body").on("resize", ".userPage", function(event){
+    	// Show page's width, height
     });
 
     $(".userPage").resizable();

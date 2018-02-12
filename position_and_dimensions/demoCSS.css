@@ -32,7 +32,7 @@ body {
     width: 100%;
     max-width: 100%;
 	height: calc(100% - 50px);
-	max-height: calc(100% - 50px);
+	max-height: calc(100% - 50px + 1px);
 	background-color: white;
 }
 

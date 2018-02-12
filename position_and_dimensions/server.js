@@ -110,13 +110,12 @@ var cloneViewObj = function(){
 var views = [];
 var viewCounter = 0;
 
-var view0 = createViewObj(1680, 800);
+var view0 = createViewObj(1480, 800);
 view0["elements"].push(createElementObj(0, 100, 40, 400, 250, "blue"));
 view0["elements"].push(createElementObj(1, 600, 300, 300, 400, "red"));
+views.push(view0);
 
-var view1= createViewObj(840, 800);
+/*var view1= createViewObj(740, 800);
 view1["elements"].push(createElementObj(0, 100, 40, 400, 250, "blue"));
 view1["elements"].push(createElementObj(1, 400, 300, 300, 400, "red"));
-
-views.push(view0);
-views.push(view1);
+views.push(view1);*/

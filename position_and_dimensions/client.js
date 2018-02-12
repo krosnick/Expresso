@@ -47,7 +47,7 @@ $(document).ready(function() {
 	    });
 	});
 
-    $("#demoCSSMenu").on("click", ".clone a", function(event){
+    $("#viewsMenu").on("click", ".clone a", function(event){
     	var viewId = $(event.target).parent().attr("viewId"); // need to call "parent()" because $(event.target) is the <a> element and its parent has the "viewId" attribute 
     	// Make this link bold
 		makeFontBold($(event.target), $(".clone a"));
@@ -220,7 +220,7 @@ var addViewMenuItem = function(viewId){
 	var newViewText = "Clone " + viewId;
 	var newViewIdString = "view" + viewId;
 	var newViewObject = $('<span class="clone" id="' + newViewIdString + '" viewId=' + viewId + '><a href="#">' + newViewText + '</a></span>');
-	$("#demoCSSMenu").append(newViewObject);
+	$("#viewsMenu").append(newViewObject);
 };
 
 var renderView = function(viewData){

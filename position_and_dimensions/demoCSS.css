@@ -2,7 +2,7 @@ body {
 	background-color: gray;
 }
 
-#demoCSSMenu {
+#viewsMenu {
 	height: 50px;
     bottom: 0px;
     background-color: #f5f5dc;
@@ -10,6 +10,16 @@ body {
     width: 100%;
     left: 0px;
     border-top: 1px solid black;
+}
+
+#rulesMenu {
+	width: 200px;
+	height: calc(100% - 50px);
+	background-color: #f5f5dc;
+	position: fixed;
+	right: 0px;
+	top: 0px;
+	border-left: 1px solid black;
 }
 
 #originalView {
@@ -30,7 +40,7 @@ body {
     left: 0px;
 	top: 0px;
     width: 100%;
-    max-width: 100%;
+    max-width: calc(100% - 200px);
 	height: calc(100% - 50px);
 	max-height: calc(100% - 50px + 1px);
 	background-color: white;

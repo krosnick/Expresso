@@ -27,7 +27,6 @@ $(document).ready(function() {
 		// Render view 0 by default
 		renderView(views[0]);
 		$(".userPage").resizable();
-		//$(".userPageContent").selectable();
     });
 
     // Possibly want to use templates later (store views in json, then render in template)
@@ -61,38 +60,10 @@ $(document).ready(function() {
 		updateView(viewId);
 	});
 
-    /*$("body").on("resizestart dragstart", ".modifiable", function(event){
-    	// On resize or drag
-    	dataChanged = true;
-
-    	var elementNum = $(event.target).attr("elementId");
-    	$("#elementName").text("Element #" + elementNum);
-    	currentlySelectedElement = elementNum;
-    	$("#selectedElementRules").css("display", "block");
-    });
-
-    $("body").on("resizestop dragstop", ".modifiable", function(event){
-    	// On resize or drag
-    	dataChanged = true;
-    	$("#selectedElementRules").css("display", "none");
-    	$("#elementName").text(emptyElementName);
-    	currentlySelectedElement = undefined;
-    });*/
-
     $(".userPage").on("click", function(event){
     	// Unselect any other selected elements (if there are any)
     	$(".pageElement.selected").removeClass("selected");
     	if($(event.target).hasClass("pageElement")){
-    		/*// Select this element (put box shadow around it)
-	    	var newlySelectedElement = $(event.target);
-	    	newlySelectedElement.addClass("selected");
-
-	    	// Update the rules menu
-	    	var selectedElementNum = newlySelectedElement.attr("elementId");
-	    	currentlySelectedElement = selectedElementNum;
-	    	//console.log(selectedElementNum);
-	    	var selectedElementRules = allElementRules[selectedElementNum];
-	    	updateRulesMenu(newlySelectedElement, selectedElementRules);*/
 	    	selectElement($(event.target));
     	}else{
     		currentlySelectedElement = undefined;
@@ -101,52 +72,8 @@ $(document).ready(function() {
     	}
     });
 
-    /*$("body").on("click", ".pageElement", function(event){
-    	// Unselect any other selected elements (if there are any)
-    	$(".pageElement.selected").removeClass("selected");
-
-    	// Select this element (put box shadow around it)
-    	var newlySelectedElement = $(event.target);
-    	newlySelectedElement.addClass("selected");
-
-    	// Update the rules menu
-    	var selectedElementNum = newlySelectedElement.attr("elementId");
-    	currentlySelectedElement = selectedElementNum;
-    	//console.log(selectedElementNum);
-    	var selectedElementRules = allElementRules[selectedElementNum];
-    	updateRulesMenu(newlySelectedElement, selectedElementRules);
-    });
-
-    $("body").on("click", ":not(.pageElement)", function(event){
-    	currentlySelectedElement = undefined;
-    	$(".pageElement.selected").removeClass("selected");
-    });*/
-
     $("body").on("resize drag", ".modifiable", function(event, ui){
-    	//console.log("Happening");
-    	// On resize or drag
     	dataChanged = true;
-    	//console.log(event);
-    	//console.log(ui);
-
-    	//var selectedElementActualId = event.target.id;
-    	//var selectedElement = $("#" + selectedElementActualId);
-    	
-
-    	/*if(currentlySelectedElement){
-	    	var selectedElement = $("#" + currentlySelectedElement);
-	    	//var selectedElement = $(event.target);
-	    	//console.log(selectedElement);
-	    	var selectedElementNum = selectedElement.attr("elementId");
-	    	//console.log(selectedElementNum);
-	    	var selectedElementRules = allElementRules[selectedElementNum];
-	    	//console.log(selectedElementRules);
-	    	
-	    	// comment out for now only
-	    	//updateRulesMenu(selectedElement, selectedElementRules);
-	    	console.log("updateRulesMenu 1");
-	    	updateRulesMenu(selectedElement);
-    	}*/
     });
 
 
@@ -164,7 +91,6 @@ $(document).ready(function() {
     	var coords = "(" + element.css("left") + ", " + element.css("top") + ")";
     	$("#" + elementPositionInfoId).text(coords);
 
-    	//console.log("updateRulesMenu 2");
     	updateRulesMenu(element);
     });
     $("body").on("dragstop", ".pageElement", function(event, ui){
@@ -188,7 +114,6 @@ $(document).ready(function() {
     	var dimensions = "width: " + element.css("width") + ", height: " + element.css("height");
     	$("#" + elementDimensionsInfoId).text(dimensions);
 
-    	//console.log("updateRulesMenu 3");
     	updateRulesMenu(element);
     });
     $("body").on("resizestop", ".pageElement", function(event, ui){
@@ -196,31 +121,7 @@ $(document).ready(function() {
     	$("#" + elementDimensionsInfoId).remove();
     });
     // -------------------------------------------------------
-
-
-    // ------------- Behavior on element selected  -------------
-    /*$("body").on("selectableselected", ".userPageContent", function(event, ui){
-
-    	console.log(event);
-    	console.log(ui);
-    	var selectedElementActualId = ui.selected.id;
-    	var selectedElement = $("#" + selectedElementActualId);
-    	console.log(selectedElement);
-    	var selectedElementNum = selectedElement.attr("elementId");
-    	console.log(selectedElementNum);
-    	var selectedElementRules = allElementRules[selectedElementNum];
-    	console.log(selectedElementRules);
-    	updateRulesMenu(selectedElement, selectedElementRules);
-
-    	$("#elementName").text("Element #" + selectedElementNum);
-    	currentlySelectedElement = selectedElementNum;
-    	$("#selectedElementRules").css("display", "block");
-    });
-    $("body").on("selectableunselected", ".userPageContent", function(event, ui){
-    	$("#selectedElementRules").css("display", "none");
-    	$("#elementName").text(emptyElementName);
-    	currentlySelectedElement = undefined;
-    });*/
+    
 
     // ------------- Behavior on page resize  -------------
     $("body").on("resize", ".userPage", function(event){
@@ -232,21 +133,23 @@ $(document).ready(function() {
 
     // ------------- Behavior on radio button change -------------
     $("input[type=radio]").on("change", function(event){
-    	//console.log(event);
-    	var property = event.target.name;
-    	// currentlySelectedElement is the element
-    	// Now need to update the corresponding rule
-    	// Send relevant info back to server
-    	// Then get full rule data structure back from server
+    	var elementRulesToUpdate = allElementRules[currentlySelectedElement];
+    	var elementProperty = event.target.name;
+    	var elementValue = event.target.value;
+    	elementRulesToUpdate[elementProperty]["rule"] = elementValue;
+    	
+    	// Send rules back to server
+    	$.ajax({
+	        type: "POST",
+	        url: "/updateRules",
+	        data: {"rules": allElementRules}
+	    });
     });
     // -----------------------------------------------------------
 
 
     $(".userPage").resizable();
-    //$(".userPageContent").selectable();
-
-    //$("#elementWidthRules input").checkboxradio();
-
+    
     // Probably should have a timer to send updated element data to server to be saved
     window.setInterval(function(){
     	if(dataChanged){
@@ -267,36 +170,18 @@ var selectElement = function(element){
 	// Select this element (put box shadow around it)
 	element.addClass("selected");
 
-	/*// Update the rules menu
-	var selectedElementNum = element.attr("elementId");
-	currentlySelectedElement = selectedElementNum;
-	//console.log(selectedElementNum);
-	var selectedElementRules = allElementRules[selectedElementNum];*/
-
 	// Update the rules menu
 	var selectedElementNum = element.attr("elementId");
 	currentlySelectedElement = selectedElementNum;
 	
-	// comment out for now only
-	//updateRulesMenu(element, selectedElementRules);
-	//console.log("updateRulesMenu 4");
 	updateRulesMenu(element);
 };
 
 //var updateRulesMenu = function(jQueryElement, elementRules){
 var updateRulesMenu = function(jQueryElement){
-	//console.log("inside of updateRulesMenu");
-
-	//console.log(jQueryElement);
-
-	var selectedElementNum = jQueryElement.attr("elementId");
-	//console.log(selectedElementNum);
-
-	//console.log(allElementRules);
-
+	
+	var selectedElementNum = jQueryElement.attr("elementId");	
 	var elementRules = allElementRules[selectedElementNum];
-
-	//console.log(elementRules);
 
 	// Set radio button constant + ratio text values
     // Set selected radio button
@@ -454,7 +339,9 @@ var updateView = function(viewId){
     	renderView(data["view"]);
 
     	$(".userPage").resizable();
-    	//$(".userPageContent").selectable();
+    	
+    	// Now select what was currentlySelectedElement before
+    	$("[elementId=" + currentlySelectedElement + "]").addClass("selected");
     });
 };
 
@@ -486,8 +373,6 @@ var renderView = function(viewData){
 	// Make pageElement elements (i.e., the box right now) draggable and resizable
 	$(".pageElement").draggable();
 	$(".pageElement").resizable();
-	//$(".pageElement").selectable();
-	//$(".userPageContent").selectable();
 };
 
 var createDOMElement = function(elementData){

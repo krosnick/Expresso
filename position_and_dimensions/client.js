@@ -177,11 +177,12 @@ var selectElement = function(element){
 	updateRulesMenu(element);
 };
 
-//var updateRulesMenu = function(jQueryElement, elementRules){
 var updateRulesMenu = function(jQueryElement){
 	
 	var selectedElementNum = jQueryElement.attr("elementId");	
+	console.log(selectedElementNum);
 	var elementRules = allElementRules[selectedElementNum];
+	console.log(elementRules);
 
 	// Set radio button constant + ratio text values
     // Set selected radio button
@@ -196,10 +197,13 @@ var updateRulesMenu = function(jQueryElement){
     $("#radio-width-constant-value").text(currentWidthConstant + "px");
     $("#radio-width-ratio-value").text(currentWidthRatio + "% of page width");
 
+    console.log(elementRules["width"]["rule"]);
     if(elementRules["width"]["rule"] === "constant"){
-    	$("#radio-width-constant").attr("checked", true);
+    	$("#radio-width-constant").prop("checked", true);
+    	$("#radio-width-ratio").prop("checked", false);
     }else if(elementRules["width"]["rule"] === "ratio"){
-    	$("#radio-width-ratio").attr("checked", true);
+    	$("#radio-width-ratio").prop("checked", true);
+    	$("#radio-width-constant").prop("checked", false);
     }else{
     	// Something is wrong, or indicate "inconsistent rule"
     	console.log("Inconsistent rule");
@@ -214,9 +218,11 @@ var updateRulesMenu = function(jQueryElement){
     $("#radio-height-ratio-value").text(currentHeightRatio + "% of page height");
 
     if(elementRules["height"]["rule"] === "constant"){
-    	$("#radio-height-constant").attr("checked", true);
+    	$("#radio-height-constant").prop("checked", true);
+    	$("#radio-height-ratio").prop("checked", false);
     }else if(elementRules["height"]["rule"] === "ratio"){
-    	$("#radio-height-ratio").attr("checked", true);
+    	$("#radio-height-ratio").prop("checked", true);
+    	$("#radio-height-constant").prop("checked", false);
     }else{
     	// Something is wrong, or indicate "inconsistent rule"
     	console.log("Inconsistent rule");
@@ -230,9 +236,11 @@ var updateRulesMenu = function(jQueryElement){
     $("#radio-x-ratio-value").text(currentXRatio + "% of page width");
 
     if(elementRules["x"]["rule"] === "constant"){
-    	$("#radio-x-constant").attr("checked", true);
+    	$("#radio-x-constant").prop("checked", true);
+    	$("#radio-x-ratio").prop("checked", false);
     }else if(elementRules["x"]["rule"] === "ratio"){
-    	$("#radio-x-ratio").attr("checked", true);
+    	$("#radio-x-ratio").prop("checked", true);
+    	$("#radio-x-constant").prop("checked", false);
     }else{
     	// Something is wrong, or indicate "inconsistent rule"
     	console.log("Inconsistent rule");
@@ -246,9 +254,11 @@ var updateRulesMenu = function(jQueryElement){
     $("#radio-y-ratio-value").text(currentYRatio + "% of page height");
 
     if(elementRules["y"]["rule"] === "constant"){
-    	$("#radio-y-constant").attr("checked", true);
+    	$("#radio-y-constant").prop("checked", true);
+    	$("#radio-y-ratio").prop("checked", false);
     }else if(elementRules["y"]["rule"] === "ratio"){
-    	$("#radio-y-ratio").attr("checked", true);
+    	$("#radio-y-ratio").prop("checked", true);
+    	$("#radio-y-constant").prop("checked", false);
     }else{
     	// Something is wrong, or indicate "inconsistent rule"
     	console.log("Inconsistent rule");
@@ -346,7 +356,7 @@ var updateView = function(viewId){
 };
 
 var addViewMenuItem = function(viewId){
-	var newViewText = "Clone " + viewId;
+	var newViewText = "Keyframe " + viewId;
 	var newViewIdString = "view" + viewId;
 	var newViewObject = $('<span class="clone" id="' + newViewIdString + '" viewId=' + viewId + '><a href="#">' + newViewText + '</a></span>');
 	$("#viewsMenu").append(newViewObject);

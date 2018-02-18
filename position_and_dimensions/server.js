@@ -56,11 +56,8 @@ app.post("/updateData", function(req, res){
 });
 
 app.post("/updateRules", function(req, res){
-	//console.log(req.body);
-	//console.log(req.body.rules);
 	elementRules = req.body.rules;
-	console.log(elementRules);
-
+	
 	res.end();
 });
 

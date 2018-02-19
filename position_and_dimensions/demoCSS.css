@@ -35,7 +35,7 @@ body {
 }
 
 .userPage {
-	border: 2px solid black;
+	/*border: 2px solid black;*/
 	position: absolute !important;
     left: 0px;
 	top: 0px;
@@ -60,7 +60,8 @@ body {
 }
 
 .pageElement {
-	position: absolute !important;
+	/*position: absolute !important;*/
+	position: absolute; /* Later on we'll need to make sure to include this in the returned rules/output of the system */
 }
 
 #elementPositionInfo {

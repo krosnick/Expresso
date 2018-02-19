@@ -6,6 +6,8 @@ var pageDimensionsInfoId = "pageDimensionsInfo";
 var allElementRules;
 var emptyElementName = "(select an element to see)";
 var currentlySelectedElement;
+var elementCSSRules = "elementCSSRules";
+var cssRules = [];
 
 $(document).ready(function() {
     // Get views from server
@@ -16,13 +18,20 @@ $(document).ready(function() {
     }).done(function(data) {
     	var views = data["views"];
     	allElementRules = data["elementRules"];
-
+    	console.log(allElementRules);
+    	cssRules = data["cssRules"];
+    	console.log(cssRules);
     	// Show menu of views at the bottom
     	views.forEach(function(view){
     		addViewMenuItem(view["id"]);
     	});
 
     	makeFontBold($("#view" + 0 + " a"), $(".clone a"));
+
+    	// Should we inject cssRules here? And then when we render view0 below, only add elements, no styling?
+    	// Technically maybe just need to insert element divs into the DOM; could have a list of all element ids + other properties that don't change as page dims change
+
+    	replaceCSSRules();
 
 		// Render view 0 by default
 		renderView(views[0]);
@@ -91,7 +100,7 @@ $(document).ready(function() {
     	var coords = "(" + element.css("left") + ", " + element.css("top") + ")";
     	$("#" + elementPositionInfoId).text(coords);
 
-    	updateRulesMenu(element);
+    	//updateRulesMenu(element);
     });
     $("body").on("dragstop", ".pageElement", function(event, ui){
     	// Remove the relatively positioned box containing the (x, y) coordinates
@@ -114,7 +123,7 @@ $(document).ready(function() {
     	var dimensions = "width: " + element.css("width") + ", height: " + element.css("height");
     	$("#" + elementDimensionsInfoId).text(dimensions);
 
-    	updateRulesMenu(element);
+    	//updateRulesMenu(element);
     });
     $("body").on("resizestop", ".pageElement", function(event, ui){
     	// Remove the relatively positioned box containing the dimensions
@@ -135,14 +144,28 @@ $(document).ready(function() {
     $("input[type=radio]").on("change", function(event){
     	var elementRulesToUpdate = allElementRules[currentlySelectedElement];
     	var elementProperty = event.target.name;
-    	var elementValue = event.target.value;
-    	elementRulesToUpdate[elementProperty]["rule"] = elementValue;
+    	var elementRuleType = event.target.value;
+    	//var elementRuleValue = event.target["rule-value"];
+    	var elementRuleValue = parseFloat($(event.target).attr("rule-value"));
+    	elementRulesToUpdate[elementProperty]["rule"] = elementRuleType;
+    	elementRulesToUpdate[elementProperty]["value"] = elementRuleValue;
+    	// Where is this value stored? Only directly in HTML text, or can it be stored as an attribute value or in a datastructure?
+
+    	// Need to update value here? Or probably value should be determined on server? For now update value here
+    	// If "ratio" is selected, include percentage; if "constant" is selected, include pixel value
+    	// Later on: Use logic (from processInput.js) to determine pattern, and to determine if rule is inconsistent for all keyframes
     	
+    	console.log(allElementRules);
+
     	// Send rules back to server
     	$.ajax({
 	        type: "POST",
 	        url: "/updateRules",
 	        data: {"rules": allElementRules}
+	    }).done(function(data) {
+	    	cssRules = data["cssRules"];
+	    	console.log(cssRules);
+	    	replaceCSSRules();
 	    });
     });
     // -----------------------------------------------------------
@@ -156,14 +179,21 @@ $(document).ready(function() {
 			var viewData = captureElementAndPageData();
 			dataChanged = false;
 
+			// should element rules be updated here? Or maybe let the server take care of that
+
     		// Send update to server
     		$.ajax({
 		        type: "POST",
 		        url: "/updateData",
 		        data: viewData
+		    }).done(function(data) {
+		    	cssRules = data["cssRules"];
+		    	console.log(cssRules);
+		    	replaceCSSRules();
 		    });
     	}
     }, 1000);
+    //}, 10000);
 });
 
 var selectElement = function(element){
@@ -174,10 +204,10 @@ var selectElement = function(element){
 	var selectedElementNum = element.attr("elementId");
 	currentlySelectedElement = selectedElementNum;
 	
-	updateRulesMenu(element);
+	//updateRulesMenu(element);
 };
 
-var updateRulesMenu = function(jQueryElement){
+/*var updateRulesMenu = function(jQueryElement){
 	
 	var selectedElementNum = jQueryElement.attr("elementId");	
 	console.log(selectedElementNum);
@@ -195,7 +225,9 @@ var updateRulesMenu = function(jQueryElement){
     var currentPageWidth = $(".userPage").width();
     var currentWidthRatio = 1.0 * currentWidthConstant / currentPageWidth * 100;
     $("#radio-width-constant-value").text(currentWidthConstant + "px");
+    $("#radio-width-constant").attr("rule-value", currentWidthConstant);
     $("#radio-width-ratio-value").text(currentWidthRatio + "% of page width");
+    $("#radio-width-ratio").attr("rule-value", currentWidthRatio);
 
     console.log(elementRules["width"]["rule"]);
     if(elementRules["width"]["rule"] === "constant"){
@@ -215,7 +247,9 @@ var updateRulesMenu = function(jQueryElement){
     var currentPageHeight = $(".userPage").height();
     var currentHeightRatio = 1.0 * currentHeightConstant / currentPageHeight * 100;
     $("#radio-height-constant-value").text(currentHeightConstant + "px");
+    $("#radio-height-constant").attr("rule-value", currentHeightConstant);
     $("#radio-height-ratio-value").text(currentHeightRatio + "% of page height");
+    $("#radio-height-ratio").attr("rule-value", currentHeightRatio);
 
     if(elementRules["height"]["rule"] === "constant"){
     	$("#radio-height-constant").prop("checked", true);
@@ -233,7 +267,9 @@ var updateRulesMenu = function(jQueryElement){
     var currentPageWidth = $(".userPage").width();
     var currentXRatio = 1.0 * currentXConstant / currentPageWidth * 100;
     $("#radio-x-constant-value").text(currentXConstant + "px");
+    $("#radio-x-constant").attr("rule-value", currentXConstant);
     $("#radio-x-ratio-value").text(currentXRatio + "% of page width");
+    $("#radio-x-ratio").attr("rule-value", currentXRatio);
 
     if(elementRules["x"]["rule"] === "constant"){
     	$("#radio-x-constant").prop("checked", true);
@@ -251,7 +287,9 @@ var updateRulesMenu = function(jQueryElement){
     var currentPageHeight = $(".userPage").height();
     var currentYRatio = 1.0 * currentYConstant / currentPageHeight * 100;
     $("#radio-y-constant-value").text(currentYConstant + "px");
+    $("#radio-y-constant").attr("rule-value", currentYConstant);
     $("#radio-y-ratio-value").text(currentYRatio + "% of page height");
+    $("#radio-y-ratio").attr("rule-value", currentYRatio);
 
     if(elementRules["y"]["rule"] === "constant"){
     	$("#radio-y-constant").prop("checked", true);
@@ -266,7 +304,7 @@ var updateRulesMenu = function(jQueryElement){
 
     // Ensure menu is visible
     $("#selectedElementRules").css("display", "block");
-}
+}*/
 
 var updatePageDimensionsLabel = function(){
 	var element = $(".userPage");
@@ -281,11 +319,15 @@ var captureElementData = function(){
 	for(var i = 0; i < uiElements.length; i++){
 		var uiElementId = uiElements[i].id;
 		var jqueryUIElement = $("#" + uiElementId);
-		var elementId = jqueryUIElement.attr("elementId");
-		var elementWidth = jqueryUIElement.css("width");
+		var elementId = parseInt(jqueryUIElement.attr("elementId"));
+		/*var elementWidth = jqueryUIElement.css("width");
 		var elementHeight = jqueryUIElement.css("height");
 		var elementX = jqueryUIElement.css("left");
-		var elementY = jqueryUIElement.css("top");
+		var elementY = jqueryUIElement.css("top");*/
+		var elementWidth = jqueryUIElement.width();
+		var elementHeight = jqueryUIElement.height();
+		var elementX = jqueryUIElement.offset().left;
+		var elementY = jqueryUIElement.offset().top;
 		var elementColor = jqueryUIElement.css("background-color");
 		var uiElementData = {
 			"id": elementId,
@@ -297,6 +339,7 @@ var captureElementData = function(){
 		};
 		uiElementsData.push(uiElementData);
 	}
+	console.log(uiElementsData);
 	return uiElementsData;
 }
 
@@ -388,12 +431,24 @@ var renderView = function(viewData){
 var createDOMElement = function(elementData){
 	var element = $("<div></div>").attr("id", "element" + elementData["id"]);
 	element.attr("elementId", elementData["id"]);
-	element.css("left", elementData["x"]);
-	element.css("top", elementData["y"]);
-	element.css("width", elementData["width"]);
-	element.css("height", elementData["height"]);
 	element.css("background-color", elementData["color"]);
 	element.addClass("pageElement");
 	element.addClass("modifiable");
+
+	// Commenting these out, since they'll be set by the CSS rules we inject
+	/*element.css("left", elementData["x"]);
+	element.css("top", elementData["y"]);
+	element.css("width", elementData["width"]);
+	element.css("height", elementData["height"]);*/
+
 	return element;
+};
+
+var replaceCSSRules = function(){
+	$("#" + elementCSSRules).empty();
+	var cssRulesString = "";
+	for(var i = 0; i < cssRules.length; i++){
+		cssRulesString += cssRules[i];
+	}
+	$("#" + elementCSSRules).append("<style>" + cssRulesString + "</style>");
 };

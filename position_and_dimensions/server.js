@@ -13,7 +13,6 @@ app.use(bodyParser.urlencoded());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '')));
 
-
 app.get('/',function(req,res){
 	var options = {
 		root: __dirname
@@ -41,7 +40,7 @@ app.post('/cloneOriginal', function(req, res) {
 });
 
 app.post('/view', function(req, res){
-
+	console.log(req.body.oldView);
 	updateElementAndPageData(req.body.oldView);
 
 	var viewId = parseInt(req.body.newViewId);
@@ -56,7 +55,6 @@ app.post("/updateData", function(req, res){
 
 	// For each view, call convertClientDataToInts(req.body.oldView);
 	for(var i = 0; i < views.length; i++){
-		console.log(i);
 		convertClientDataToInts(views[i]);
 	}
 	
@@ -86,16 +84,9 @@ app.listen(8080);
 // ------------ Helpers ------------
 
 var convertClientDataToInts = function(viewObj){
-	//var elementsData = viewObj["elementsData"];
 	var elementsData = viewObj["elements"];
-	//console.log(elementsData);
 	for(var i = 0; i < elementsData.length; i++){
 		var element = elementsData[i];
-		/*element["id"] = parseInt(element["id"]);
-		element["width"] = parseInt(element["width"]);
-		element["height"] = parseInt(element["height"]);
-		element["x"] = parseInt(element["x"]);
-		element["y"] = parseInt(element["y"]);*/
 		var elementPropertyKeyValues = Object.entries(elementDataFormat);
 		for(var propertyIndex = 0; propertyIndex < elementPropertyKeyValues.length; propertyIndex++){
 			var propertyKeyAndValue = elementPropertyKeyValues[propertyIndex];
@@ -106,12 +97,10 @@ var convertClientDataToInts = function(viewObj){
 			for(var optionIndex = 0; optionIndex < propertyDataList.length; optionIndex++){
 				var optionData = propertyDataList[optionIndex];
 				var propertyName = optionData["property"];
-				//element[behaviorName][0][propertyName] = parseInt(element[behaviorName][0][propertyName]);
 				element[behaviorName][propertyName] = parseInt(element[behaviorName][propertyName]);
 			}
 		}
 	}
-	console.log(elementsData);
 };
 
 var updateElementAndPageData = function(viewObj){
@@ -132,17 +121,6 @@ var updateElementAndPageData = function(viewObj){
 		oldViewServerObj["elements"] = viewElementsData;
 	}
 };
-
-/*var createElementObj = function(id, x, y, width, height, color){
-	return {
-		"id": id,
-		"x": x,
-		"y": y,
-		"width": width,
-		"height": height,
-		"color": color
-	};
-};*/
 
 var createViewObj = function(pageWidth, pageHeight){
 	var newView = {
@@ -188,29 +166,6 @@ var createCSSRule = function(elementRules){
 	
 	var ruleString = "#element" + elementRules["id"] + "{";
 
-	/*
-	for(var pageDimIndex = 0; pageDimIndex < pageDimensions.length; pageDimIndex++){
-		var pageDim = pageDimensions[pageDimIndex];
-		var compareFunc = pageDimensionsAndBehaviorsTheyInfluence[pageDim]["compareFunc"];
-		
-		// Sort based on appropriate page dimension
-		keyframesDataForThisElement.sort(compareFunc);
-
-		var behaviorsInfluenced = pageDimensionsAndBehaviorsTheyInfluence[pageDim]["behaviorsInfluenced"];
-		for(var behaviorIndex = 0; behaviorIndex < behaviorsInfluenced; behaviorIndex++){
-			var behaviorName = behaviorsInfluenced[behaviorIndex];
-			
-			// maybe need to do some more processing here, or maybe within "determinePattern"
-			// need to consider the possible properties for each element behavior
-			// elementDataFormat and view1Element0
-
-			// For now assume only one property per behavior (later on will probably choose property which has fewer media queries)
-			var propertyName = elementDataFormat[behaviorName][0]["property"];
-	*/
-	// Need to organize elementRules differently; should have the idea of behavior/property name; need to fix this in updateCSSRules? 
-
-	// properties
-
 	for(var propertyIndex = 0; propertyIndex < properties.length; propertyIndex++){
 		var propertyName = properties[propertyIndex];
 
@@ -220,23 +175,6 @@ var createCSSRule = function(elementRules){
 		var elementXPropertyValueString = createPropertyValueString(propertyName, elementXValueString);
 		ruleString += elementXPropertyValueString;
 	}
-
-	/*// Should index by property names
-	var elementXValueString = createValue(elementRules["x"]["m"], elementRules["x"]["b"]);
-	var elementXPropertyValueString = createPropertyValueString("left", elementXValueString);
-	ruleString += elementXPropertyValueString;
-
-	var elementYValueString = createValue(elementRules["y"]["m"], elementRules["y"]["b"]);
-	var elementYPropertyValueString = createPropertyValueString("top", elementYValueString);
-	ruleString += elementYPropertyValueString;
-
-	var elementWidthValueString = createValue(elementRules["width"]["m"], elementRules["width"]["b"]);
-	var elementWidthPropertyValueString = createPropertyValueString("width", elementWidthValueString);
-	ruleString += elementWidthPropertyValueString;
-
-	var elementHeightValueString = createValue(elementRules["height"]["m"], elementRules["height"]["b"]);
-	var elementHeightPropertyValueString = createPropertyValueString("height", elementHeightValueString);
-	ruleString += elementHeightPropertyValueString;*/
 
 	ruleString += "}";
 
@@ -304,11 +242,7 @@ var updateCSSRules = function(){
 		// For now assume only one chunk/media query
 
 		elementPatterns[elementId] = patterns;
-
-		console.log(patterns);
 	}
-
-	//return elementPatterns;
 
 	var arrayOfElementRules = Object.values(elementPatterns);
 	for(var i = 0; i < arrayOfElementRules.length; i++){
@@ -317,59 +251,6 @@ var updateCSSRules = function(){
 		cssRules.push(cssRuleString);
 	}
 
-	/*cssRules = [];
-
-	// Use logic from processInput.js
-	// For each element, compare its properties in each view
-	// views array
-	var numElements = views[0]["elements"].length;
-	var properties = ["width", "height", "x", "y"];
-	var horizontalProperties = ["width", "x"];
-	var verticalProperties = ["height", "y"];
-
-	var elementPatterns = {};
-
-	for(var elementIndex = 0; elementIndex < numElements; elementIndex++){
-		var elementId = views[0]["elements"][elementIndex]["id"];
-		var keyframesDataForThisElement = [];
-		for(var viewIndex = 0; viewIndex < views.length; viewIndex++){
-			var elementObjAtKeyframe = Object.assign({}, views[viewIndex]["elements"][elementId]);
-			elementObjAtKeyframe["pageWidth"] = views[viewIndex]["pageWidth"];
-			elementObjAtKeyframe["pageHeight"] = views[viewIndex]["pageHeight"];
-			elementObjAtKeyframe["keyframeId"] = views[viewIndex]["id"];
-			keyframesDataForThisElement.push(elementObjAtKeyframe);
-		}
-		// will need to sort by width and height separately?
-
-		keyframesDataForThisElement.sort(comparePageWidths);
-		var elementWidthPattern = determinePattern(keyframesDataForThisElement, "width", "pageWidth");
-		var elementXPattern = determinePattern(keyframesDataForThisElement, "x", "pageWidth");
-		
-		keyframesDataForThisElement.sort(comparePageHeights);
-		var elementHeightPattern = determinePattern(keyframesDataForThisElement, "height", "pageHeight");
-		var elementYPattern = determinePattern(keyframesDataForThisElement, "y", "pageHeight");
-
-		// For now assume only one chunk/media query
-		var patterns = {
-			"width": elementWidthPattern,
-			"height": elementHeightPattern,
-			"x": elementXPattern,
-			"y": elementYPattern,
-			"id": elementId
-		};
-
-		elementPatterns[elementId] = patterns;
-	}
-
-	//return elementPatterns;
-
-	var arrayOfElementRules = Object.values(elementPatterns);
-	for(var i = 0; i < arrayOfElementRules.length; i++){
-		var elementRuleSet = arrayOfElementRules[i];
-		var cssRuleString = createCSSRule(elementRuleSet);
-		cssRules.push(cssRuleString);
-	}
-	*/
 };
 
 var comparePageWidths = function(a, b) {
@@ -397,71 +278,84 @@ var comparePageHeights = function(a, b) {
 // axisName is "pageWidth" or "pageHeight"
 //var determinePattern = function(dataPoints, attributeName, axisName){
 var determinePattern = function(dataPoints, behaviorName, attributeName, axisName){
-	// sort dataPoints by pageWidth value
-	dataPoints.sort(comparePageWidths);
 	
 	var elementSelector = dataPoints[0]["id"];
-
-	// for left and for right (separately)
-	// Let's do "left" first
-	// possibly only 1 of left/right will follow a behavior based on pageWidth; possibly only 2/3 of left/right/elementWidth could follow a behavior based on pageWidth
-	// if there are no adjacent pairs with the same slope, assume there is no pageWidth-based pattern for that property (left or right)
-
-	var slopes = [];
-
-	// compute slopes
-	for(var i = 1; i < dataPoints.length; i++){
-		var point1 = dataPoints[i-1];
-		var point2 = dataPoints[i];
-
-		//var leftPageWidthSlope = (point2[attributeName] - point1[attributeName])/(point2[axisName] - point1[axisName]);
-		var leftPageWidthSlope = (point2[behaviorName][attributeName] - point1[behaviorName][attributeName])/(point2[axisName] - point1[axisName]);
-		slopes.push(leftPageWidthSlope);
-	}
-
-	var chunkStartIndices = [];
-	chunkStartIndices.push(0);
-
-	// compare slopes, identify chunks
-	for(var i = 1; i < slopes.length; i++){
-		var slope1 = slopes[i-1];
-		var slope2 = slopes[i];
-		if(slope1 == slope2){
-			// Same chunk, nothing to do
-		}else{
-			// Different chunk
-			chunkStartIndices.push(i);
-		}
-	}
-	
 	var chunkLineFitData = [];
 
-	for(var i = 0; i < chunkStartIndices.length; i++){
-		// Choose any 2 arbitrary points in the chunk (for ease, just the first two), and fit a line to them
-		// equation: y = m*x + c
-		// matrix multiplication for this? or just quick formula
-		var pointIndex1 = chunkStartIndices[i];
-		var pointIndex2 = pointIndex1 + 1;
-		var point1 = dataPoints[pointIndex1];
-		var point2 = dataPoints[pointIndex2];
+	if(dataPoints.length == 1){
+		// If one point only, assume properties will remain constant throughout all viewport sizes
+		var m = 0;
+		var b = dataPoints[0][behaviorName][attributeName];
 
-		//var pointData = [ [point1["pageWidth"], point1["left"]], [point2["pageWidth"], point2["left"]] ];
-		//var pointData = [ [point1[axisName], point1[attributeName]], [point2[axisName], point2[attributeName]] ];
-		var pointData = [ [point1[axisName], point1[behaviorName][attributeName]], [point2[axisName], point2[behaviorName][attributeName]] ];
-		result = regression.linear(pointData);
-		var m = result.equation[0];
-		var b = result.equation[1];
+		var chunkStart = dataPoints[0][axisName];
+		var chunkEnd = dataPoints[0][axisName];
+		chunkLineFitData.push( { "m": m, "b": b, "start": chunkStart, "end": chunkEnd, "elementSelector": elementSelector } );
+	}else{
+		// sort dataPoints by pageWidth value
+		dataPoints.sort(comparePageWidths);
 
-		var chunkStart = point1[axisName];
-		var chunkEnd;
-		if(i < chunkStartIndices.length - 1){
-			chunkEnd = dataPoints[chunkStartIndices[i+1]][axisName];
-		}else{
-			chunkEnd = dataPoints[dataPoints.length - 1][axisName];
+		// for left and for right (separately)
+		// Let's do "left" first
+		// possibly only 1 of left/right will follow a behavior based on pageWidth; possibly only 2/3 of left/right/elementWidth could follow a behavior based on pageWidth
+		// if there are no adjacent pairs with the same slope, assume there is no pageWidth-based pattern for that property (left or right)
+
+		var slopes = [];
+
+		// compute slopes
+		for(var i = 1; i < dataPoints.length; i++){
+			var point1 = dataPoints[i-1];
+			var point2 = dataPoints[i];
+
+			//var leftPageWidthSlope = (point2[attributeName] - point1[attributeName])/(point2[axisName] - point1[axisName]);
+			var leftPageWidthSlope = (point2[behaviorName][attributeName] - point1[behaviorName][attributeName])/(point2[axisName] - point1[axisName]);
+			slopes.push(leftPageWidthSlope);
 		}
 
-		chunkLineFitData.push( { "m": m, "b": b, "start": chunkStart, "end": chunkEnd, "elementSelector": elementSelector } );
+		var chunkStartIndices = [];
+		chunkStartIndices.push(0);
+
+		// compare slopes, identify chunks
+		for(var i = 1; i < slopes.length; i++){
+			var slope1 = slopes[i-1];
+			var slope2 = slopes[i];
+			if(slope1 == slope2){
+				// Same chunk, nothing to do
+			}else{
+				// Different chunk
+				chunkStartIndices.push(i);
+			}
+		}
+		
+		//var chunkLineFitData = [];
+
+		for(var i = 0; i < chunkStartIndices.length; i++){
+			// Choose any 2 arbitrary points in the chunk (for ease, just the first two), and fit a line to them
+			// equation: y = m*x + c
+			// matrix multiplication for this? or just quick formula
+			var pointIndex1 = chunkStartIndices[i];
+			var pointIndex2 = pointIndex1 + 1;
+			var point1 = dataPoints[pointIndex1];
+			var point2 = dataPoints[pointIndex2];
+
+			//var pointData = [ [point1["pageWidth"], point1["left"]], [point2["pageWidth"], point2["left"]] ];
+			//var pointData = [ [point1[axisName], point1[attributeName]], [point2[axisName], point2[attributeName]] ];
+			var pointData = [ [point1[axisName], point1[behaviorName][attributeName]], [point2[axisName], point2[behaviorName][attributeName]] ];
+			result = regression.linear(pointData);
+			var m = result.equation[0];
+			var b = result.equation[1];
+
+			var chunkStart = point1[axisName];
+			var chunkEnd;
+			if(i < chunkStartIndices.length - 1){
+				chunkEnd = dataPoints[chunkStartIndices[i+1]][axisName];
+			}else{
+				chunkEnd = dataPoints[dataPoints.length - 1][axisName];
+			}
+
+			chunkLineFitData.push( { "m": m, "b": b, "start": chunkStart, "end": chunkEnd, "elementSelector": elementSelector } );
+		}
 	}
+
 	return chunkLineFitData;
 	
 	//}
@@ -480,71 +374,6 @@ var determinePattern = function(dataPoints, behaviorName, attributeName, axisNam
 
 // ------------ Constants ------------
 var constantUnit = "px";
-
-//var computedProperties = ["width", "height", "x", "y"];
-
-// Should it be rule property --> (relies on) computed properties?
-// or should it be computed property --> (influences) rule properties?
-/*var computedToRuleProperties = {
-	"width": {
-		"options": [
-			{
-				"elementProperty": "width",
-				"pageProperty": "width"
-			}
-		]
-	},
-	"height": {
-		"options": [
-			{
-				"elementProperty": "height",
-				"pageProperty": "height"
-			}
-		]
-	},
-	"x": {
-		"options": [
-			{
-				"elementProperty": "left",
-				"pageProperty": "left"
-			},
-			{
-				"elementProperty": "right",
-				"pageProperty": "right"
-			}
-		]
-	},
-	"y": {
-		"options": [
-			{
-				"elementProperty": "top",
-				"pageProperty": "top"
-			},
-			{
-				"elementProperty": "bottom",
-				"pageProperty": "bottom"
-			}
-		]
-	}
-};*/
-/*var rulePropertyOptions = {
-	"width": {
-		"options": ["width"],
-		"pageDimension": "width"
-	},
-	"height": {
-		"options": ["height"],
-		"pageDimension": "height"
-	},
-	"x": {
-		"options": ["left", "right"],
-		"pageDimension": "width"
-	},
-	"y": {
-		"options": ["top", "bottom"],
-		"pageDimension": "height"
-	}
-};*/
 
 var pageDimensionsAndBehaviorsTheyInfluence = {
 	"pageWidth": {
@@ -598,58 +427,11 @@ var elementDataFormat = {
 
 // maybe generate this list later from elementDataFormat? 
 var properties = ["width", "height", "left", "top"];
-//var properties = ["width", "height", "x", "y"];
-
-/*
-// format for keyframe data
-// for each element:
-var elementData = {
-	"width": {
-		"width": value
-	},
-	"height": {
-		"height": value
-	},
-	"x": {
-		"left": value,
-		"right": value
-	},
-	"y": {
-		"top": value,
-		"bottom": value
-	}
-}
-
-*
-
-/*var ruleProperties = {
-	"width": {
-		"elementProperty": "width",
-		"pageProperty": "width"
-	},
-	"height": {
-		"elementProperty": "height",
-		"pageProperty": "height"
-	},
-
-};*/
 
 // ------------ State ------------
 // View raw data
 var views = [];
 var viewCounter = 0;
-
-// var createElementObj = function(id, x, y, width, height, color){
-/*var view0 = createViewObj(1480, 800);
-view0["elements"].push(createElementObj(0, 100, 40, 400, 250, "blue"));
-view0["elements"].push(createElementObj(1, 600, 300, 296, 400, "red"));
-views.push(view0);
-
-var view1= createViewObj(740, 800);
-view1["elements"].push(createElementObj(0, 100, 40, 400, 250, "blue"));
-view1["elements"].push(createElementObj(1, 600, 300, 148, 400, "red"));
-views.push(view1);*/
-
 
 var view0Element0 = {
 	"id": 0,
@@ -684,45 +466,9 @@ var view0Element1 = {
 	}
 };
 var view0 = createViewObj(1480, 800);
-//view0["elements"].push(createElementObj(0, 100, 40, 400, 250, "blue"));
-//view0["elements"].push(createElementObj(1, 600, 300, 296, 400, "red"));
 view0["elements"].push(view0Element0);
 view0["elements"].push(view0Element1);
 views.push(view0);
-
-
-/*var view1Element0 = {
-	"id": 0,
-	"color": "blue",
-	"x": [{
-		"left": 100
-	}],
-	"y": [{
-		"top": 40
-	}],
-	"width": [{
-		"width": 400
-	}],
-	"height": [{
-		"height": 250
-	}]
-};
-var view1Element1 = {
-	"id": 1,
-	"color": "red",
-	"x": [{
-		"left": 600
-	}],
-	"y": [{
-		"top": 300
-	}],
-	"width": [{
-		"width": 148
-	}],
-	"height": [{
-		"height": 400
-	}]
-};*/
 
 var view1Element0 = {
 	"id": 0,
@@ -758,8 +504,6 @@ var view1Element1 = {
 };
 
 var view1= createViewObj(740, 800);
-//view1["elements"].push(createElementObj(0, 100, 40, 400, 250, "blue"));
-//view1["elements"].push(createElementObj(1, 600, 300, 148, 400, "red"));
 view1["elements"].push(view1Element0);
 view1["elements"].push(view1Element1);
 views.push(view1);
@@ -767,44 +511,6 @@ views.push(view1);
 // Rules
 var elementRules = {};
 // give a default rule for each property of each element (probably constant)
-/*for(var i = 0; i < views[0]["elements"].length; i++){
-	var elementObj = views[0]["elements"][i];
-
-	var elementRuleObj = {};
-	
-	// I think element rules are wrong, need to calculate based on keyframe data
-
-	elementRuleObj["id"] = elementObj["id"];
-
-	// Need to determine rule here
-
-	// Element x
-	elementRuleObj["x"] = {
-		"m": 0,
-		"b": elementObj["x"]
-	};
-
-	// Element y
-	elementRuleObj["y"] = {
-		"m": 0,
-		"b": elementObj["y"]
-	};
-
-	// Element width
-	elementRuleObj["width"] = {
-		"m": 0,
-		"b": elementObj["width"]
-	};
-
-	// Element height
-	elementRuleObj["height"] = {
-		"m": 0,
-		"b": elementObj["height"]
-	};
-
-	elementRules[elementObj["id"]] = elementRuleObj;
-	//elementRules.push(elementRuleObj);
-}*/
 
 // List of CSS-style rules as strings, e.g. "#element0 { width: 5px; height: 10px; position: absolute; left: 20px}"
 var cssRules = [];

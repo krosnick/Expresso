@@ -9,23 +9,6 @@ var currentlySelectedElement;
 var elementCSSRules = "elementCSSRules";
 var cssRules = [];
 
-/*var elementDataFormat = {
-	"width": {
-		"width": value
-	},
-	"height": {
-		"height": value
-	},
-	"x": {
-		"left": value,
-		"right": value
-	},
-	"y": {
-		"top": value,
-		"bottom": value
-	}
-};*/
-
 var elementDataFormat = {
 	"width": [
 		{
@@ -284,10 +267,6 @@ var captureElementData = function(){
 		var uiElementId = uiElements[i].id;
 		var jqueryUIElement = $("#" + uiElementId);
 		var elementId = parseInt(jqueryUIElement.attr("elementId"));
-		/*var elementWidth = jqueryUIElement.css("width");
-		var elementHeight = jqueryUIElement.css("height");
-		var elementX = jqueryUIElement.css("left");
-		var elementY = jqueryUIElement.css("top");*/
 		
 		var elementColor = jqueryUIElement.css("background-color");
 		var uiElementData = {
@@ -301,58 +280,16 @@ var captureElementData = function(){
 			var behaviorName = propertyKeyAndValue[0];
 			var propertyDataList = propertyKeyAndValue[1];
 			
-			//var propertyValues = [];
 			for(var optionIndex = 0; optionIndex < propertyDataList.length; optionIndex++){
 				var optionData = propertyDataList[optionIndex];
 				var propertyName = optionData["property"];
-				//var propertyValue = optionData["get"].call(jqueryUIElement);
 				var propertyValue = (optionData["get"]).call(jqueryUIElement);
-				//var propertyValue = (optionData["get"]).call(document.getElementById(uiElementId));
-				/*var propertyObj = {};
-				propertyObj[propertyName] = propertyValue;
-				propertyValues.push(propertyObj);*/
 				var propertyObj = {};
 				propertyObj[propertyName] = propertyValue;
-				//propertyValues.push(propertyObj);
 				uiElementData[behaviorName] = propertyObj;
 			}
-			//uiElementData[behaviorName] = propertyValues;
 		}
 
-		//elementDataFormat
-		/*var elementPropertyKeyValues = Object.entries(elementDataFormat);
-		for(var propertyIndex = 0; propertyIndex < elementPropertyKeyValues.length; propertyIndex++){
-			var propertyKeyAndValue = elementPropertyKeyValues[propertyIndex];
-			var behaviorName = propertyKeyAndValue[0];
-			var propertyDataList = propertyKeyAndValue[1];
-			
-			var propertyValues = [];
-			for(var optionIndex = 0; optionIndex < propertyDataList.length; optionIndex++){
-				var optionData = propertyDataList[optionIndex];
-				var propertyName = optionData["property"];
-				//var propertyValue = optionData["get"].call(jqueryUIElement);
-				var propertyValue = (optionData["get"]).call(jqueryUIElement);
-				//var propertyValue = (optionData["get"]).call(document.getElementById(uiElementId));
-				var propertyObj = {};
-				propertyObj[propertyName] = propertyValue;
-				propertyValues.push(propertyObj);
-			}
-			uiElementData[behaviorName] = propertyValues;
-		}*/
-		
-		/*var elementWidth = jqueryUIElement.width();
-		var elementHeight = jqueryUIElement.height();
-		var elementX = jqueryUIElement.offset().left;
-		var elementY = jqueryUIElement.offset().top;
-		var elementColor = jqueryUIElement.css("background-color");
-		var uiElementData = {
-			"id": elementId,
-			"width": elementWidth,
-			"height": elementHeight,
-			"x": elementX,
-			"y": elementY,
-			"color": elementColor
-		};*/
 		uiElementsData.push(uiElementData);
 	}
 	console.log(uiElementsData);

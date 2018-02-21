@@ -52,18 +52,17 @@ app.post('/view', function(req, res){
 });
 
 app.post("/updateData", function(req, res){
-	//convertClientDataToInts(req.body.oldView);
 	updateElementAndPageData(req.body.oldView);
 
 	// For each view, call convertClientDataToInts(req.body.oldView);
 	for(var i = 0; i < views.length; i++){
+		console.log(i);
 		convertClientDataToInts(views[i]);
 	}
 	
 	// Based on all keyframes, should update element and css rules here
 	updateCSSRules();
-	//res.end();
-
+	
 	// Perhaps also send elementRules back too?
 	res.json({
 		"cssRules": cssRules
@@ -75,7 +74,6 @@ app.post("/updateRules", function(req, res){
 	
 	updateCSSRules();
 	
-	//res.end();
 	res.json({
 		"cssRules": cssRules
 	});
@@ -90,14 +88,30 @@ app.listen(8080);
 var convertClientDataToInts = function(viewObj){
 	//var elementsData = viewObj["elementsData"];
 	var elementsData = viewObj["elements"];
+	//console.log(elementsData);
 	for(var i = 0; i < elementsData.length; i++){
 		var element = elementsData[i];
-		element["id"] = parseInt(element["id"]);
+		/*element["id"] = parseInt(element["id"]);
 		element["width"] = parseInt(element["width"]);
 		element["height"] = parseInt(element["height"]);
 		element["x"] = parseInt(element["x"]);
-		element["y"] = parseInt(element["y"]);
+		element["y"] = parseInt(element["y"]);*/
+		var elementPropertyKeyValues = Object.entries(elementDataFormat);
+		for(var propertyIndex = 0; propertyIndex < elementPropertyKeyValues.length; propertyIndex++){
+			var propertyKeyAndValue = elementPropertyKeyValues[propertyIndex];
+			var behaviorName = propertyKeyAndValue[0];
+			var propertyDataList = propertyKeyAndValue[1];
+			
+			var propertyValues = [];
+			for(var optionIndex = 0; optionIndex < propertyDataList.length; optionIndex++){
+				var optionData = propertyDataList[optionIndex];
+				var propertyName = optionData["property"];
+				//element[behaviorName][0][propertyName] = parseInt(element[behaviorName][0][propertyName]);
+				element[behaviorName][propertyName] = parseInt(element[behaviorName][propertyName]);
+			}
+		}
 	}
+	console.log(elementsData);
 };
 
 var updateElementAndPageData = function(viewObj){
@@ -119,7 +133,7 @@ var updateElementAndPageData = function(viewObj){
 	}
 };
 
-var createElementObj = function(id, x, y, width, height, color){
+/*var createElementObj = function(id, x, y, width, height, color){
 	return {
 		"id": id,
 		"x": x,
@@ -128,7 +142,7 @@ var createElementObj = function(id, x, y, width, height, color){
 		"height": height,
 		"color": color
 	};
-};
+};*/
 
 var createViewObj = function(pageWidth, pageHeight){
 	var newView = {
@@ -149,70 +163,19 @@ var cloneViewObj = function(){
 	return clonedView;
 };
 
-// Create CSS rule string based on rules for given element
-/*var createCSSRule = function(elementRules){
-	
-	var ruleString = "#element" + elementRules["id"] + "{\n";
-
-	// Element x
-	//var leftRule = 
-	if(elementRules["x"]["rule"] === "constant"){
-		ruleString += "\tleft: " + elementRules["x"]["value"] + "px;\n";
-	}else if(elementRules["x"]["rule"] === "ratio"){
-		ruleString += "\tleft: " + elementRules["x"]["value"] + "%;\n";
-	}else{
-		// Inconsistent rule?
-		// Figure out later what the default should be
-	}
-
-	// Element y
-	if(elementRules["y"]["rule"] === "constant"){
-		ruleString += "\ttop: " + elementRules["y"]["value"] + "px;\n";
-	}else if(elementRules["y"]["rule"] === "ratio"){
-		ruleString += "\ttop: " + elementRules["y"]["value"] + "%;\n";
-	}else{
-		// Inconsistent rule?
-		// Figure out later what the default should be
-	}
-
-	// Element width
-	if(elementRules["width"]["rule"] === "constant"){
-		ruleString += "\twidth: " + elementRules["width"]["value"] + "px;\n";
-	}else if(elementRules["width"]["rule"] === "ratio"){
-		ruleString += "\twidth: " + elementRules["width"]["value"] + "%;\n";
-	}else{
-		// Inconsistent rule?
-		// Figure out later what the default should be
-	}
-
-	// Element height
-	if(elementRules["height"]["rule"] === "constant"){
-		ruleString += "\theight: " + elementRules["height"]["value"] + "px;\n";
-	}else if(elementRules["height"]["rule"] === "ratio"){
-		ruleString += "\theight: " + elementRules["height"]["value"] + "%;\n";
-	}else{
-		// Inconsistent rule?
-		// Figure out later what the default should be
-	}
-
-	ruleString += "}";
-
-	return ruleString;
-};*/
-
-var createValue = function(m, c){
+var createValue = function(m, b){
 	var valueString;
-	if(m == 0 && c == 0){
+	if(m == 0 && b == 0){
 		valueString = "0";
 	}else if(m == 0){
-		valueString = "" + c + constantUnit;
-	}else if(c == 0){
+		valueString = "" + b + constantUnit;
+	}else if(b == 0){
 		//valueString = "" + (m * 100) + "vw";
 		valueString = "" + (m * 100) + "%";
 	}else{
-		//valueString = "" + (m * 100) + "vw + " + c + constantUnit;
-		//valueString = "calc(" + (m * 100) + "vw + " + c + constantUnit + ")";
-		valueString = "calc(" + (m * 100) + "% + " + c + constantUnit + ")";
+		//valueString = "" + (m * 100) + "vw + " + b + constantUnit;
+		//valueString = "calc(" + (m * 100) + "vw + " + b + constantUnit + ")";
+		valueString = "calc(" + (m * 100) + "% + " + b + constantUnit + ")";
 	}
 	return valueString;
 }
@@ -223,70 +186,61 @@ var createPropertyValueString = function(property, value){
 
 var createCSSRule = function(elementRules){
 	
-	//var ruleString = "#element" + elementRules["id"] + "{\n";
 	var ruleString = "#element" + elementRules["id"] + "{";
 
-	/*// Element x
-	if(elementRules["x"]["rule"] === "constant"){
-		ruleString += "\tleft: " + elementRules["x"]["value"] + "px;\n";
-	}else if(elementRules["x"]["rule"] === "ratio"){
-		ruleString += "\tleft: " + elementRules["x"]["value"] + "%;\n";
-	}else{
-		// Inconsistent rule?
-		// Figure out later what the default should be
+	/*
+	for(var pageDimIndex = 0; pageDimIndex < pageDimensions.length; pageDimIndex++){
+		var pageDim = pageDimensions[pageDimIndex];
+		var compareFunc = pageDimensionsAndBehaviorsTheyInfluence[pageDim]["compareFunc"];
+		
+		// Sort based on appropriate page dimension
+		keyframesDataForThisElement.sort(compareFunc);
+
+		var behaviorsInfluenced = pageDimensionsAndBehaviorsTheyInfluence[pageDim]["behaviorsInfluenced"];
+		for(var behaviorIndex = 0; behaviorIndex < behaviorsInfluenced; behaviorIndex++){
+			var behaviorName = behaviorsInfluenced[behaviorIndex];
+			
+			// maybe need to do some more processing here, or maybe within "determinePattern"
+			// need to consider the possible properties for each element behavior
+			// elementDataFormat and view1Element0
+
+			// For now assume only one property per behavior (later on will probably choose property which has fewer media queries)
+			var propertyName = elementDataFormat[behaviorName][0]["property"];
+	*/
+	// Need to organize elementRules differently; should have the idea of behavior/property name; need to fix this in updateCSSRules? 
+
+	// properties
+
+	for(var propertyIndex = 0; propertyIndex < properties.length; propertyIndex++){
+		var propertyName = properties[propertyIndex];
+
+
+		//var elementXValueString = createValue(elementRules[propertyName]["m"], elementRules[propertyName]["b"]);
+		var elementXValueString = createValue(elementRules[propertyName][0]["m"], elementRules[propertyName][0]["b"]);
+		var elementXPropertyValueString = createPropertyValueString(propertyName, elementXValueString);
+		ruleString += elementXPropertyValueString;
 	}
 
-	// Element y
-	if(elementRules["y"]["rule"] === "constant"){
-		ruleString += "\ttop: " + elementRules["y"]["value"] + "px;\n";
-	}else if(elementRules["y"]["rule"] === "ratio"){
-		ruleString += "\ttop: " + elementRules["y"]["value"] + "%;\n";
-	}else{
-		// Inconsistent rule?
-		// Figure out later what the default should be
-	}
-
-	// Element width
-	if(elementRules["width"]["rule"] === "constant"){
-		ruleString += "\twidth: " + elementRules["width"]["value"] + "px;\n";
-	}else if(elementRules["width"]["rule"] === "ratio"){
-		ruleString += "\twidth: " + elementRules["width"]["value"] + "%;\n";
-	}else{
-		// Inconsistent rule?
-		// Figure out later what the default should be
-	}
-
-	// Element height
-	if(elementRules["height"]["rule"] === "constant"){
-		ruleString += "\theight: " + elementRules["height"]["value"] + "px;\n";
-	}else if(elementRules["height"]["rule"] === "ratio"){
-		ruleString += "\theight: " + elementRules["height"]["value"] + "%;\n";
-	}else{
-		// Inconsistent rule?
-		// Figure out later what the default should be
-	}*/
-
+	/*// Should index by property names
 	var elementXValueString = createValue(elementRules["x"]["m"], elementRules["x"]["b"]);
 	var elementXPropertyValueString = createPropertyValueString("left", elementXValueString);
-	//ruleString += "\t" + elementXPropertyValueString + "\n";
 	ruleString += elementXPropertyValueString;
 
 	var elementYValueString = createValue(elementRules["y"]["m"], elementRules["y"]["b"]);
 	var elementYPropertyValueString = createPropertyValueString("top", elementYValueString);
-	//ruleString += "\t" + elementYPropertyValueString + "\n";
 	ruleString += elementYPropertyValueString;
 
 	var elementWidthValueString = createValue(elementRules["width"]["m"], elementRules["width"]["b"]);
 	var elementWidthPropertyValueString = createPropertyValueString("width", elementWidthValueString);
-	//ruleString += "\t" + elementWidthPropertyValueString + "\n";
 	ruleString += elementWidthPropertyValueString;
 
 	var elementHeightValueString = createValue(elementRules["height"]["m"], elementRules["height"]["b"]);
 	var elementHeightPropertyValueString = createPropertyValueString("height", elementHeightValueString);
-	//ruleString += "\t" + elementHeightPropertyValueString + "\n";
-	ruleString += elementHeightPropertyValueString;
+	ruleString += elementHeightPropertyValueString;*/
 
 	ruleString += "}";
+
+	console.log(ruleString);
 
 	return ruleString;
 };
@@ -301,15 +255,10 @@ var updateCSSRules = function(){
 	// For each element, compare its properties in each view
 	// views array
 	var numElements = views[0]["elements"].length;
-	var properties = ["width", "height", "x", "y"];
-	var horizontalProperties = ["width", "x"];
-	var verticalProperties = ["height", "y"];
-
 	var elementPatterns = {};
 
 	for(var elementIndex = 0; elementIndex < numElements; elementIndex++){
 		var elementId = views[0]["elements"][elementIndex]["id"];
-		console.log("elementId: "  + elementId);
 		var keyframesDataForThisElement = [];
 		for(var viewIndex = 0; viewIndex < views.length; viewIndex++){
 			var elementObjAtKeyframe = Object.assign({}, views[viewIndex]["elements"][elementId]);
@@ -317,34 +266,42 @@ var updateCSSRules = function(){
 			elementObjAtKeyframe["pageHeight"] = views[viewIndex]["pageHeight"];
 			elementObjAtKeyframe["keyframeId"] = views[viewIndex]["id"];
 			keyframesDataForThisElement.push(elementObjAtKeyframe);
-			console.log(elementObjAtKeyframe);
 		}
 		// will need to sort by width and height separately?
 
-		keyframesDataForThisElement.sort(comparePageWidths);
-		var elementWidthPattern = determinePattern(keyframesDataForThisElement, "width", "pageWidth");
-		console.log(elementWidthPattern);
-		var elementXPattern = determinePattern(keyframesDataForThisElement, "x", "pageWidth");
-		
-		keyframesDataForThisElement.sort(comparePageHeights);
-		var elementHeightPattern = determinePattern(keyframesDataForThisElement, "height", "pageHeight");
-		var elementYPattern = determinePattern(keyframesDataForThisElement, "y", "pageHeight");
-		
-		/*var patterns = {
-			"width": elementWidthPattern,
-			"height": elementHeightPattern,
-			"x": elementXPattern,
-			"y": elementYPattern
-		};*/
+		//pageDimensionsAndBehaviorsTheyInfluence
+		var pageDimensions = Object.keys(pageDimensionsAndBehaviorsTheyInfluence);
 
-		// For now assume only one chunk/media query
 		var patterns = {
-			"width": elementWidthPattern[0],
-			"height": elementHeightPattern[0],
-			"x": elementXPattern[0],
-			"y": elementYPattern[0],
 			"id": elementId
 		};
+
+		for(var pageDimIndex = 0; pageDimIndex < pageDimensions.length; pageDimIndex++){
+			var pageDim = pageDimensions[pageDimIndex];
+			var compareFunc = pageDimensionsAndBehaviorsTheyInfluence[pageDim]["compareFunc"];
+			
+			// Sort based on appropriate page dimension
+			keyframesDataForThisElement.sort(compareFunc);
+			var behaviorsInfluenced = pageDimensionsAndBehaviorsTheyInfluence[pageDim]["behaviorsInfluenced"];
+			for(var behaviorIndex = 0; behaviorIndex < behaviorsInfluenced.length; behaviorIndex++){
+				var behaviorName = behaviorsInfluenced[behaviorIndex];
+				// maybe need to do some more processing here, or maybe within "determinePattern"
+				// need to consider the possible properties for each element behavior
+				// elementDataFormat and view1Element0
+
+				// For now assume only one property per behavior (later on will probably choose property which has fewer media queries)
+				var propertyName = elementDataFormat[behaviorName][0]["property"];
+				// Should I pass in behavior and property name into determinePattern?
+				//var elementPropertyPattern = determinePattern(keyframesDataForThisElement, propertyName, pageDim);
+				var elementPropertyPattern = determinePattern(keyframesDataForThisElement, behaviorName, propertyName, pageDim);
+				// Should it be patterns[propertyName] or patterns[behaviorName][propertyName]?
+				patterns[propertyName] = elementPropertyPattern;
+				//patterns[behaviorName] = elementPropertyPattern;
+			}
+
+		}
+
+		// For now assume only one chunk/media query
 
 		elementPatterns[elementId] = patterns;
 
@@ -359,18 +316,61 @@ var updateCSSRules = function(){
 		var cssRuleString = createCSSRule(elementRuleSet);
 		cssRules.push(cssRuleString);
 	}
-	
-	console.log("updateCSSRules called");
-};
-/*var updateCSSRules = function(){
-	cssRules = [];
-	var arrayOfElementRules = Object.values(elementRules);
+
+	/*cssRules = [];
+
+	// Use logic from processInput.js
+	// For each element, compare its properties in each view
+	// views array
+	var numElements = views[0]["elements"].length;
+	var properties = ["width", "height", "x", "y"];
+	var horizontalProperties = ["width", "x"];
+	var verticalProperties = ["height", "y"];
+
+	var elementPatterns = {};
+
+	for(var elementIndex = 0; elementIndex < numElements; elementIndex++){
+		var elementId = views[0]["elements"][elementIndex]["id"];
+		var keyframesDataForThisElement = [];
+		for(var viewIndex = 0; viewIndex < views.length; viewIndex++){
+			var elementObjAtKeyframe = Object.assign({}, views[viewIndex]["elements"][elementId]);
+			elementObjAtKeyframe["pageWidth"] = views[viewIndex]["pageWidth"];
+			elementObjAtKeyframe["pageHeight"] = views[viewIndex]["pageHeight"];
+			elementObjAtKeyframe["keyframeId"] = views[viewIndex]["id"];
+			keyframesDataForThisElement.push(elementObjAtKeyframe);
+		}
+		// will need to sort by width and height separately?
+
+		keyframesDataForThisElement.sort(comparePageWidths);
+		var elementWidthPattern = determinePattern(keyframesDataForThisElement, "width", "pageWidth");
+		var elementXPattern = determinePattern(keyframesDataForThisElement, "x", "pageWidth");
+		
+		keyframesDataForThisElement.sort(comparePageHeights);
+		var elementHeightPattern = determinePattern(keyframesDataForThisElement, "height", "pageHeight");
+		var elementYPattern = determinePattern(keyframesDataForThisElement, "y", "pageHeight");
+
+		// For now assume only one chunk/media query
+		var patterns = {
+			"width": elementWidthPattern,
+			"height": elementHeightPattern,
+			"x": elementXPattern,
+			"y": elementYPattern,
+			"id": elementId
+		};
+
+		elementPatterns[elementId] = patterns;
+	}
+
+	//return elementPatterns;
+
+	var arrayOfElementRules = Object.values(elementPatterns);
 	for(var i = 0; i < arrayOfElementRules.length; i++){
 		var elementRuleSet = arrayOfElementRules[i];
 		var cssRuleString = createCSSRule(elementRuleSet);
 		cssRules.push(cssRuleString);
 	}
-};*/
+	*/
+};
 
 var comparePageWidths = function(a, b) {
   if (a["pageWidth"] < b["pageWidth"]) {
@@ -381,7 +381,7 @@ var comparePageWidths = function(a, b) {
   }
   // a must be equal to b
   return 0;
-}
+};
 
 var comparePageHeights = function(a, b) {
   if (a["pageHeight"] < b["pageHeight"]) {
@@ -392,11 +392,11 @@ var comparePageHeights = function(a, b) {
   }
   // a must be equal to b
   return 0;
-}
+};
 
-//var determinePattern = function(dataPoints, getDatumOfInterest, attributeName){
 // axisName is "pageWidth" or "pageHeight"
-var determinePattern = function(dataPoints, attributeName, axisName){
+//var determinePattern = function(dataPoints, attributeName, axisName){
+var determinePattern = function(dataPoints, behaviorName, attributeName, axisName){
 	// sort dataPoints by pageWidth value
 	dataPoints.sort(comparePageWidths);
 	
@@ -414,9 +414,8 @@ var determinePattern = function(dataPoints, attributeName, axisName){
 		var point1 = dataPoints[i-1];
 		var point2 = dataPoints[i];
 
-		//var leftPageWidthSlope = (point2["left"] - point1["left"])/(point2["pageWidth"] - point1["pageWidth"]);
-		//var leftPageWidthSlope = (getDatumOfInterest(point2, attributeName) - getDatumOfInterest(point1, attributeName))/(point2["pageWidth"] - point1["pageWidth"]);
-		var leftPageWidthSlope = (point2[attributeName] - point1[attributeName])/(point2[axisName] - point1[axisName]);
+		//var leftPageWidthSlope = (point2[attributeName] - point1[attributeName])/(point2[axisName] - point1[axisName]);
+		var leftPageWidthSlope = (point2[behaviorName][attributeName] - point1[behaviorName][attributeName])/(point2[axisName] - point1[axisName]);
 		slopes.push(leftPageWidthSlope);
 	}
 
@@ -437,22 +436,6 @@ var determinePattern = function(dataPoints, attributeName, axisName){
 	
 	var chunkLineFitData = [];
 
-	/*if(dataPoints.length > 4 && chunkStartIndices.length == (dataPoints.length - 1)){
-		// If we have more than 4 datapoints and no adjacent datapoint pairs have the same slope
-		// Probably means no pattern for "left"
-		// Right now using "> 4" because potentially a user could provide 4 examples (e0, e1, e2, e3)
-		// the inner 2 (e1 and e2) to specify the slope/relationship between an element property and the page width,
-		// and then the outer 2 pairs (e0 with e1, and e2 with e3) to specify min and max values of the element property
-		// (where e0 and e1 have the same element property value, and likewise for e2 with e3)
-
-		// Or maybe get rid of this "> 4" thing. Maybe in processDataPoints just compare all possible patterns,
-		// and for left/right in particular, take the one with the fewest number of chunks?
-		// (a CSS rule can't have both left/right, it doesn't make sense)
-
-		return noPattern;
-	}else{*/
-		// There are patterns and chunks larger than 2 data points. Let's solve system of equations for each chunk
-	
 	for(var i = 0; i < chunkStartIndices.length; i++){
 		// Choose any 2 arbitrary points in the chunk (for ease, just the first two), and fit a line to them
 		// equation: y = m*x + c
@@ -463,10 +446,11 @@ var determinePattern = function(dataPoints, attributeName, axisName){
 		var point2 = dataPoints[pointIndex2];
 
 		//var pointData = [ [point1["pageWidth"], point1["left"]], [point2["pageWidth"], point2["left"]] ];
-		var pointData = [ [point1[axisName], point1[attributeName]], [point2[axisName], point2[attributeName]] ];
+		//var pointData = [ [point1[axisName], point1[attributeName]], [point2[axisName], point2[attributeName]] ];
+		var pointData = [ [point1[axisName], point1[behaviorName][attributeName]], [point2[axisName], point2[behaviorName][attributeName]] ];
 		result = regression.linear(pointData);
 		var m = result.equation[0];
-		var c = result.equation[1];
+		var b = result.equation[1];
 
 		var chunkStart = point1[axisName];
 		var chunkEnd;
@@ -476,7 +460,7 @@ var determinePattern = function(dataPoints, attributeName, axisName){
 			chunkEnd = dataPoints[dataPoints.length - 1][axisName];
 		}
 
-		chunkLineFitData.push( { "m": m, "b": c, "start": chunkStart, "end": chunkEnd, "elementSelector": elementSelector } );
+		chunkLineFitData.push( { "m": m, "b": b, "start": chunkStart, "end": chunkEnd, "elementSelector": elementSelector } );
 	}
 	return chunkLineFitData;
 	
@@ -492,10 +476,163 @@ var determinePattern = function(dataPoints, attributeName, axisName){
 	// if adjacent pairs of slopes are different, then break into media queries
 	// identify largest chunks of data points with same slope
 	// for each chunk, solve y = a*x + b; now for that chunk we can calculate CSS values
-}
+};
 
 // ------------ Constants ------------
 var constantUnit = "px";
+
+//var computedProperties = ["width", "height", "x", "y"];
+
+// Should it be rule property --> (relies on) computed properties?
+// or should it be computed property --> (influences) rule properties?
+/*var computedToRuleProperties = {
+	"width": {
+		"options": [
+			{
+				"elementProperty": "width",
+				"pageProperty": "width"
+			}
+		]
+	},
+	"height": {
+		"options": [
+			{
+				"elementProperty": "height",
+				"pageProperty": "height"
+			}
+		]
+	},
+	"x": {
+		"options": [
+			{
+				"elementProperty": "left",
+				"pageProperty": "left"
+			},
+			{
+				"elementProperty": "right",
+				"pageProperty": "right"
+			}
+		]
+	},
+	"y": {
+		"options": [
+			{
+				"elementProperty": "top",
+				"pageProperty": "top"
+			},
+			{
+				"elementProperty": "bottom",
+				"pageProperty": "bottom"
+			}
+		]
+	}
+};*/
+/*var rulePropertyOptions = {
+	"width": {
+		"options": ["width"],
+		"pageDimension": "width"
+	},
+	"height": {
+		"options": ["height"],
+		"pageDimension": "height"
+	},
+	"x": {
+		"options": ["left", "right"],
+		"pageDimension": "width"
+	},
+	"y": {
+		"options": ["top", "bottom"],
+		"pageDimension": "height"
+	}
+};*/
+
+var pageDimensionsAndBehaviorsTheyInfluence = {
+	"pageWidth": {
+		"compareFunc": comparePageWidths,
+		"behaviorsInfluenced": ["width", "x"]
+	},
+	"pageHeight": {
+		"compareFunc": comparePageHeights,
+		"behaviorsInfluenced": ["height", "y"]
+	}
+};
+
+var elementDataFormat = {
+	"width": [
+		{
+			"property": "width",
+			"pageDimension": "pageWidth"
+		}
+	],
+	"height": [
+		{
+			"property": "height",
+			"pageDimension": "pageHeight"
+		}
+	],
+	"x": [
+		{
+			"property": "left",
+			"pageDimension": "pageWidth"
+		}/*,
+		{
+			"property": "right",
+			"get": function(){
+				return this.offset().right;
+			}
+		}*/
+	],
+	"y": [
+		{
+			"property": "top",
+			"pageDimension": "pageHeight"
+		}/*,
+		{
+			"property": "bottom",
+			"get": function(){
+				return this.offset().bottom;
+			}
+		}*/
+	]
+};
+
+// maybe generate this list later from elementDataFormat? 
+var properties = ["width", "height", "left", "top"];
+//var properties = ["width", "height", "x", "y"];
+
+/*
+// format for keyframe data
+// for each element:
+var elementData = {
+	"width": {
+		"width": value
+	},
+	"height": {
+		"height": value
+	},
+	"x": {
+		"left": value,
+		"right": value
+	},
+	"y": {
+		"top": value,
+		"bottom": value
+	}
+}
+
+*
+
+/*var ruleProperties = {
+	"width": {
+		"elementProperty": "width",
+		"pageProperty": "width"
+	},
+	"height": {
+		"elementProperty": "height",
+		"pageProperty": "height"
+	},
+
+};*/
 
 // ------------ State ------------
 // View raw data
@@ -503,7 +640,7 @@ var views = [];
 var viewCounter = 0;
 
 // var createElementObj = function(id, x, y, width, height, color){
-var view0 = createViewObj(1480, 800);
+/*var view0 = createViewObj(1480, 800);
 view0["elements"].push(createElementObj(0, 100, 40, 400, 250, "blue"));
 view0["elements"].push(createElementObj(1, 600, 300, 296, 400, "red"));
 views.push(view0);
@@ -511,43 +648,136 @@ views.push(view0);
 var view1= createViewObj(740, 800);
 view1["elements"].push(createElementObj(0, 100, 40, 400, 250, "blue"));
 view1["elements"].push(createElementObj(1, 600, 300, 148, 400, "red"));
+views.push(view1);*/
+
+
+var view0Element0 = {
+	"id": 0,
+	"color": "blue",
+	"x": {
+		"left": 100
+	},
+	"y": {
+		"top": 40
+	},
+	"width": {
+		"width": 400
+	},
+	"height": {
+		"height": 250
+	}
+};
+var view0Element1 = {
+	"id": 1,
+	"color": "red",
+	"x": {
+		"left": 600
+	},
+	"y": {
+		"top": 300
+	},
+	"width": {
+		"width": 296
+	},
+	"height": {
+		"height": 400
+	}
+};
+var view0 = createViewObj(1480, 800);
+//view0["elements"].push(createElementObj(0, 100, 40, 400, 250, "blue"));
+//view0["elements"].push(createElementObj(1, 600, 300, 296, 400, "red"));
+view0["elements"].push(view0Element0);
+view0["elements"].push(view0Element1);
+views.push(view0);
+
+
+/*var view1Element0 = {
+	"id": 0,
+	"color": "blue",
+	"x": [{
+		"left": 100
+	}],
+	"y": [{
+		"top": 40
+	}],
+	"width": [{
+		"width": 400
+	}],
+	"height": [{
+		"height": 250
+	}]
+};
+var view1Element1 = {
+	"id": 1,
+	"color": "red",
+	"x": [{
+		"left": 600
+	}],
+	"y": [{
+		"top": 300
+	}],
+	"width": [{
+		"width": 148
+	}],
+	"height": [{
+		"height": 400
+	}]
+};*/
+
+var view1Element0 = {
+	"id": 0,
+	"color": "blue",
+	"x": {
+		"left": 100
+	},
+	"y": {
+		"top": 40
+	},
+	"width": {
+		"width": 400
+	},
+	"height": {
+		"height": 250
+	}
+};
+var view1Element1 = {
+	"id": 1,
+	"color": "red",
+	"x": {
+		"left": 600
+	},
+	"y": {
+		"top": 300
+	},
+	"width": {
+		"width": 148
+	},
+	"height": {
+		"height": 400
+	}
+};
+
+var view1= createViewObj(740, 800);
+//view1["elements"].push(createElementObj(0, 100, 40, 400, 250, "blue"));
+//view1["elements"].push(createElementObj(1, 600, 300, 148, 400, "red"));
+view1["elements"].push(view1Element0);
+view1["elements"].push(view1Element1);
 views.push(view1);
 
 // Rules
 var elementRules = {};
 // give a default rule for each property of each element (probably constant)
-var viewPageWidth = views[0]["pageWidth"];
-var viewPageHeight = views[0]["pageHeight"];
-for(var i = 0; i < views[0]["elements"].length; i++){
+/*for(var i = 0; i < views[0]["elements"].length; i++){
 	var elementObj = views[0]["elements"][i];
 
 	var elementRuleObj = {};
-	/*elementRuleObj["id"] = elementObj["id"];
-	// Element x
-	elementRuleObj["x"] = {
-		"rule": "constant", // could be "constant", "ratio", or "inconsistent"
-		"value": elementObj["x"] // if "rule" were "ratio", "value" would be elementObj["x"]/viewPageWidth
-	};
-
-	// Element y
-	elementRuleObj["y"] = {
-		"rule": "constant",
-		"value": elementObj["y"]
-	};
-
-	// Element width
-	elementRuleObj["width"] = {
-		"rule": "constant",
-		"value": elementObj["width"]
-	};
-
-	// Element height
-	elementRuleObj["height"] = {
-		"rule": "constant",
-		"value": elementObj["height"]
-	};*/
+	
+	// I think element rules are wrong, need to calculate based on keyframe data
 
 	elementRuleObj["id"] = elementObj["id"];
+
+	// Need to determine rule here
+
 	// Element x
 	elementRuleObj["x"] = {
 		"m": 0,
@@ -574,22 +804,8 @@ for(var i = 0; i < views[0]["elements"].length; i++){
 
 	elementRules[elementObj["id"]] = elementRuleObj;
 	//elementRules.push(elementRuleObj);
-}
+}*/
 
 // List of CSS-style rules as strings, e.g. "#element0 { width: 5px; height: 10px; position: absolute; left: 20px}"
 var cssRules = [];
-/*var arrayOfElementRules = Object.values(elementRules);
-for(var i = 0; i < arrayOfElementRules.length; i++){
-	var elementRuleSet = arrayOfElementRules[i];
-	var cssRuleString = createCSSRule(elementRuleSet);
-	cssRules.push(cssRuleString);
-}*/
-
 updateCSSRules();
-
-/*for(var i = 0; i < views[0]["elements"].length; i++){
-	var elementObj = views[0]["elements"][i];
-	var elementRuleSet = elementRules[elementObj["id"]];
-	var cssRuleString = createCSSRule(elementRuleSet);
-	cssRules.push(cssRuleString);
-}*/

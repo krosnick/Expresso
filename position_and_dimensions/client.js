@@ -9,6 +9,72 @@ var currentlySelectedElement;
 var elementCSSRules = "elementCSSRules";
 var cssRules = [];
 
+/*var elementDataFormat = {
+	"width": {
+		"width": value
+	},
+	"height": {
+		"height": value
+	},
+	"x": {
+		"left": value,
+		"right": value
+	},
+	"y": {
+		"top": value,
+		"bottom": value
+	}
+};*/
+
+var elementDataFormat = {
+	"width": [
+		{
+			"property": "width",
+			"get": function(){
+				return this.width();
+				//width();
+				//this.offsetWidth;
+			}
+		}
+	],
+	"height": [
+		{
+			"property": "height",
+			"get": function(){
+				return this.height();
+			}
+		}
+	],
+	"x": [
+		{
+			"property": "left",
+			"get": function(){
+				return this.offset().left;
+			}
+		}/*,
+		{
+			"property": "right",
+			"get": function(){
+				return this.offset().right;
+			}
+		}*/
+	],
+	"y": [
+		{
+			"property": "top",
+			"get": function(){
+				return this.offset().top;
+			}
+		}/*,
+		{
+			"property": "bottom",
+			"get": function(){
+				return this.offset().bottom;
+			}
+		}*/
+	]
+};
+
 $(document).ready(function() {
     // Get views from server
     // Need to get enough info to show list of views and current view
@@ -18,9 +84,9 @@ $(document).ready(function() {
     }).done(function(data) {
     	var views = data["views"];
     	allElementRules = data["elementRules"];
-    	console.log(allElementRules);
+    	//console.log(allElementRules);
     	cssRules = data["cssRules"];
-    	console.log(cssRules);
+    	//console.log(cssRules);
     	// Show menu of views at the bottom
     	views.forEach(function(view){
     		addViewMenuItem(view["id"]);
@@ -155,8 +221,6 @@ $(document).ready(function() {
     	// If "ratio" is selected, include percentage; if "constant" is selected, include pixel value
     	// Later on: Use logic (from processInput.js) to determine pattern, and to determine if rule is inconsistent for all keyframes
     	
-    	console.log(allElementRules);
-
     	// Send rules back to server
     	$.ajax({
 	        type: "POST",
@@ -164,7 +228,6 @@ $(document).ready(function() {
 	        data: {"rules": allElementRules}
 	    }).done(function(data) {
 	    	cssRules = data["cssRules"];
-	    	console.log(cssRules);
 	    	replaceCSSRules();
 	    });
     });
@@ -207,105 +270,6 @@ var selectElement = function(element){
 	//updateRulesMenu(element);
 };
 
-/*var updateRulesMenu = function(jQueryElement){
-	
-	var selectedElementNum = jQueryElement.attr("elementId");	
-	console.log(selectedElementNum);
-	var elementRules = allElementRules[selectedElementNum];
-	console.log(elementRules);
-
-	// Set radio button constant + ratio text values
-    // Set selected radio button
-
-    // width, height, x, y
-
-    // Width
-    // Calculate current constant, current ratio
-    var currentWidthConstant = jQueryElement.width();
-    var currentPageWidth = $(".userPage").width();
-    var currentWidthRatio = 1.0 * currentWidthConstant / currentPageWidth * 100;
-    $("#radio-width-constant-value").text(currentWidthConstant + "px");
-    $("#radio-width-constant").attr("rule-value", currentWidthConstant);
-    $("#radio-width-ratio-value").text(currentWidthRatio + "% of page width");
-    $("#radio-width-ratio").attr("rule-value", currentWidthRatio);
-
-    console.log(elementRules["width"]["rule"]);
-    if(elementRules["width"]["rule"] === "constant"){
-    	$("#radio-width-constant").prop("checked", true);
-    	$("#radio-width-ratio").prop("checked", false);
-    }else if(elementRules["width"]["rule"] === "ratio"){
-    	$("#radio-width-ratio").prop("checked", true);
-    	$("#radio-width-constant").prop("checked", false);
-    }else{
-    	// Something is wrong, or indicate "inconsistent rule"
-    	console.log("Inconsistent rule");
-    }
-    // If doesn't match value in elementRules...?
-
-    // Height
-    var currentHeightConstant = jQueryElement.height();
-    var currentPageHeight = $(".userPage").height();
-    var currentHeightRatio = 1.0 * currentHeightConstant / currentPageHeight * 100;
-    $("#radio-height-constant-value").text(currentHeightConstant + "px");
-    $("#radio-height-constant").attr("rule-value", currentHeightConstant);
-    $("#radio-height-ratio-value").text(currentHeightRatio + "% of page height");
-    $("#radio-height-ratio").attr("rule-value", currentHeightRatio);
-
-    if(elementRules["height"]["rule"] === "constant"){
-    	$("#radio-height-constant").prop("checked", true);
-    	$("#radio-height-ratio").prop("checked", false);
-    }else if(elementRules["height"]["rule"] === "ratio"){
-    	$("#radio-height-ratio").prop("checked", true);
-    	$("#radio-height-constant").prop("checked", false);
-    }else{
-    	// Something is wrong, or indicate "inconsistent rule"
-    	console.log("Inconsistent rule");
-    }
-
-    // x
-    var currentXConstant = jQueryElement.offset().left;
-    var currentPageWidth = $(".userPage").width();
-    var currentXRatio = 1.0 * currentXConstant / currentPageWidth * 100;
-    $("#radio-x-constant-value").text(currentXConstant + "px");
-    $("#radio-x-constant").attr("rule-value", currentXConstant);
-    $("#radio-x-ratio-value").text(currentXRatio + "% of page width");
-    $("#radio-x-ratio").attr("rule-value", currentXRatio);
-
-    if(elementRules["x"]["rule"] === "constant"){
-    	$("#radio-x-constant").prop("checked", true);
-    	$("#radio-x-ratio").prop("checked", false);
-    }else if(elementRules["x"]["rule"] === "ratio"){
-    	$("#radio-x-ratio").prop("checked", true);
-    	$("#radio-x-constant").prop("checked", false);
-    }else{
-    	// Something is wrong, or indicate "inconsistent rule"
-    	console.log("Inconsistent rule");
-    }
-
-    // y
-    var currentYConstant = jQueryElement.offset().top;
-    var currentPageHeight = $(".userPage").height();
-    var currentYRatio = 1.0 * currentYConstant / currentPageHeight * 100;
-    $("#radio-y-constant-value").text(currentYConstant + "px");
-    $("#radio-y-constant").attr("rule-value", currentYConstant);
-    $("#radio-y-ratio-value").text(currentYRatio + "% of page height");
-    $("#radio-y-ratio").attr("rule-value", currentYRatio);
-
-    if(elementRules["y"]["rule"] === "constant"){
-    	$("#radio-y-constant").prop("checked", true);
-    	$("#radio-y-ratio").prop("checked", false);
-    }else if(elementRules["y"]["rule"] === "ratio"){
-    	$("#radio-y-ratio").prop("checked", true);
-    	$("#radio-y-constant").prop("checked", false);
-    }else{
-    	// Something is wrong, or indicate "inconsistent rule"
-    	console.log("Inconsistent rule");
-    }
-
-    // Ensure menu is visible
-    $("#selectedElementRules").css("display", "block");
-}*/
-
 var updatePageDimensionsLabel = function(){
 	var element = $(".userPage");
 	var dimensions = "width: " + element.css("width") + ", height: " + element.css("height");
@@ -324,7 +288,59 @@ var captureElementData = function(){
 		var elementHeight = jqueryUIElement.css("height");
 		var elementX = jqueryUIElement.css("left");
 		var elementY = jqueryUIElement.css("top");*/
-		var elementWidth = jqueryUIElement.width();
+		
+		var elementColor = jqueryUIElement.css("background-color");
+		var uiElementData = {
+			"id": elementId,
+			"color": elementColor
+		};
+
+		var elementPropertyKeyValues = Object.entries(elementDataFormat);
+		for(var propertyIndex = 0; propertyIndex < elementPropertyKeyValues.length; propertyIndex++){
+			var propertyKeyAndValue = elementPropertyKeyValues[propertyIndex];
+			var behaviorName = propertyKeyAndValue[0];
+			var propertyDataList = propertyKeyAndValue[1];
+			
+			//var propertyValues = [];
+			for(var optionIndex = 0; optionIndex < propertyDataList.length; optionIndex++){
+				var optionData = propertyDataList[optionIndex];
+				var propertyName = optionData["property"];
+				//var propertyValue = optionData["get"].call(jqueryUIElement);
+				var propertyValue = (optionData["get"]).call(jqueryUIElement);
+				//var propertyValue = (optionData["get"]).call(document.getElementById(uiElementId));
+				/*var propertyObj = {};
+				propertyObj[propertyName] = propertyValue;
+				propertyValues.push(propertyObj);*/
+				var propertyObj = {};
+				propertyObj[propertyName] = propertyValue;
+				//propertyValues.push(propertyObj);
+				uiElementData[behaviorName] = propertyObj;
+			}
+			//uiElementData[behaviorName] = propertyValues;
+		}
+
+		//elementDataFormat
+		/*var elementPropertyKeyValues = Object.entries(elementDataFormat);
+		for(var propertyIndex = 0; propertyIndex < elementPropertyKeyValues.length; propertyIndex++){
+			var propertyKeyAndValue = elementPropertyKeyValues[propertyIndex];
+			var behaviorName = propertyKeyAndValue[0];
+			var propertyDataList = propertyKeyAndValue[1];
+			
+			var propertyValues = [];
+			for(var optionIndex = 0; optionIndex < propertyDataList.length; optionIndex++){
+				var optionData = propertyDataList[optionIndex];
+				var propertyName = optionData["property"];
+				//var propertyValue = optionData["get"].call(jqueryUIElement);
+				var propertyValue = (optionData["get"]).call(jqueryUIElement);
+				//var propertyValue = (optionData["get"]).call(document.getElementById(uiElementId));
+				var propertyObj = {};
+				propertyObj[propertyName] = propertyValue;
+				propertyValues.push(propertyObj);
+			}
+			uiElementData[behaviorName] = propertyValues;
+		}*/
+		
+		/*var elementWidth = jqueryUIElement.width();
 		var elementHeight = jqueryUIElement.height();
 		var elementX = jqueryUIElement.offset().left;
 		var elementY = jqueryUIElement.offset().top;
@@ -336,7 +352,7 @@ var captureElementData = function(){
 			"x": elementX,
 			"y": elementY,
 			"color": elementColor
-		};
+		};*/
 		uiElementsData.push(uiElementData);
 	}
 	console.log(uiElementsData);

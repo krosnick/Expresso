@@ -21,8 +21,13 @@ app.get('/',function(req,res){
 });
 
 app.get('/currentData',function(req,res){
-	res.json({
+	/*res.json({
 		"views": views,
+		"elementRules": elementRules,
+		"cssRules": cssRules
+	});*/
+	res.json({
+		"views": Object.values(views),
 		"elementRules": elementRules,
 		"cssRules": cssRules
 	});
@@ -30,7 +35,8 @@ app.get('/currentData',function(req,res){
 
 app.post('/cloneOriginal', function(req, res) {
 	var clonedView = cloneViewObj();
-	views.push(clonedView);
+	views[clonedView["id"]] = clonedView;
+	//views.push(clonedView);
 
 	// Send back to client
 	res.json({
@@ -39,8 +45,35 @@ app.post('/cloneOriginal', function(req, res) {
 	});
 });
 
+app.post('/deleteKeyframe', function(req, res){
+	//{"viewId": currentViewId, "nextViewToShow": nextKeyframeToShow}
+	var viewIdToDelete = parseInt(req.body.viewId);
+
+	/*var viewIdToReturn = parseInt(req.body.nextViewToShow);
+	var viewToReturn = views[viewIdToReturn];*/
+
+	//views.splice(viewIdToDelete, 1);
+	delete views[viewIdToDelete];
+
+	// For simplicity, make viewToReturn the leftmost one/first in Object.values(views)[0]?
+	var viewToReturn = Object.values(views)[0];
+
+	var viewIds = Object.keys(views);
+	for(var i = 0; i < viewIds.length; i++){
+		var viewId = viewIds[i];
+		convertClientDataToInts(views[viewId]);
+	}
+
+	// Based on the remaining keyframes, should update CSS rules
+	updateCSSRules();
+
+	res.json({
+		"nextViewToShow": viewToReturn,
+		"cssRules": cssRules
+	});
+});
+
 app.post('/view', function(req, res){
-	console.log(req.body.oldView);
 	updateElementAndPageData(req.body.oldView);
 
 	var viewId = parseInt(req.body.newViewId);
@@ -54,8 +87,12 @@ app.post("/updateData", function(req, res){
 	updateElementAndPageData(req.body.oldView);
 
 	// For each view, call convertClientDataToInts(req.body.oldView);
-	for(var i = 0; i < views.length; i++){
-		convertClientDataToInts(views[i]);
+	//for(var i = 0; i < views.length; i++){
+	var viewIds = Object.keys(views);
+	for(var i = 0; i < viewIds.length; i++){
+		var viewId = viewIds[i];
+		//convertClientDataToInts(views[i]);
+		convertClientDataToInts(views[viewId]);
 	}
 	
 	// Based on all keyframes, should update element and css rules here
@@ -133,9 +170,20 @@ var createViewObj = function(pageWidth, pageHeight){
 	return newView;
 };
 
+var getFirstViewObj = function(){
+	var viewIds = Object.keys(views);
+	var firstViewCurrently = views[viewIds[0]];
+	return firstViewCurrently;
+};
+
 var cloneViewObj = function(){
-	var original = views[0];
-	var clonedView = Object.assign({}, original);
+	//var original = views[0];
+	/*var viewIds = Object.keys(views);
+	var firstViewCurrently = views[viewIds[0]];*/
+	var firstViewCurrently = getFirstViewObj();
+	//var original = views[0];
+	//var clonedView = Object.assign({}, original);
+	var clonedView = Object.assign({}, firstViewCurrently);
 	clonedView["id"] = viewCounter;
 	viewCounter++;
 	return clonedView;
@@ -192,17 +240,27 @@ var updateCSSRules = function(){
 	// Use logic from processInput.js
 	// For each element, compare its properties in each view
 	// views array
-	var numElements = views[0]["elements"].length;
+	//var numElements = views[0]["elements"].length;
+	var viewIds = Object.keys(views);
+	var firstViewCurrently = views[viewIds[0]];
+	var numElements = firstViewCurrently["elements"].length;
 	var elementPatterns = {};
 
 	for(var elementIndex = 0; elementIndex < numElements; elementIndex++){
-		var elementId = views[0]["elements"][elementIndex]["id"];
+		//var elementId = views[0]["elements"][elementIndex]["id"];
+		var elementId = firstViewCurrently["elements"][elementIndex]["id"];
 		var keyframesDataForThisElement = [];
-		for(var viewIndex = 0; viewIndex < views.length; viewIndex++){
-			var elementObjAtKeyframe = Object.assign({}, views[viewIndex]["elements"][elementId]);
+		//for(var viewIndex = 0; viewIndex < views.length; viewIndex++){
+		for(var viewIndex = 0; viewIndex < viewIds.length; viewIndex++){
+			var viewKey = viewIds[viewIndex];
+			/*var elementObjAtKeyframe = Object.assign({}, views[viewIndex]["elements"][elementId]);
 			elementObjAtKeyframe["pageWidth"] = views[viewIndex]["pageWidth"];
 			elementObjAtKeyframe["pageHeight"] = views[viewIndex]["pageHeight"];
-			elementObjAtKeyframe["keyframeId"] = views[viewIndex]["id"];
+			elementObjAtKeyframe["keyframeId"] = views[viewIndex]["id"];*/
+			var elementObjAtKeyframe = Object.assign({}, views[viewKey]["elements"][elementId]);
+			elementObjAtKeyframe["pageWidth"] = views[viewKey]["pageWidth"];
+			elementObjAtKeyframe["pageHeight"] = views[viewKey]["pageHeight"];
+			elementObjAtKeyframe["keyframeId"] = views[viewKey]["id"];
 			keyframesDataForThisElement.push(elementObjAtKeyframe);
 		}
 		// will need to sort by width and height separately?
@@ -220,6 +278,7 @@ var updateCSSRules = function(){
 			
 			// Sort based on appropriate page dimension
 			keyframesDataForThisElement.sort(compareFunc);
+			console.log(keyframesDataForThisElement);
 			var behaviorsInfluenced = pageDimensionsAndBehaviorsTheyInfluence[pageDim]["behaviorsInfluenced"];
 			for(var behaviorIndex = 0; behaviorIndex < behaviorsInfluenced.length; behaviorIndex++){
 				var behaviorName = behaviorsInfluenced[behaviorIndex];
@@ -430,7 +489,8 @@ var properties = ["width", "height", "left", "top"];
 
 // ------------ State ------------
 // View raw data
-var views = [];
+//var views = [];
+var views = {};
 var viewCounter = 0;
 
 var view0Element0 = {
@@ -468,7 +528,8 @@ var view0Element1 = {
 var view0 = createViewObj(1480, 800);
 view0["elements"].push(view0Element0);
 view0["elements"].push(view0Element1);
-views.push(view0);
+//views.push(view0);
+views[view0["id"]] = view0;
 
 var view1Element0 = {
 	"id": 0,
@@ -506,7 +567,8 @@ var view1Element1 = {
 var view1= createViewObj(740, 800);
 view1["elements"].push(view1Element0);
 view1["elements"].push(view1Element1);
-views.push(view1);
+//views.push(view1);
+views[view1["id"]] = view1;
 
 // Rules
 var elementRules = {};

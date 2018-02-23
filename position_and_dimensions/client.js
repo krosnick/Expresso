@@ -110,6 +110,70 @@ $(document).ready(function() {
 	    });
 	});
 
+    /*// Delete current keyframe
+	$("#deleteButton").on("click", function(event){
+		var nextKeyframeToShowId; // fill in
+		if(currentViewId === 0){
+			nextKeyframeToShowId = currentViewId + 1;
+		}else{
+			nextKeyframeToShowId = currentViewId - 1;
+		}
+		// Should handle 0-keyframe case at some point
+
+	    $.ajax({
+	        type: "POST",
+	        url: "/deleteKeyframe",
+	        data: {"viewId": currentViewId, "nextViewToShow": nextKeyframeToShowId}
+	    }).done(function(data) {
+
+	    	// Need to remove deleted keyframe's link
+	    	removeViewMenuItem(currentViewId);
+
+	    	makeFontBold($("#view" + nextKeyframeToShowId + " a"), $(".clone a"));
+
+	    	var nextViewToShow = data["nextViewToShow"];
+	    	cssRules = data["cssRules"];
+	    	replaceCSSRules();
+	    	
+	    	//allElementRules = data["elementRules"];
+	    	currentViewId = nextViewToShow["id"];
+	    	renderView(nextViewToShow);
+	    	$(".userPage").resizable();
+	    	// Now select what was currentlySelectedElement before
+	    	$("[elementId=" + currentlySelectedElement + "]").addClass("selected");    	
+	    });
+	});*/
+
+	// Delete current keyframe
+	$("#deleteButton").on("click", function(event){
+		// Should handle 0-keyframe case at some point
+
+	    $.ajax({
+	        type: "POST",
+	        url: "/deleteKeyframe",
+	        data: {"viewId": currentViewId}
+	    }).done(function(data) {
+
+	    	// Need to remove deleted keyframe's link
+	    	removeViewMenuItem(currentViewId);
+
+	    	var nextViewToShow = data["nextViewToShow"];
+	    	console.log(nextViewToShow);
+	    	var nextKeyframeToShowId =  nextViewToShow["id"]; // sent from server; in the future maybe ask from client?
+	    	makeFontBold($("#view" + nextKeyframeToShowId + " a"), $(".clone a"));
+
+	    	cssRules = data["cssRules"];
+	    	replaceCSSRules();
+	    	
+	    	//allElementRules = data["elementRules"];
+	    	currentViewId = nextViewToShow["id"];
+	    	renderView(nextViewToShow);
+	    	$(".userPage").resizable();
+	    	// Now select what was currentlySelectedElement before
+	    	$("[elementId=" + currentlySelectedElement + "]").addClass("selected");    	
+	    });
+	});
+
     $("#viewsMenu").on("click", ".clone a", function(event){
     	var viewId = $(event.target).parent().attr("viewId"); // need to call "parent()" because $(event.target) is the <a> element and its parent has the "viewId" attribute 
     	// Make this link bold
@@ -227,6 +291,8 @@ $(document).ready(function() {
 
 			// should element rules be updated here? Or maybe let the server take care of that
 
+			console.log(viewData);
+
     		// Send update to server
     		$.ajax({
 		        type: "POST",
@@ -292,7 +358,7 @@ var captureElementData = function(){
 
 		uiElementsData.push(uiElementData);
 	}
-	console.log(uiElementsData);
+	//console.log(uiElementsData);
 	return uiElementsData;
 }
 
@@ -356,6 +422,10 @@ var addViewMenuItem = function(viewId){
 	var newViewIdString = "view" + viewId;
 	var newViewObject = $('<span class="clone" id="' + newViewIdString + '" viewId=' + viewId + '><a href="#">' + newViewText + '</a></span>');
 	$("#viewsMenu").append(newViewObject);
+};
+
+var removeViewMenuItem = function(viewId){
+	$("[viewId=" + viewId + "]").remove();
 };
 
 var renderView = function(viewData){

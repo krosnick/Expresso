@@ -58,6 +58,18 @@ var elementDataFormat = {
 	]
 };
 
+var getUserPageDimValue = function(relevantPageDim){
+	var userPageObj = $(".userPage");
+	console.log(relevantPageDim);
+	if(relevantPageDim === "pageWidth"){
+		return userPageObj.width();
+	}else if(relevantPageDim === "pageHeight"){
+		return userPageObj.height();
+	}else{
+		console.error("Error");
+	}
+}
+
 $(document).ready(function() {
     // Get views from server
     // Need to get enough info to show list of views and current view
@@ -67,9 +79,7 @@ $(document).ready(function() {
     }).done(function(data) {
     	var views = data["views"];
     	allElementRules = data["elementRules"];
-    	//console.log(allElementRules);
     	cssRules = data["cssRules"];
-    	//console.log(cssRules);
     	// Show menu of views at the bottom
     	views.forEach(function(view){
     		addViewMenuItem(view["id"]);
@@ -158,7 +168,6 @@ $(document).ready(function() {
 	    	removeViewMenuItem(currentViewId);
 
 	    	var nextViewToShow = data["nextViewToShow"];
-	    	console.log(nextViewToShow);
 	    	var nextKeyframeToShowId =  nextViewToShow["id"]; // sent from server; in the future maybe ask from client?
 	    	makeFontBold($("#view" + nextKeyframeToShowId + " a"), $(".clone a"));
 
@@ -194,7 +203,22 @@ $(document).ready(function() {
     	}
     });
 
-    $("body").on("resize drag", ".modifiable", function(event, ui){
+    /*$("body").on("resize drag", ".modifiable", function(event, ui){
+    	dataChanged = true;
+    });*/
+    /*$("body").on("resize drag", ".pageElement", function(event, ui){
+    	dataChanged = true;
+    });*/
+
+    /*$("body").on("resizestop", ".userPage", function(event, ui){
+    	dataChanged = true;
+    });*/
+
+    $("body").on("resize", ".userPage", function(event, ui){
+    	replaceCSSRules();
+    });
+
+    $("body").on("resizestop dragstop", ".modifiable", function(event, ui){
     	dataChanged = true;
     });
 
@@ -253,6 +277,7 @@ $(document).ready(function() {
     // ----------------------------------------------------
 
 
+    /*
     // ------------- Behavior on radio button change -------------
     $("input[type=radio]").on("change", function(event){
     	var elementRulesToUpdate = allElementRules[currentlySelectedElement];
@@ -279,6 +304,7 @@ $(document).ready(function() {
 	    });
     });
     // -----------------------------------------------------------
+    */
 
 
     $(".userPage").resizable();
@@ -291,8 +317,6 @@ $(document).ready(function() {
 
 			// should element rules be updated here? Or maybe let the server take care of that
 
-			console.log(viewData);
-
     		// Send update to server
     		$.ajax({
 		        type: "POST",
@@ -300,7 +324,6 @@ $(document).ready(function() {
 		        data: viewData
 		    }).done(function(data) {
 		    	cssRules = data["cssRules"];
-		    	console.log(cssRules);
 		    	replaceCSSRules();
 		    });
     	}
@@ -358,7 +381,6 @@ var captureElementData = function(){
 
 		uiElementsData.push(uiElementData);
 	}
-	//console.log(uiElementsData);
 	return uiElementsData;
 }
 
@@ -409,6 +431,8 @@ var updateView = function(viewId){
     	currentViewId = viewId;
 
     	renderView(data["view"]);
+
+    	replaceCSSRules();
 
     	$(".userPage").resizable();
     	
@@ -470,8 +494,48 @@ var createDOMElement = function(elementData){
 var replaceCSSRules = function(){
 	$("#" + elementCSSRules).empty();
 	var cssRulesString = "";
+
 	for(var i = 0; i < cssRules.length; i++){
-		cssRulesString += cssRules[i];
+
+		var ruleObject = cssRules[i];
+		// Using cssRules, need to choose the rule that is correct for each object in the list, and then add it to cssRulesString
+		var relevantCSSRule = returnRelevantCSSRule(ruleObject);
+		console.log(relevantCSSRule);
+		cssRulesString += relevantCSSRule;
+		//cssRulesString += cssRules[i];
 	}
 	$("#" + elementCSSRules).append("<style>" + cssRulesString + "</style>");
 };
+
+var returnRelevantCSSRule = function(ruleObject){
+	// Get current .userPage width/height
+	var dimValue = getUserPageDimValue(ruleObject["pageDim"]);
+
+	// Determine which rule the .userPage width/height falls into
+	var ruleList = ruleObject["cssRulesList"];
+	for(var i = 0; i < ruleList.length; i++){
+		var ruleOption = ruleList[i];
+		var ruleStart = ruleOption["start"];
+		var ruleEnd = ruleOption["end"];
+
+		if(ruleStart === null && ruleEnd === null){
+			return ruleOption["cssRuleString"];
+		}else if(ruleStart === null){
+			// Check ruleEnd
+			if(dimValue <= ruleEnd){
+				return ruleOption["cssRuleString"];
+			}
+		}else if(ruleEnd === null){
+			// Check ruleStart
+			if(dimValue >= ruleStart){
+				return ruleOption["cssRuleString"];
+			}
+		}else{
+			// Check both ruleStart and ruleEnd
+			if(dimValue >= ruleStart && dimValue <= ruleEnd){
+				return ruleOption["cssRuleString"];
+			}
+		}
+	}
+	console.log("Error if you got here");
+}

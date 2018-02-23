@@ -226,9 +226,72 @@ var createCSSRule = function(elementRules){
 
 	ruleString += "}";
 
-	console.log(ruleString);
-
 	return ruleString;
+};
+
+var generateCSSRulesList = function(elementId, pageDim, behaviorName, propertyName, elementPropertyPattern){
+	//var ruleString = "";
+	//for(var mediaQueryIndex = 0; mediaQueryIndex < elementPropertyPattern.length; mediaQueryIndex++){
+	var ruleList = [];
+	for(var mediaQueryIndex = elementPropertyPattern.length-1; mediaQueryIndex >= 0; mediaQueryIndex--){
+		var ruleObj = {};
+		var rule = elementPropertyPattern[mediaQueryIndex];
+
+		ruleObj["start"] = null;
+		ruleObj["end"] = null;
+		if(mediaQueryIndex > 0){
+			ruleObj["start"] = rule["start"];
+		}
+		if(mediaQueryIndex < elementPropertyPattern.length-1){
+			ruleObj["end"] = rule["end"];
+		}
+
+		var singleRule = "#element" + rule["elementSelector"] + "{";
+		var elementValueString = createValue(rule["m"], rule["b"]);
+		var elementPropertyValueString = createPropertyValueString(propertyName, elementValueString);
+		singleRule += elementPropertyValueString;
+		singleRule += "}";
+
+		ruleObj["cssRuleString"] = singleRule;
+
+		ruleList.push(ruleObj);
+
+		/*if(mediaQueryIndex === elementPropertyPattern.length-1){
+			// When mediaQueryIndex === elementPropertyPattern.length-1, should just generate a normal CSS rule with no "@media" rule;
+			// This makes sense for when there's only one rule in elementPropertyPattern,
+			// as well as for when there are multiple rules in elementPropertyPattern,
+			// because this is the general rule that later media queries override
+			ruleString += "#element" + rule["elementSelector"] + "{";
+			var elementValueString = createValue(rule["m"], rule["b"]);
+			var elementPropertyValueString = createPropertyValueString(propertyName, elementValueString);
+			ruleString += elementPropertyValueString;
+			ruleString += "}";
+		}else{
+			// Use media queries
+
+			// media query syntax start
+
+			// will be either "max-width" or "max-height" depending on what pageDim is
+			var mediaQueryMaxProperty = pageDimensionsAndBehaviorsTheyInfluence[pageDim]["mediaMaxProperty"];
+			var mediaPrefix = "@media (" + mediaQueryMaxProperty + ": " + rule["end"] + constantUnit + ") {";
+			ruleString += mediaPrefix;
+
+			// rule content
+			ruleString += "#element" + rule["elementSelector"] + "{";
+			var elementValueString = createValue(rule["m"], rule["b"]);
+			var elementPropertyValueString = createPropertyValueString(propertyName, elementValueString);
+			ruleString += elementPropertyValueString;
+			ruleString += "}";
+			ruleString += "}"; // for ending media query
+
+			// media query syntax end
+
+		}
+		ruleString += "\n";*/
+	}
+	//return ruleString;
+	console.log(ruleList);
+	return ruleList;
 };
 
 // This should probably update element rules and css rule strings
@@ -278,7 +341,7 @@ var updateCSSRules = function(){
 			
 			// Sort based on appropriate page dimension
 			keyframesDataForThisElement.sort(compareFunc);
-			console.log(keyframesDataForThisElement);
+			//console.log(keyframesDataForThisElement);
 			var behaviorsInfluenced = pageDimensionsAndBehaviorsTheyInfluence[pageDim]["behaviorsInfluenced"];
 			for(var behaviorIndex = 0; behaviorIndex < behaviorsInfluenced.length; behaviorIndex++){
 				var behaviorName = behaviorsInfluenced[behaviorIndex];
@@ -292,23 +355,46 @@ var updateCSSRules = function(){
 				//var elementPropertyPattern = determinePattern(keyframesDataForThisElement, propertyName, pageDim);
 				var elementPropertyPattern = determinePattern(keyframesDataForThisElement, behaviorName, propertyName, pageDim);
 				// Should it be patterns[propertyName] or patterns[behaviorName][propertyName]?
+				
+				//console.log("elementId: " + elementId + "; pageDim: " + pageDim + "; behaviorName: " + behaviorName + "; propertyName: " + propertyName);
+				//console.log(elementPropertyPattern);
+
 				patterns[propertyName] = elementPropertyPattern;
 				//patterns[behaviorName] = elementPropertyPattern;
+
+				// Generate CSS rules/rule strings for the pattern elementPropertyPattern (for behaviorName, pageWidth/pageHeight, elementId)
+				// Sort array from largest page height/width to smallest
+				// For first rule, just insert CSS string normally
+				// For remaining rules, have a max-width rule (with the max width being the prior rule's startWidth (or startWidth-1?)) 
+
+				var cssRulesList = generateCSSRulesList(elementId, pageDim, behaviorName, propertyName, elementPropertyPattern);
+				var cssRulesObj = {
+					"cssRulesList": cssRulesList,
+					"behaviorName": behaviorName,
+					"propertyName": propertyName,
+					"pageDim": pageDim
+				}
+				//cssRules.push(cssRulesString);
+				cssRules.push(cssRulesObj);
+				console.log(cssRulesObj);
+
 			}
 
 		}
 
 		// For now assume only one chunk/media query
 
-		elementPatterns[elementId] = patterns;
+		//elementPatterns[elementId] = patterns;
 	}
 
-	var arrayOfElementRules = Object.values(elementPatterns);
+	/*var arrayOfElementRules = Object.values(elementPatterns);
 	for(var i = 0; i < arrayOfElementRules.length; i++){
 		var elementRuleSet = arrayOfElementRules[i];
 		var cssRuleString = createCSSRule(elementRuleSet);
 		cssRules.push(cssRuleString);
-	}
+	}*/
+
+	console.log(cssRules);
 
 };
 
@@ -437,11 +523,15 @@ var constantUnit = "px";
 var pageDimensionsAndBehaviorsTheyInfluence = {
 	"pageWidth": {
 		"compareFunc": comparePageWidths,
-		"behaviorsInfluenced": ["width", "x"]
+		"behaviorsInfluenced": ["width", "x"],
+		"mediaMaxProperty": "max-width",
+		"mediaMinProperty": "min-width",
 	},
 	"pageHeight": {
 		"compareFunc": comparePageHeights,
-		"behaviorsInfluenced": ["height", "y"]
+		"behaviorsInfluenced": ["height", "y"],
+		"mediaMaxProperty": "max-height",
+		"mediaMinProperty": "min-height",
 	}
 };
 

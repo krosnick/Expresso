@@ -124,17 +124,17 @@ var convertClientDataToInts = function(viewObj){
 	var elementsData = viewObj["elements"];
 	for(var i = 0; i < elementsData.length; i++){
 		var element = elementsData[i];
-		var elementPropertyKeyValues = Object.entries(elementDataFormat);
-		for(var propertyIndex = 0; propertyIndex < elementPropertyKeyValues.length; propertyIndex++){
-			var propertyKeyAndValue = elementPropertyKeyValues[propertyIndex];
-			var behaviorName = propertyKeyAndValue[0];
-			var propertyDataList = propertyKeyAndValue[1];
+		var elementBehaviorKeyValues = Object.entries(elementDataFormat);
+		for(var behaviorIndex = 0; behaviorIndex < elementBehaviorKeyValues.length; behaviorIndex++){
+			var behaviorKeyAndValue = elementBehaviorKeyValues[behaviorIndex];
+			var behaviorName = behaviorKeyAndValue[0];
 			
-			var propertyValues = [];
-			for(var optionIndex = 0; optionIndex < propertyDataList.length; optionIndex++){
-				var optionData = propertyDataList[optionIndex];
-				var propertyName = optionData["property"];
-				element[behaviorName][propertyName] = parseInt(element[behaviorName][propertyName]);
+			var elementBehaviorDictOfOptions = element[behaviorName];
+			var elementBehaviorListOfOptions = Object.keys(elementBehaviorDictOfOptions);
+			for(var optionIndex = 0; optionIndex < elementBehaviorListOfOptions.length; optionIndex++){
+				var propertyOptionName = elementBehaviorListOfOptions[optionIndex];
+				var propertyOptionValue = elementBehaviorDictOfOptions[propertyOptionName];
+				element[behaviorName][propertyOptionName] = parseInt(propertyOptionValue);
 			}
 		}
 	}
@@ -331,9 +331,11 @@ var updateCSSRules = function(){
 		//pageDimensionsAndBehaviorsTheyInfluence
 		var pageDimensions = Object.keys(pageDimensionsAndBehaviorsTheyInfluence);
 
-		var patterns = {
+		/*var patterns = {
 			"id": elementId
-		};
+		};*/
+
+		console.log(keyframesDataForThisElement);
 
 		for(var pageDimIndex = 0; pageDimIndex < pageDimensions.length; pageDimIndex++){
 			var pageDim = pageDimensions[pageDimIndex];
@@ -341,61 +343,93 @@ var updateCSSRules = function(){
 			
 			// Sort based on appropriate page dimension
 			keyframesDataForThisElement.sort(compareFunc);
-			//console.log(keyframesDataForThisElement);
 			var behaviorsInfluenced = pageDimensionsAndBehaviorsTheyInfluence[pageDim]["behaviorsInfluenced"];
 			for(var behaviorIndex = 0; behaviorIndex < behaviorsInfluenced.length; behaviorIndex++){
 				var behaviorName = behaviorsInfluenced[behaviorIndex];
 				// maybe need to do some more processing here, or maybe within "determinePattern"
 				// need to consider the possible properties for each element behavior
-				// elementDataFormat and view1Element0
 
-				// For now assume only one property per behavior (later on will probably choose property which has fewer media queries)
-				var propertyName = elementDataFormat[behaviorName][0]["property"];
+				var chosenElementPropertyPattern = undefined;
+				var chosenPropertyName = undefined;
+
+				// Need to consider the multiple properties per behavior, and choose the one with the fewest media queries?
+				
+				//var propertiesObject = elementDataFormat[behaviorName];
+				//var propertiesList = Object.keys(propertiesObject);
+				
+				var propertiesList = elementDataFormat[behaviorName]["properties"];
+				//console.log(propertiesList);
+				for(var propertyIndex = 0; propertyIndex < propertiesList.length; propertyIndex++){
+					var propertyName = propertiesList[propertyIndex];
+					// Hacky: Maybe test it out first to see if this property exists in this set of keyframes?
+					//console.log(keyframesDataForThisElement[0][behaviorName]);
+					//[propertyIndex][attributeName]
+
+					//var elementPropertyPattern = determinePattern(keyframesDataForThisElement, behaviorName, propertyName, propertyIndex, pageDim);
+					
+					if(keyframesDataForThisElement[0][behaviorName][propertyName] !== undefined){
+						var elementPropertyPattern = determinePattern(keyframesDataForThisElement, behaviorName, propertyName, pageDim);
+						if(chosenElementPropertyPattern === undefined || elementPropertyPattern.length < chosenElementPropertyPattern.length){
+							chosenElementPropertyPattern = elementPropertyPattern;
+							chosenPropertyName = propertyName;
+						}
+					}
+				}
+
+				// Change elementDataFormat[behaviorName].length to something else...
+				/*for(var propertyIndex = 0; propertyIndex < elementDataFormat[behaviorName].length; propertyIndex++){
+					var propertyName = elementDataFormat[behaviorName][propertyIndex]["property"];
+					
+					// Hacky: Maybe test it out first to see if this property exists in this set of keyframes?
+					//keyframesDataForThisElement[0][behaviorName]
+					//[propertyIndex][attributeName]
+
+					//var elementPropertyPattern = determinePattern(keyframesDataForThisElement, behaviorName, propertyName, propertyIndex, pageDim);
+					var elementPropertyPattern = determinePattern(keyframesDataForThisElement, behaviorName, propertyName, pageDim);
+					if(chosenElementPropertyPattern === undefined || elementPropertyPattern.length < chosenElementPropertyPattern.length){
+						chosenElementPropertyPattern = elementPropertyPattern;
+					}
+				}*/
+				// maybe remove the above and have it occur within determinePattern?
+
+				/*var propertyName = elementDataFormat[behaviorName][0]["property"];
 				// Should I pass in behavior and property name into determinePattern?
 				//var elementPropertyPattern = determinePattern(keyframesDataForThisElement, propertyName, pageDim);
 				var elementPropertyPattern = determinePattern(keyframesDataForThisElement, behaviorName, propertyName, pageDim);
-				// Should it be patterns[propertyName] or patterns[behaviorName][propertyName]?
+				// Should it be patterns[propertyName] or patterns[behaviorName][propertyName]?*/
 				
-				//console.log("elementId: " + elementId + "; pageDim: " + pageDim + "; behaviorName: " + behaviorName + "; propertyName: " + propertyName);
-				//console.log(elementPropertyPattern);
-
-				patterns[propertyName] = elementPropertyPattern;
-				//patterns[behaviorName] = elementPropertyPattern;
-
+				//patterns[propertyName] = chosenElementPropertyPattern;
+				
 				// Generate CSS rules/rule strings for the pattern elementPropertyPattern (for behaviorName, pageWidth/pageHeight, elementId)
 				// Sort array from largest page height/width to smallest
 				// For first rule, just insert CSS string normally
 				// For remaining rules, have a max-width rule (with the max width being the prior rule's startWidth (or startWidth-1?)) 
 
-				var cssRulesList = generateCSSRulesList(elementId, pageDim, behaviorName, propertyName, elementPropertyPattern);
+				//var cssRulesList = generateCSSRulesList(elementId, pageDim, behaviorName, propertyName, elementPropertyPattern);
+				
+
+				/*var cssRulesList = generateCSSRulesList(elementId, pageDim, behaviorName, propertyName, chosenElementPropertyPattern);
 				var cssRulesObj = {
 					"cssRulesList": cssRulesList,
 					"behaviorName": behaviorName,
 					"propertyName": propertyName,
 					"pageDim": pageDim
 				}
-				//cssRules.push(cssRulesString);
+				cssRules.push(cssRulesObj);*/
+
+				var cssRulesList = generateCSSRulesList(elementId, pageDim, behaviorName, chosenPropertyName, chosenElementPropertyPattern);
+				var cssRulesObj = {
+					"cssRulesList": cssRulesList,
+					"behaviorName": behaviorName,
+					"propertyName": chosenPropertyName,
+					"pageDim": pageDim
+				}
 				cssRules.push(cssRulesObj);
-				console.log(cssRulesObj);
 
 			}
 
 		}
-
-		// For now assume only one chunk/media query
-
-		//elementPatterns[elementId] = patterns;
 	}
-
-	/*var arrayOfElementRules = Object.values(elementPatterns);
-	for(var i = 0; i < arrayOfElementRules.length; i++){
-		var elementRuleSet = arrayOfElementRules[i];
-		var cssRuleString = createCSSRule(elementRuleSet);
-		cssRules.push(cssRuleString);
-	}*/
-
-	console.log(cssRules);
-
 };
 
 var comparePageWidths = function(a, b) {
@@ -422,8 +456,13 @@ var comparePageHeights = function(a, b) {
 
 // axisName is "pageWidth" or "pageHeight"
 //var determinePattern = function(dataPoints, attributeName, axisName){
+//var determinePattern = function(dataPoints, behaviorName, attributeName, propertyIndex, axisName){
 var determinePattern = function(dataPoints, behaviorName, attributeName, axisName){
-	
+	/*console.log(dataPoints);
+	console.log(behaviorName);
+	console.log(attributeName);
+	console.log(axisName);*/
+
 	var elementSelector = dataPoints[0]["id"];
 	var chunkLineFitData = [];
 
@@ -431,6 +470,7 @@ var determinePattern = function(dataPoints, behaviorName, attributeName, axisNam
 		// If one point only, assume properties will remain constant throughout all viewport sizes
 		var m = 0;
 		var b = dataPoints[0][behaviorName][attributeName];
+		//var b = dataPoints[0][behaviorName][propertyIndex][attributeName];
 
 		var chunkStart = dataPoints[0][axisName];
 		var chunkEnd = dataPoints[0][axisName];
@@ -453,6 +493,8 @@ var determinePattern = function(dataPoints, behaviorName, attributeName, axisNam
 
 			//var leftPageWidthSlope = (point2[attributeName] - point1[attributeName])/(point2[axisName] - point1[axisName]);
 			var leftPageWidthSlope = (point2[behaviorName][attributeName] - point1[behaviorName][attributeName])/(point2[axisName] - point1[axisName]);
+			//var leftPageWidthSlope = (point2[behaviorName][propertyIndex][attributeName] - point1[behaviorName][propertyIndex][attributeName])/(point2[axisName] - point1[axisName]);
+			
 			slopes.push(leftPageWidthSlope);
 		}
 
@@ -485,6 +527,7 @@ var determinePattern = function(dataPoints, behaviorName, attributeName, axisNam
 			//var pointData = [ [point1["pageWidth"], point1["left"]], [point2["pageWidth"], point2["left"]] ];
 			//var pointData = [ [point1[axisName], point1[attributeName]], [point2[axisName], point2[attributeName]] ];
 			var pointData = [ [point1[axisName], point1[behaviorName][attributeName]], [point2[axisName], point2[behaviorName][attributeName]] ];
+			//var pointData = [ [point1[axisName], point1[behaviorName][propertyIndex][attributeName]], [point2[axisName], point2[behaviorName][propertyIndex][attributeName]] ];
 			result = regression.linear(pointData);
 			var m = result.equation[0];
 			var b = result.equation[1];
@@ -535,7 +578,7 @@ var pageDimensionsAndBehaviorsTheyInfluence = {
 	}
 };
 
-var elementDataFormat = {
+/*var elementDataFormat = {
 	"width": [
 		{
 			"property": "width",
@@ -552,26 +595,41 @@ var elementDataFormat = {
 		{
 			"property": "left",
 			"pageDimension": "pageWidth"
-		}/*,
+		},
 		{
 			"property": "right",
-			"get": function(){
-				return this.offset().right;
-			}
-		}*/
+			"pageDimension": "pageWidth"
+		}
 	],
 	"y": [
 		{
 			"property": "top",
 			"pageDimension": "pageHeight"
-		}/*,
+		},
 		{
 			"property": "bottom",
-			"get": function(){
-				return this.offset().bottom;
-			}
-		}*/
+			"pageDimension": "pageHeight"
+		}
 	]
+};*/
+
+var elementDataFormat = {
+	"width": {
+		"pageDimension": "pageWidth",
+		"properties": ["width"]
+	},
+	"height": {
+		"pageDimension": "pageHeight",
+		"properties": ["height"]
+	},
+	"x": {
+		"pageDimension": "pageWidth",
+		"properties": ["left", "right"]
+	},
+	"y": {
+		"pageDimension": "pageHeight",
+		"properties": ["top", "bottom"]
+	}
 };
 
 // maybe generate this list later from elementDataFormat? 
@@ -615,6 +673,76 @@ var view0Element1 = {
 		"height": 400
 	}
 };
+
+/*var view0Element0 = {
+	"id": 0,
+	"color": "blue",
+	"x": [
+		{"left": 100}
+	],
+	"y": [
+		{"top": 40}
+	],
+	"width": [
+		{"width": 400}
+	],
+	"height": [
+		{"height": 250}
+	]
+};
+var view0Element1 = {
+	"id": 1,
+	"color": "red",
+	"x": [
+		{"left": 600}
+	],
+	"y": [
+		{"top": 300}
+	],
+	"width": [
+		{"width": 296}
+	],
+	"height": [
+		{"height": 400}
+	]
+};*/
+
+/*var view0Element0 = {
+	"id": 0,
+	"color": "blue",
+	"x": [
+		{"left": 100},
+		{"right": 980}
+	],
+	"y": [
+		{"top": 40},
+		{"bottom": 510}
+	],
+	"width": [
+		{"width": 400}
+	],
+	"height": [
+		{"height": 250}
+	]
+};
+var view0Element1 = {
+	"id": 1,
+	"color": "red",
+	"x": [
+		{"left": 600},
+		{"right": 584}
+	],
+	"y": [
+		{"top": 300},
+		{"bottom": 100}
+	],
+	"width": [
+		{"width": 296}
+	],
+	"height": [
+		{"height": 400}
+	]
+};*/
 var view0 = createViewObj(1480, 800);
 view0["elements"].push(view0Element0);
 view0["elements"].push(view0Element1);
@@ -654,11 +782,81 @@ var view1Element1 = {
 	}
 };
 
-var view1= createViewObj(740, 800);
+/*var view1Element0 = {
+	"id": 0,
+	"color": "blue",
+	"x": [
+		{"left": 100}
+	],
+	"y": [
+		{"top": 40}
+	],
+	"width": [
+		{"width": 400}
+	],
+	"height": [
+		{"height": 250}
+	]
+};
+var view1Element1 = {
+	"id": 1,
+	"color": "red",
+	"x": [
+		{"left": 600}
+	],
+	"y": [
+		{"top": 300}
+	],
+	"width": [
+		{"width": 148}
+	],
+	"height": [
+		{"height": 400}
+	]
+};*/
+
+/*var view1Element0 = {
+	"id": 0,
+	"color": "blue",
+	"x": [
+		{"left": 100},
+		{"right": 240}
+	],
+	"y": [
+		{"top": 40},
+		{"bottom": 510}
+	],
+	"width": [
+		{"width": 400}
+	],
+	"height": [
+		{"height": 250}
+	]
+};
+var view1Element1 = {
+	"id": 1,
+	"color": "red",
+	"x": [
+		{"left": 600},
+		{"right": 52}
+	],
+	"y": [
+		{"top": 300},
+		{"bottom": 100}
+	],
+	"width": [
+		{"width": 148}
+	],
+	"height": [
+		{"height": 400}
+	]
+};*/
+
+/*var view1= createViewObj(740, 800);
 view1["elements"].push(view1Element0);
 view1["elements"].push(view1Element1);
 //views.push(view1);
-views[view1["id"]] = view1;
+views[view1["id"]] = view1;*/
 
 // Rules
 var elementRules = {};

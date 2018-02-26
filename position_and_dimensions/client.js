@@ -9,14 +9,20 @@ var currentlySelectedElement;
 var elementCSSRules = "elementCSSRules";
 var cssRules = [];
 
+var getPageWidth = function(){
+	return $(".userpage").width();
+};
+
+var getPageHeight = function(){
+	return $(".userpage").height();
+};
+
 var elementDataFormat = {
 	"width": [
 		{
 			"property": "width",
 			"get": function(){
 				return this.width();
-				//width();
-				//this.offsetWidth;
 			}
 		}
 	],
@@ -34,13 +40,13 @@ var elementDataFormat = {
 			"get": function(){
 				return this.offset().left;
 			}
-		}/*,
+		},
 		{
 			"property": "right",
 			"get": function(){
-				return this.offset().right;
+				return $(".userPage").width() - this.width() - this.offset().left;
 			}
-		}*/
+		}
 	],
 	"y": [
 		{
@@ -48,13 +54,13 @@ var elementDataFormat = {
 			"get": function(){
 				return this.offset().top;
 			}
-		}/*,
+		},
 		{
 			"property": "bottom",
 			"get": function(){
-				return this.offset().bottom;
+				return $(".userPage").height() - this.height() - this.offset().top;
 			}
-		}*/
+		}
 	]
 };
 
@@ -120,40 +126,6 @@ $(document).ready(function() {
 	    });
 	});
 
-    /*// Delete current keyframe
-	$("#deleteButton").on("click", function(event){
-		var nextKeyframeToShowId; // fill in
-		if(currentViewId === 0){
-			nextKeyframeToShowId = currentViewId + 1;
-		}else{
-			nextKeyframeToShowId = currentViewId - 1;
-		}
-		// Should handle 0-keyframe case at some point
-
-	    $.ajax({
-	        type: "POST",
-	        url: "/deleteKeyframe",
-	        data: {"viewId": currentViewId, "nextViewToShow": nextKeyframeToShowId}
-	    }).done(function(data) {
-
-	    	// Need to remove deleted keyframe's link
-	    	removeViewMenuItem(currentViewId);
-
-	    	makeFontBold($("#view" + nextKeyframeToShowId + " a"), $(".clone a"));
-
-	    	var nextViewToShow = data["nextViewToShow"];
-	    	cssRules = data["cssRules"];
-	    	replaceCSSRules();
-	    	
-	    	//allElementRules = data["elementRules"];
-	    	currentViewId = nextViewToShow["id"];
-	    	renderView(nextViewToShow);
-	    	$(".userPage").resizable();
-	    	// Now select what was currentlySelectedElement before
-	    	$("[elementId=" + currentlySelectedElement + "]").addClass("selected");    	
-	    });
-	});*/
-
 	// Delete current keyframe
 	$("#deleteButton").on("click", function(event){
 		// Should handle 0-keyframe case at some point
@@ -202,17 +174,6 @@ $(document).ready(function() {
     		$("#selectedElementRules").css("display", "none");
     	}
     });
-
-    /*$("body").on("resize drag", ".modifiable", function(event, ui){
-    	dataChanged = true;
-    });*/
-    /*$("body").on("resize drag", ".pageElement", function(event, ui){
-    	dataChanged = true;
-    });*/
-
-    /*$("body").on("resizestop", ".userPage", function(event, ui){
-    	dataChanged = true;
-    });*/
 
     $("body").on("resize", ".userPage", function(event, ui){
     	replaceCSSRules();
@@ -369,17 +330,25 @@ var captureElementData = function(){
 			var behaviorName = propertyKeyAndValue[0];
 			var propertyDataList = propertyKeyAndValue[1];
 			
+			var propertyOptions = [];
+
+			uiElementData[behaviorName] = {};
 			for(var optionIndex = 0; optionIndex < propertyDataList.length; optionIndex++){
 				var optionData = propertyDataList[optionIndex];
 				var propertyName = optionData["property"];
 				var propertyValue = (optionData["get"]).call(jqueryUIElement);
-				var propertyObj = {};
-				propertyObj[propertyName] = propertyValue;
-				uiElementData[behaviorName] = propertyObj;
+				//var propertyObj = {};
+				uiElementData[behaviorName][propertyName] = propertyValue;
+				//propertyObj[propertyName] = propertyValue;
+				//uiElementData[behaviorName] = propertyObj;
+				//propertyOptions.push(propertyObj);
 			}
+
+			//uiElementData[behaviorName] = propertyOptions;
 		}
 
 		uiElementsData.push(uiElementData);
+		console.log(uiElementData);
 	}
 	return uiElementsData;
 }

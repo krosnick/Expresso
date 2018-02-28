@@ -166,6 +166,7 @@ $(document).ready(function() {
     $(".userPage").on("click", function(event){
     	// Unselect any other selected elements (if there are any)
     	$(".pageElement.selected").removeClass("selected");
+    	$("#toolsMenu").hide();
     	if($(event.target).hasClass("pageElement")){
 	    	selectElement($(event.target));
     	}else{
@@ -290,16 +291,32 @@ $(document).ready(function() {
     	}
     }, 1000);
     //}, 10000);
+
+    $("#colorpicker").spectrum({
+	    showButtons: false,
+	    allowEmpty: true,
+	    move: function(color) {
+	    	// update selected element color
+	    	var hexColorString = color.toHexString();
+	    	$("[elementId=" + currentlySelectedElement + "]").css("background-color", hexColorString);
+	    	dataChanged = true;
+	    }
+	});
 });
 
 var selectElement = function(element){
 	// Select this element (put box shadow around it)
 	element.addClass("selected");
 
-	// Update the rules menu
 	var selectedElementNum = element.attr("elementId");
 	currentlySelectedElement = selectedElementNum;
+
+	// Set colorpicker color to that of selected element
+	$("#colorpicker").spectrum("set", element.css("background-color"));
 	
+	// Ensure tools menu is shown
+	$("#toolsMenu").show();
+
 	//updateRulesMenu(element);
 };
 

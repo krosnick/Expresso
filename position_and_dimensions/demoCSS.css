@@ -12,7 +12,7 @@ body {
     border-top: 1px solid black;
 }
 
-#rulesMenu {
+/*#rulesMenu {
 	width: 200px;
 	height: calc(100% - 50px);
 	background-color: #f5f5dc;
@@ -20,6 +20,20 @@ body {
 	right: 0px;
 	top: 0px;
 	border-left: 1px solid black;
+}*/
+
+#rightMenu {
+	width: 200px;
+	height: calc(100% - 50px);
+	background-color: #f5f5dc;
+	position: fixed;
+	right: 0px;
+	top: 0px;
+	border-left: 1px solid black;
+}
+
+#toolsMenu {
+	display: none;
 }
 
 #originalView {

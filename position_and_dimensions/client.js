@@ -10,11 +10,11 @@ var elementCSSRules = "elementCSSRules";
 var cssRules = [];
 
 var getPageWidth = function(){
-	return $(".userpage").width();
+	return $(".userPage").width();
 };
 
 var getPageHeight = function(){
-	return $(".userpage").height();
+	return $(".userPage").height();
 };
 
 var elementDataFormat = {
@@ -61,12 +61,19 @@ var elementDataFormat = {
 				return $(".userPage").height() - this.height() - this.offset().top;
 			}
 		}
+	],
+	"font-size" : [
+		{
+			"property": "font-size",
+			"get": function(){
+				return extractPixelValue(this.css("font-size"));
+			}
+		}
 	]
 };
 
 var getUserPageDimValue = function(relevantPageDim){
 	var userPageObj = $(".userPage");
-	console.log(relevantPageDim);
 	if(relevantPageDim === "pageWidth"){
 		return userPageObj.width();
 	}else if(relevantPageDim === "pageHeight"){
@@ -74,7 +81,7 @@ var getUserPageDimValue = function(relevantPageDim){
 	}else{
 		console.error("Error");
 	}
-}
+};
 
 $(document).ready(function() {
     // Get views from server
@@ -302,7 +309,22 @@ $(document).ready(function() {
 	    	dataChanged = true;
 	    }
 	});
+
+	$( "#slider" ).slider({
+      min: 8,
+      max: 96,
+      slide: function( event, ui ) {
+        $( "#amount" ).val( ui.value  + "px" );
+        $("[elementId=" + currentlySelectedElement + "]").css("font-size", ui.value  + "px");
+	    dataChanged = true;
+      }
+    });
+    //$( "#amount" ).val( $( "#slider" ).slider( "value" ) + "px" );
 });
+
+var extractPixelValue = function(fontSizeString){
+	return fontSizeString.substring(0, fontSizeString.length - 2);
+};
 
 var selectElement = function(element){
 	// Select this element (put box shadow around it)
@@ -316,6 +338,9 @@ var selectElement = function(element){
 	
 	// Ensure tools menu is shown
 	$("#toolsMenu").show();
+	var fontSize = extractPixelValue(element.css("font-size"));
+	$( "#slider" ).slider( "value", fontSize );
+	$( "#amount" ).val( fontSize  + "px" );
 
 	//updateRulesMenu(element);
 };
@@ -336,9 +361,13 @@ var captureElementData = function(){
 		var elementId = parseInt(jqueryUIElement.attr("elementId"));
 		
 		var elementColor = jqueryUIElement.css("background-color");
+		var elementText = jqueryUIElement.text();
 		var uiElementData = {
 			"id": elementId,
-			"color": elementColor
+			"background-color": {
+				"background-color": elementColor
+			},
+			"text": elementText
 		};
 
 		var elementPropertyKeyValues = Object.entries(elementDataFormat);
@@ -365,7 +394,6 @@ var captureElementData = function(){
 		}
 
 		uiElementsData.push(uiElementData);
-		console.log(uiElementData);
 	}
 	return uiElementsData;
 }
@@ -464,7 +492,8 @@ var renderView = function(viewData){
 var createDOMElement = function(elementData){
 	var element = $("<div></div>").attr("id", "element" + elementData["id"]);
 	element.attr("elementId", elementData["id"]);
-	element.css("background-color", elementData["color"]);
+	element.css("background-color", elementData["background-color"]["background-color"]);
+	element.text(elementData["text"]);
 	element.addClass("pageElement");
 	element.addClass("modifiable");
 
@@ -523,5 +552,4 @@ var returnRelevantCSSRule = function(ruleObject){
 			}
 		}
 	}
-	console.log("Error if you got here");
 }

@@ -124,3 +124,7 @@ body {
 #selectedElementRules {
 	display: none;
 }
+
+#slider {
+	margin: 10px;
+}

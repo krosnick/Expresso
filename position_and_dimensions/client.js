@@ -338,6 +338,13 @@ var selectElement = function(element){
 	
 	// Ensure tools menu is shown
 	$("#toolsMenu").show();
+	// Only show font tools menu if the currently selected element has text
+	if(element.text().trim().length > 0){
+		$("#fontTools").show();
+	}else{
+		$("#fontTools").hide();
+	}
+
 	var fontSize = extractPixelValue(element.css("font-size"));
 	$( "#slider" ).slider( "value", fontSize );
 	$( "#amount" ).val( fontSize  + "px" );
@@ -514,15 +521,122 @@ var replaceCSSRules = function(){
 
 		var ruleObject = cssRules[i];
 		// Using cssRules, need to choose the rule that is correct for each object in the list, and then add it to cssRulesString
-		var relevantCSSRule = returnRelevantCSSRule(ruleObject);
+		/*var relevantCSSRule = returnRelevantCSSRule(ruleObject);
 		console.log(relevantCSSRule);
-		cssRulesString += relevantCSSRule;
+		cssRulesString += relevantCSSRule;*/
+		var cssString = generateCSSString(ruleObject);
+		console.log(cssString);
+		cssRulesString += cssString;
 		//cssRulesString += cssRules[i];
 	}
 	$("#" + elementCSSRules).append("<style>" + cssRulesString + "</style>");
 };
 
-var returnRelevantCSSRule = function(ruleObject){
+var generateCSSString = function(ruleObject){
+	
+	/*var cssRulesObj = {
+		"cssRulesList": chosenElementPropertyPattern,
+		"behaviorName": behaviorName,
+		"propertyName": chosenPropertyName,
+		"pageDim": pageDim,
+		"elementId": elementId
+	}*/
+
+	var dimValue = getUserPageDimValue(ruleObject["pageDim"]);
+	console.log(dimValue);
+	var cssRulesList = ruleObject["cssRulesList"];
+	var behaviorName = ruleObject["behaviorName"];
+	var propertyName = ruleObject["propertyName"];
+	var pageDim = ruleObject["pageDim"];
+	var elementId = ruleObject["elementId"];
+	console.log(ruleObject);
+	for(var mediaQueryIndex = 0; mediaQueryIndex < cssRulesList.length; mediaQueryIndex++){
+		var ruleOption = cssRulesList[mediaQueryIndex];
+		var ruleStart = null;
+		var ruleEnd = null;
+		
+		if(mediaQueryIndex > 0){
+			ruleStart = ruleOption["start"];
+		}
+		if(mediaQueryIndex < cssRulesList.length-1){
+			ruleEnd = ruleOption["end"];
+		}
+
+		var m = ruleOption["m"];
+		var b = ruleOption["b"];
+
+		var isRelevantRule = false;
+
+		if(ruleStart === null && ruleEnd === null){
+			isRelevantRule = true;
+		}else if(ruleStart === null){
+			// Check ruleEnd
+			if(dimValue <= ruleEnd){
+				isRelevantRule = true;
+			}
+		}else if(ruleEnd === null){
+			// Check ruleStart
+			if(dimValue >= ruleStart){
+				isRelevantRule = true;
+			}
+		}else{
+			// Check both ruleStart and ruleEnd
+			if(dimValue >= ruleStart && dimValue <= ruleEnd){
+				isRelevantRule = true;
+			}
+		}
+
+		if(isRelevantRule){
+			var computedValue = m * dimValue + b;
+
+			// Construct CSS rule string
+			var singleRule = "#element" + elementId + "{";
+			singleRule += createPropertyValueString(propertyName, computedValue);
+			singleRule += "}";
+			console.log(singleRule);
+			return singleRule;
+		}
+	}
+
+	// generate hard-coded value for this ruleObject
+	// e.g., #element0 { width: 100px }
+
+	// Get current .userPage width/height
+	/*var dimValue = getUserPageDimValue(ruleObject["pageDim"]);
+
+	// Determine which rule the .userPage width/height falls into
+	var ruleList = ruleObject["cssRulesList"];
+	for(var i = 0; i < ruleList.length; i++){
+		var ruleOption = ruleList[i];
+		var ruleStart = ruleOption["start"];
+		var ruleEnd = ruleOption["end"];
+
+		if(ruleStart === null && ruleEnd === null){
+			return ruleOption["cssRuleString"];
+		}else if(ruleStart === null){
+			// Check ruleEnd
+			if(dimValue <= ruleEnd){
+				return ruleOption["cssRuleString"];
+			}
+		}else if(ruleEnd === null){
+			// Check ruleStart
+			if(dimValue >= ruleStart){
+				return ruleOption["cssRuleString"];
+			}
+		}else{
+			// Check both ruleStart and ruleEnd
+			if(dimValue >= ruleStart && dimValue <= ruleEnd){
+				return ruleOption["cssRuleString"];
+			}
+		}
+	}*/
+}
+
+var createPropertyValueString = function(property, value){
+	return "" + property + ": " + value + "px;";
+}
+
+/*var returnRelevantCSSRule = function(ruleObject){
 	// Get current .userPage width/height
 	var dimValue = getUserPageDimValue(ruleObject["pageDim"]);
 
@@ -552,4 +666,4 @@ var returnRelevantCSSRule = function(ruleObject){
 			}
 		}
 	}
-}
+}*/

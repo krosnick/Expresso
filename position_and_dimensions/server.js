@@ -189,7 +189,7 @@ var createPropertyValueString = function(property, value){
 	return "" + property + ": " + value + ";";
 }
 
-var createCSSRule = function(elementRules){
+/*var createCSSRule = function(elementRules){
 	
 	var ruleString = "#element" + elementRules["id"] + "{";
 
@@ -204,7 +204,7 @@ var createCSSRule = function(elementRules){
 	ruleString += "}";
 
 	return ruleString;
-};
+};*/
 
 var generateCSSRulesList = function(elementId, pageDim, behaviorName, propertyName, elementPropertyPattern){
 	var ruleList = [];
@@ -262,7 +262,7 @@ var updateCSSRules = function(){
 
 		var pageDimensions = Object.keys(pageDimensionsAndBehaviorsTheyInfluence);
 
-		console.log(keyframesDataForThisElement);
+		//console.log(keyframesDataForThisElement);
 
 		for(var pageDimIndex = 0; pageDimIndex < pageDimensions.length; pageDimIndex++){
 			var pageDim = pageDimensions[pageDimIndex];
@@ -276,32 +276,45 @@ var updateCSSRules = function(){
 				// maybe need to do some more processing here, or maybe within "determinePattern"
 				// need to consider the possible properties for each element behavior
 
-				var chosenElementPropertyPattern = undefined;
-				var chosenPropertyName = undefined;
+				if(keyframesDataForThisElement[0][behaviorName] !== undefined){
 
-				// Need to consider the multiple properties per behavior, and choose the one with the fewest media queries?
-				
-				var propertiesList = elementDataFormat[behaviorName]["properties"];
-				for(var propertyIndex = 0; propertyIndex < propertiesList.length; propertyIndex++){
-					var propertyName = propertiesList[propertyIndex];
-					// Hacky: Maybe test it out first to see if this property exists in this set of keyframes?
-					if(keyframesDataForThisElement[0][behaviorName][propertyName] !== undefined){
-						var elementPropertyPattern = determinePattern(keyframesDataForThisElement, behaviorName, propertyName, pageDim);
-						if(chosenElementPropertyPattern === undefined || elementPropertyPattern.length < chosenElementPropertyPattern.length){
-							chosenElementPropertyPattern = elementPropertyPattern;
-							chosenPropertyName = propertyName;
+					var chosenElementPropertyPattern = undefined;
+					var chosenPropertyName = undefined;
+
+					// Need to consider the multiple properties per behavior, and choose the one with the fewest media queries?
+					
+					var propertiesList = elementDataFormat[behaviorName]["properties"];
+					for(var propertyIndex = 0; propertyIndex < propertiesList.length; propertyIndex++){
+						var propertyName = propertiesList[propertyIndex];
+						// Hacky: Maybe test it out first to see if this property exists in this set of keyframes?
+						if(keyframesDataForThisElement[0][behaviorName][propertyName] !== undefined){
+							var elementPropertyPattern = determinePattern(keyframesDataForThisElement, behaviorName, propertyName, pageDim);
+							if(chosenElementPropertyPattern === undefined || elementPropertyPattern.length < chosenElementPropertyPattern.length){
+								chosenElementPropertyPattern = elementPropertyPattern;
+								chosenPropertyName = propertyName;
+							}
 						}
 					}
-				}
 
-				var cssRulesList = generateCSSRulesList(elementId, pageDim, behaviorName, chosenPropertyName, chosenElementPropertyPattern);
-				var cssRulesObj = {
-					"cssRulesList": cssRulesList,
-					"behaviorName": behaviorName,
-					"propertyName": chosenPropertyName,
-					"pageDim": pageDim
+					/*var cssRulesList = generateCSSRulesList(elementId, pageDim, behaviorName, chosenPropertyName, chosenElementPropertyPattern);
+					var cssRulesObj = {
+						"cssRulesList": cssRulesList,
+						"behaviorName": behaviorName,
+						"propertyName": chosenPropertyName,
+						"pageDim": pageDim
+					}
+					cssRules.push(cssRulesObj);*/
+
+					var cssRulesObj = {
+						"cssRulesList": chosenElementPropertyPattern,
+						"behaviorName": behaviorName,
+						"propertyName": chosenPropertyName,
+						"pageDim": pageDim,
+						"elementId": elementId
+					}
+					console.log(cssRulesObj);
+					cssRules.push(cssRulesObj);
 				}
-				cssRules.push(cssRulesObj);
 
 			}
 
@@ -484,11 +497,11 @@ var view0Element0 = {
 	},
 	"height": {
 		"height": 250
-	},
+	}/*,
 	"text": "This is a box",
 	"font-size": {
 		"font-size": 16
-	}
+	}*/
 };
 var view0Element1 = {
 	"id": 1,
@@ -507,7 +520,7 @@ var view0Element1 = {
 	"height": {
 		"height": 400
 	},
-	"text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nam at lectus urna duis convallis convallis. Morbi non arcu risus quis. Sit amet consectetur adipiscing elit duis tristique sollicitudin nibh. Nec feugiat nisl pretium fusce id. Faucibus vitae aliquet nec ullamcorper sit amet. Hac habitasse platea dictumst vestibulum rhoncus est. Volutpat diam ut venenatis tellus. Consectetur adipiscing elit ut aliquam purus sit amet luctus. Vulputate mi sit amet mauris commodo quis imperdiet massa. Metus aliquam eleifend mi in nulla posuere sollicitudin. Arcu vitae elementum curabitur vitae nunc. Ac tortor vitae purus faucibus. Aenean et tortor at risus viverra adipiscing at.",
+	"text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nam at lectus urna duis convallis convallis. Morbi non arcu risus quis. Sit amet consectetur adipiscing elit duis tristique sollicitudin nibh. Nec feugiat nisl pretium fusce id.",
 	"font-size": {
 		"font-size": 16
 	}
@@ -534,11 +547,11 @@ var view1Element0 = {
 	},
 	"height": {
 		"height": 250
-	},
+	}/*,
 	"text": "This is a box",
 	"font-size": {
 		"font-size": 16
-	}
+	}*/
 };
 var view1Element1 = {
 	"id": 1,
@@ -557,7 +570,7 @@ var view1Element1 = {
 	"height": {
 		"height": 400
 	},
-	"text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nam at lectus urna duis convallis convallis. Morbi non arcu risus quis. Sit amet consectetur adipiscing elit duis tristique sollicitudin nibh. Nec feugiat nisl pretium fusce id. Faucibus vitae aliquet nec ullamcorper sit amet. Hac habitasse platea dictumst vestibulum rhoncus est. Volutpat diam ut venenatis tellus. Consectetur adipiscing elit ut aliquam purus sit amet luctus. Vulputate mi sit amet mauris commodo quis imperdiet massa. Metus aliquam eleifend mi in nulla posuere sollicitudin. Arcu vitae elementum curabitur vitae nunc. Ac tortor vitae purus faucibus. Aenean et tortor at risus viverra adipiscing at.",
+	"text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nam at lectus urna duis convallis convallis. Morbi non arcu risus quis. Sit amet consectetur adipiscing elit duis tristique sollicitudin nibh. Nec feugiat nisl pretium fusce id.",
 	"font-size": {
 		"font-size": 16
 	}

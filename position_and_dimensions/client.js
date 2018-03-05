@@ -62,14 +62,60 @@ var elementDataFormat = {
 			}
 		}
 	],
-	"font-size" : [
+	"font-size": [
 		{
 			"property": "font-size",
 			"get": function(){
 				return extractPixelValue(this.css("font-size"));
 			}
 		}
+	],
+	"background-color": [
+		{
+			"property": "background-color",
+			"get": function(){
+				return this.css("background-color");
+			}
+		}
 	]
+};
+
+/*var propertyToCSSStringFunction = {
+	"width": createSingleAttributeCSSString,
+	"height": createSingleAttributeCSSString,
+	"left": createSingleAttributeCSSString,
+	"right": createSingleAttributeCSSString,
+	"top": createSingleAttributeCSSString,
+	"bottom": createSingleAttributeCSSString,
+	"font-size": createSingleAttributeCSSString,
+	"background-color": createRGBCSSString
+};*/
+
+var propertyToCSSStringFunction = {
+	width: function(ruleObject, dimensionValue, elementId, propertyName){
+		return createSingleAttributeCSSString(ruleObject, dimensionValue, elementId, propertyName);
+	},
+	"height": function(ruleObject, dimensionValue, elementId, propertyName){
+		return createSingleAttributeCSSString(ruleObject, dimensionValue, elementId, propertyName);
+	},
+	"left": function(ruleObject, dimensionValue, elementId, propertyName){
+		return createSingleAttributeCSSString(ruleObject, dimensionValue, elementId, propertyName);
+	},
+	"right": function(ruleObject, dimensionValue, elementId, propertyName){
+		return createSingleAttributeCSSString(ruleObject, dimensionValue, elementId, propertyName);
+	},
+	"top": function(ruleObject, dimensionValue, elementId, propertyName){
+		return createSingleAttributeCSSString(ruleObject, dimensionValue, elementId, propertyName);
+	},
+	"bottom": function(ruleObject, dimensionValue, elementId, propertyName){
+		return createSingleAttributeCSSString(ruleObject, dimensionValue, elementId, propertyName);
+	},
+	"font-size": function(ruleObject, dimensionValue, elementId, propertyName){
+		return createSingleAttributeCSSString(ruleObject, dimensionValue, elementId, propertyName);
+	},
+	"background-color": function(ruleObject, dimensionValue, elementId, propertyName){
+		return createRGBCSSString(ruleObject, dimensionValue, elementId, propertyName);
+	}
 };
 
 var getUserPageDimValue = function(relevantPageDim){
@@ -302,6 +348,10 @@ $(document).ready(function() {
     $("#colorpicker").spectrum({
 	    showButtons: false,
 	    allowEmpty: true,
+	    showPalette: true,
+	    showSelectionPalette: true,
+	    palette: [ ],
+	    localStorageKey: "spectrum.homepage",
 	    move: function(color) {
 	    	// update selected element color
 	    	var hexColorString = color.toHexString();
@@ -369,11 +419,15 @@ var captureElementData = function(){
 		
 		var elementColor = jqueryUIElement.css("background-color");
 		var elementText = jqueryUIElement.text();
-		var uiElementData = {
+		/*var uiElementData = {
 			"id": elementId,
 			"background-color": {
 				"background-color": elementColor
 			},
+			"text": elementText
+		};*/
+		var uiElementData = {
+			"id": elementId,
 			"text": elementText
 		};
 
@@ -499,7 +553,7 @@ var renderView = function(viewData){
 var createDOMElement = function(elementData){
 	var element = $("<div></div>").attr("id", "element" + elementData["id"]);
 	element.attr("elementId", elementData["id"]);
-	element.css("background-color", elementData["background-color"]["background-color"]);
+	//element.css("background-color", elementData["background-color"]["background-color"]);
 	element.text(elementData["text"]);
 	element.addClass("pageElement");
 	element.addClass("modifiable");
@@ -532,16 +586,7 @@ var replaceCSSRules = function(){
 	$("#" + elementCSSRules).append("<style>" + cssRulesString + "</style>");
 };
 
-var generateCSSString = function(ruleObject){
-	
-	/*var cssRulesObj = {
-		"cssRulesList": chosenElementPropertyPattern,
-		"behaviorName": behaviorName,
-		"propertyName": chosenPropertyName,
-		"pageDim": pageDim,
-		"elementId": elementId
-	}*/
-
+/*var generateCSSString = function(ruleObject){
 	var dimValue = getUserPageDimValue(ruleObject["pageDim"]);
 	console.log(dimValue);
 	var cssRulesList = ruleObject["cssRulesList"];
@@ -597,39 +642,108 @@ var generateCSSString = function(ruleObject){
 			return singleRule;
 		}
 	}
+}*/
 
-	// generate hard-coded value for this ruleObject
-	// e.g., #element0 { width: 100px }
+var createSingleAttributeCSSString = function(ruleObject, dimensionValue, elementId, propertyName){
+	var m = ruleObject["m"];
+	var b = ruleObject["b"];
+	var computedValue = m * dimensionValue + b;
 
-	// Get current .userPage width/height
-	/*var dimValue = getUserPageDimValue(ruleObject["pageDim"]);
+	// Construct CSS rule string
+	var singleRule = "#element" + elementId + "{";
+	//singleRule += createPropertyValueString(propertyName, computedValue);
+	singleRule += "" + propertyName + ": " + computedValue + "px;";
+	singleRule += "}";
+	console.log(singleRule);
+	return singleRule;
+}
 
-	// Determine which rule the .userPage width/height falls into
-	var ruleList = ruleObject["cssRulesList"];
-	for(var i = 0; i < ruleList.length; i++){
-		var ruleOption = ruleList[i];
-		var ruleStart = ruleOption["start"];
-		var ruleEnd = ruleOption["end"];
+var createRGBCSSString = function(ruleObject, dimensionValue, elementId, propertyName){
+	var rData = ruleObject["r"];
+	var gData = ruleObject["g"];
+	var bData = ruleObject["b"];
+
+	var rComputedValue = postProcessRGBValue(rData["m"] * dimensionValue + rData["b"]);
+	var gComputedValue = postProcessRGBValue(gData["m"] * dimensionValue + gData["b"]);
+	var bComputedValue = postProcessRGBValue(bData["m"] * dimensionValue + bData["b"]);
+	
+
+
+	var rgbString = "rgb(" + rComputedValue + ", " + gComputedValue + ", " + bComputedValue + ")";
+
+	var rgbRule = "#element" + elementId + "{";
+	//rgbRule += createPropertyValueString(propertyName, rgbString);
+	rgbRule += "" + propertyName + ": " + rgbString + ";";
+	rgbRule += "}";
+	console.log(rgbRule);
+	return rgbRule;
+}
+
+var postProcessRGBValue = function(value){
+	// Make an int, bound to [0, 255]
+	return Math.min(Math.max(Math.round(value), 0), 255);
+};
+
+var generateCSSString = function(ruleObject){
+	var dimValue = getUserPageDimValue(ruleObject["pageDim"]);
+	console.log(dimValue);
+	var cssRulesList = ruleObject["cssRulesList"];
+	var behaviorName = ruleObject["behaviorName"];
+	var propertyName = ruleObject["propertyName"];
+	var pageDim = ruleObject["pageDim"];
+	var elementId = ruleObject["elementId"];
+	console.log(ruleObject);
+	for(var mediaQueryIndex = 0; mediaQueryIndex < cssRulesList.length; mediaQueryIndex++){
+		var ruleOption = cssRulesList[mediaQueryIndex];
+		var ruleStart = null;
+		var ruleEnd = null;
+		
+		if(mediaQueryIndex > 0){
+			ruleStart = ruleOption["start"];
+		}
+		if(mediaQueryIndex < cssRulesList.length-1){
+			ruleEnd = ruleOption["end"];
+		}
+
+		var isRelevantRule = false;
 
 		if(ruleStart === null && ruleEnd === null){
-			return ruleOption["cssRuleString"];
+			isRelevantRule = true;
 		}else if(ruleStart === null){
 			// Check ruleEnd
 			if(dimValue <= ruleEnd){
-				return ruleOption["cssRuleString"];
+				isRelevantRule = true;
 			}
 		}else if(ruleEnd === null){
 			// Check ruleStart
 			if(dimValue >= ruleStart){
-				return ruleOption["cssRuleString"];
+				isRelevantRule = true;
 			}
 		}else{
 			// Check both ruleStart and ruleEnd
 			if(dimValue >= ruleStart && dimValue <= ruleEnd){
-				return ruleOption["cssRuleString"];
+				isRelevantRule = true;
 			}
 		}
-	}*/
+		console.log("isRelevantRule: " + isRelevantRule);
+		if(isRelevantRule){
+			var cssStringFunction = propertyToCSSStringFunction[propertyName];
+			var cssString = cssStringFunction(ruleOption, dimValue, elementId, propertyName);
+			console.log(cssString);
+			return cssString;
+			/*// This part will be different for every property (or each property will have a function for this)
+			var m = ruleOption["m"];
+			var b = ruleOption["b"];
+			var computedValue = m * dimValue + b;
+
+			// Construct CSS rule string
+			var singleRule = "#element" + elementId + "{";
+			singleRule += createPropertyValueString(propertyName, computedValue);
+			singleRule += "}";
+			console.log(singleRule);
+			return singleRule;*/
+		}
+	}
 }
 
 var createPropertyValueString = function(property, value){

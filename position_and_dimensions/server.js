@@ -107,6 +107,27 @@ app.listen(8080);
 
 // ------------ Helpers ------------
 
+/*var convertClientDataToInts = function(viewObj){
+	var elementsData = viewObj["elements"];
+	for(var i = 0; i < elementsData.length; i++){
+		var element = elementsData[i];
+		var elementBehaviorKeyValues = Object.entries(elementDataFormat);
+		for(var behaviorIndex = 0; behaviorIndex < elementBehaviorKeyValues.length; behaviorIndex++){
+			var behaviorKeyAndValue = elementBehaviorKeyValues[behaviorIndex];
+			var behaviorName = behaviorKeyAndValue[0];
+			
+			var elementBehaviorDictOfOptions = element[behaviorName];
+			var elementBehaviorListOfOptions = Object.keys(elementBehaviorDictOfOptions);
+			for(var optionIndex = 0; optionIndex < elementBehaviorListOfOptions.length; optionIndex++){
+				var propertyOptionName = elementBehaviorListOfOptions[optionIndex];
+				var propertyOptionValue = elementBehaviorDictOfOptions[propertyOptionName];
+				console.log(propertyOptionValue);
+				element[behaviorName][propertyOptionName] = parseInt(propertyOptionValue);
+			}
+		}
+	}
+};*/
+
 var convertClientDataToInts = function(viewObj){
 	var elementsData = viewObj["elements"];
 	for(var i = 0; i < elementsData.length; i++){
@@ -121,7 +142,11 @@ var convertClientDataToInts = function(viewObj){
 			for(var optionIndex = 0; optionIndex < elementBehaviorListOfOptions.length; optionIndex++){
 				var propertyOptionName = elementBehaviorListOfOptions[optionIndex];
 				var propertyOptionValue = elementBehaviorDictOfOptions[propertyOptionName];
-				element[behaviorName][propertyOptionName] = parseInt(propertyOptionValue);
+				if(typeof(propertyOptionValue) === "string"){
+					var parseClientDataFunc = elementDataFormat[behaviorName]["parseClientData"];
+					var parsedClientData = parseClientDataFunc(propertyOptionValue);
+					element[behaviorName][propertyOptionName] = parsedClientData;
+				}
 			}
 		}
 	}
@@ -262,8 +287,6 @@ var updateCSSRules = function(){
 
 		var pageDimensions = Object.keys(pageDimensionsAndBehaviorsTheyInfluence);
 
-		//console.log(keyframesDataForThisElement);
-
 		for(var pageDimIndex = 0; pageDimIndex < pageDimensions.length; pageDimIndex++){
 			var pageDim = pageDimensions[pageDimIndex];
 			var compareFunc = pageDimensionsAndBehaviorsTheyInfluence[pageDim]["compareFunc"];
@@ -312,7 +335,7 @@ var updateCSSRules = function(){
 						"pageDim": pageDim,
 						"elementId": elementId
 					}
-					console.log(cssRulesObj);
+					//console.log(cssRulesObj);
 					cssRules.push(cssRulesObj);
 				}
 
@@ -345,19 +368,49 @@ var comparePageHeights = function(a, b) {
 };
 
 // axisName is "pageWidth" or "pageHeight"
-var determinePattern = function(dataPoints, behaviorName, attributeName, axisName){
+var determinePattern = function(dataPoints, behaviorName, propertyName, axisName){
 
 	var elementSelector = dataPoints[0]["id"];
 	var chunkLineFitData = [];
 
 	if(dataPoints.length == 1){
 		// If one point only, assume properties will remain constant throughout all viewport sizes
-		var m = 0;
-		var b = dataPoints[0][behaviorName][attributeName];
+
+		var chunkStart = dataPoints[0][axisName];
+		var chunkEnd = dataPoints[0][axisName];
+
+		/*var m = 0;
+		var b = dataPoints[0][behaviorName][propertyName];
 		
 		var chunkStart = dataPoints[0][axisName];
 		var chunkEnd = dataPoints[0][axisName];
-		chunkLineFitData.push( { "m": m, "b": b, "start": chunkStart, "end": chunkEnd, "elementSelector": elementSelector } );
+		chunkLineFitData.push( { "m": m, "b": b, "start": chunkStart, "end": chunkEnd, "elementSelector": elementSelector } );*/
+
+
+		if(typeof(dataPoints[0][behaviorName][propertyName]) === "object"){
+			var valueAttributes = Object.keys(dataPoints[0][behaviorName][propertyName]);
+			var fitDataObject = {
+				"start": chunkStart,
+				"end": chunkEnd,
+				"elementSelector": elementSelector
+			};
+			for(var attrIndex = 0; attrIndex < valueAttributes.length; attrIndex++){
+				var attributeName = valueAttributes[attrIndex];
+				// compute y=mx+b fit for attribute; then create data to add to chunkLineFitData
+				var m = 0;
+				var b = dataPoints[0][behaviorName][propertyName][attributeName];
+				var lineOfBestFit = { "m": m, "b": b, "start": chunkStart, "end": chunkEnd, "elementSelector": elementSelector };
+				fitDataObject[attributeName] = lineOfBestFit;
+			}
+			chunkLineFitData.push(fitDataObject);
+		}else{
+			//var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName], point2[axisName], point2[behaviorName][propertyName], chunkStart, chunkEnd, elementSelector);
+			var m = 0;
+			var b = dataPoints[0][behaviorName][propertyName];
+			var lineOfBestFit = { "m": m, "b": b, "start": chunkStart, "end": chunkEnd, "elementSelector": elementSelector };
+			chunkLineFitData.push(lineOfBestFit);
+		}
+
 	}else{
 		// sort dataPoints by pageWidth value
 		dataPoints.sort(comparePageWidths);
@@ -369,20 +422,42 @@ var determinePattern = function(dataPoints, behaviorName, attributeName, axisNam
 
 		var slopes = [];
 
+		/*// compute slopes
+		for(var i = 1; i < dataPoints.length; i++){
+			var point1 = dataPoints[i-1];
+			var point2 = dataPoints[i];
+
+			var leftPageWidthSlope = (point2[behaviorName][propertyName] - point1[behaviorName][propertyName])/(point2[axisName] - point1[axisName]);
+			
+			slopes.push(leftPageWidthSlope);
+		}*/
+
 		// compute slopes
 		for(var i = 1; i < dataPoints.length; i++){
 			var point1 = dataPoints[i-1];
 			var point2 = dataPoints[i];
 
-			var leftPageWidthSlope = (point2[behaviorName][attributeName] - point1[behaviorName][attributeName])/(point2[axisName] - point1[axisName]);
+			var slope;
+
+			if(typeof(point1[behaviorName][propertyName]) === "object"){
+				// For each key in the object, compute a slope. Put in an object or array?
+				slope = {};
+				var valueAttributes = Object.keys(point1[behaviorName][propertyName]);
+				for(var attrIndex = 0; attrIndex < valueAttributes.length; attrIndex++){
+					var attributeName = valueAttributes[attrIndex];
+					slope[attributeName] = (point2[behaviorName][propertyName][attributeName] - point1[behaviorName][propertyName][attributeName])/(point2[axisName] - point1[axisName]);
+				}
+			}else{
+				slope = (point2[behaviorName][propertyName] - point1[behaviorName][propertyName])/(point2[axisName] - point1[axisName]);
+			}
 			
-			slopes.push(leftPageWidthSlope);
+			slopes.push(slope);
 		}
 
 		var chunkStartIndices = [];
 		chunkStartIndices.push(0);
 
-		// compare slopes, identify chunks
+		/*// compare slopes, identify chunks
 		for(var i = 1; i < slopes.length; i++){
 			var slope1 = slopes[i-1];
 			var slope2 = slopes[i];
@@ -392,9 +467,40 @@ var determinePattern = function(dataPoints, behaviorName, attributeName, axisNam
 				// Different chunk
 				chunkStartIndices.push(i);
 			}
+		}*/
+
+		// compare slopes, identify chunks
+		for(var i = 1; i < slopes.length; i++){
+			var slope1 = slopes[i-1];
+			var slope2 = slopes[i];
+			if(typeof(slope1) === "object"){
+				var allAttributesSame = true;
+				var valueAttributes = Object.keys(slope1);
+				for(var attrIndex = 0; attrIndex < valueAttributes.length; attrIndex++){
+					var attributeName = valueAttributes[attrIndex];
+					if(slope1[attributeName] === slope2[attributeName]){
+						// Same chunk, nothing to do
+					}else{
+						allAttributesSame = false;
+					}
+				}
+				if(allAttributesSame){
+					// Same chunk, nothing to do
+				}else{
+					// Different chunk
+					chunkStartIndices.push(i);
+				}
+			}else{
+				if(slope1 == slope2){
+				// Same chunk, nothing to do
+				}else{
+					// Different chunk
+					chunkStartIndices.push(i);
+				}
+			}
 		}
 		
-		for(var i = 0; i < chunkStartIndices.length; i++){
+		/*for(var i = 0; i < chunkStartIndices.length; i++){
 			// Choose any 2 arbitrary points in the chunk (for ease, just the first two), and fit a line to them
 			// equation: y = m*x + c
 			// matrix multiplication for this? or just quick formula
@@ -403,7 +509,7 @@ var determinePattern = function(dataPoints, behaviorName, attributeName, axisNam
 			var point1 = dataPoints[pointIndex1];
 			var point2 = dataPoints[pointIndex2];
 
-			var pointData = [ [point1[axisName], point1[behaviorName][attributeName]], [point2[axisName], point2[behaviorName][attributeName]] ];
+			var pointData = [ [point1[axisName], point1[behaviorName][propertyName]], [point2[axisName], point2[behaviorName][propertyName]] ];
 			result = regression.linear(pointData);
 			var m = result.equation[0];
 			var b = result.equation[1];
@@ -417,10 +523,60 @@ var determinePattern = function(dataPoints, behaviorName, attributeName, axisNam
 			}
 
 			chunkLineFitData.push( { "m": m, "b": b, "start": chunkStart, "end": chunkEnd, "elementSelector": elementSelector } );
+		}*/
+
+		for(var i = 0; i < chunkStartIndices.length; i++){
+			// Choose any 2 arbitrary points in the chunk (for ease, just the first two), and fit a line to them
+			// equation: y = m*x + c
+			// matrix multiplication for this? or just quick formula
+			var pointIndex1 = chunkStartIndices[i];
+			var pointIndex2 = pointIndex1 + 1;
+			var point1 = dataPoints[pointIndex1];
+			var point2 = dataPoints[pointIndex2];
+
+			var chunkStart = point1[axisName];
+			var chunkEnd;
+			if(i < chunkStartIndices.length - 1){
+				chunkEnd = dataPoints[chunkStartIndices[i+1]][axisName];
+			}else{
+				chunkEnd = dataPoints[dataPoints.length - 1][axisName];
+			}
+
+			// what should be the format of this?
+			//var fitDataObject = {};
+
+			if(typeof(point1[behaviorName][propertyName]) === "object"){
+				var valueAttributes = Object.keys(point1[behaviorName][propertyName]);
+				var fitDataObject = {
+					"start": chunkStart,
+					"end": chunkEnd,
+					"elementSelector": elementSelector
+				};
+				for(var attrIndex = 0; attrIndex < valueAttributes.length; attrIndex++){
+					var attributeName = valueAttributes[attrIndex];
+					// compute y=mx+b fit for attribute; then create data to add to chunkLineFitData
+					var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName][attributeName], point2[axisName], point2[behaviorName][propertyName][attributeName], chunkStart, chunkEnd, elementSelector);
+					fitDataObject[attributeName] = lineOfBestFit;
+				}
+				console.log(fitDataObject);
+				chunkLineFitData.push(fitDataObject);
+			}else{
+				var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName], point2[axisName], point2[behaviorName][propertyName], chunkStart, chunkEnd, elementSelector);
+				chunkLineFitData.push(lineOfBestFit);
+			}
 		}
 	}
 
 	return chunkLineFitData;
+};
+
+var computeLineOfBestFit = function(axisVal1, attributeVal1, axisVal2, attributeVal2, chunkStart, chunkEnd, elementSelector){
+	var pointData = [ [axisVal1, attributeVal1], [axisVal2, attributeVal2] ];
+	result = regression.linear(pointData);
+	var m = result.equation[0];
+	var b = result.equation[1];
+	var lineOfBestFit = { "m": m, "b": b, "start": chunkStart, "end": chunkEnd, "elementSelector": elementSelector };
+	return lineOfBestFit;
 };
 
 // ------------ Constants ------------
@@ -430,7 +586,8 @@ var pageDimensionsAndBehaviorsTheyInfluence = {
 	"pageWidth": {
 		"compareFunc": comparePageWidths,
 		/*"behaviorsInfluenced": ["width", "x"],*/
-		"behaviorsInfluenced": ["width", "x", "font-size"],
+		/*"behaviorsInfluenced": ["width", "x", "font-size"],*/
+		"behaviorsInfluenced": ["width", "x", "font-size", "background-color"],
 		"mediaMaxProperty": "max-width",
 		"mediaMinProperty": "min-width",
 	},
@@ -445,23 +602,61 @@ var pageDimensionsAndBehaviorsTheyInfluence = {
 var elementDataFormat = {
 	"width": {
 		"pageDimension": "pageWidth",
-		"properties": ["width"]
+		"properties": ["width"],
+		parseClientData: function(clientString){
+			return parseInt(clientString);
+		}
 	},
 	"height": {
 		"pageDimension": "pageHeight",
-		"properties": ["height"]
+		"properties": ["height"],
+		parseClientData: function(clientString){
+			return parseInt(clientString);
+		}
 	},
 	"x": {
 		"pageDimension": "pageWidth",
-		"properties": ["left", "right"]
+		"properties": ["left", "right"],
+		parseClientData: function(clientString){
+			return parseInt(clientString);
+		}
 	},
 	"y": {
 		"pageDimension": "pageHeight",
-		"properties": ["top", "bottom"]
+		"properties": ["top", "bottom"],
+		parseClientData: function(clientString){
+			return parseInt(clientString);
+		}
 	},
 	"font-size": {
 		"pageDimension": "pageWidth",
-		"properties": ["font-size"]
+		"properties": ["font-size"],
+		parseClientData: function(clientString){
+			return parseInt(clientString);
+		}
+	},
+	"background-color": {
+		"pageDimension": "pageWidth",
+		"properties": ["background-color"],
+		parseClientData: function(clientString){
+			//return parseInt(clientString);
+			// extract from rgb(r, g, b)
+			var indexOfOpenParen = clientString.indexOf("(");
+			var indexOfFirstComma = clientString.indexOf(",", indexOfOpenParen+1);
+			var indexOfSecondComma = clientString.indexOf(",", indexOfFirstComma+1);
+			var indexOfCloseParen = clientString.indexOf(")");
+
+			var rString = clientString.substring(indexOfOpenParen + 1, indexOfFirstComma);
+			var gString = clientString.substring(indexOfFirstComma + 1, indexOfSecondComma);
+			var bString = clientString.substring(indexOfSecondComma + 1, indexOfCloseParen);
+			
+			var rgbObject = {
+				"r": parseInt(rString),
+				"g": parseInt(gString),
+				"b": parseInt(bString)
+			};
+			return rgbObject;
+		}
 	}
 };
 
@@ -483,8 +678,15 @@ var viewCounter = 0;
 
 var view0Element0 = {
 	"id": 0,
-	"background-color": {
+	/*"background-color": {
 		"background-color": "blue"
+	},*/
+	"background-color": {
+		"background-color": {
+			"r": 0,
+			"g": 0,
+			"b": 255
+		}
 	},
 	"x": {
 		"left": 100
@@ -505,8 +707,15 @@ var view0Element0 = {
 };
 var view0Element1 = {
 	"id": 1,
-	"background-color": {
+	/*"background-color": {
 		"background-color": "red"
+	},*/
+	"background-color": {
+		"background-color": {
+			"r": 255,
+			"g": 0,
+			"b": 0
+		}
 	},
 	"x": {
 		"left": 600
@@ -533,8 +742,15 @@ views[view0["id"]] = view0;
 
 var view1Element0 = {
 	"id": 0,
-	"background-color": {
+	/*"background-color": {
 		"background-color": "blue"
+	},*/
+	"background-color": {
+		"background-color": {
+			"r": 0,
+			"g": 0,
+			"b": 255
+		}
 	},
 	"x": {
 		"left": 100
@@ -555,8 +771,15 @@ var view1Element0 = {
 };
 var view1Element1 = {
 	"id": 1,
-	"background-color": {
+	/*"background-color": {
 		"background-color": "red"
+	},*/
+	"background-color": {
+		"background-color": {
+			"r": 255,
+			"g": 0,
+			"b": 0
+		}
 	},
 	"x": {
 		"left": 600
@@ -575,6 +798,8 @@ var view1Element1 = {
 		"font-size": 16
 	}
 };
+
+
 
 // Rules
 var elementRules = {};

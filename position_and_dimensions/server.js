@@ -4,6 +4,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var regression = require('regression');
+var fs = require('fs');
 
 var app = express();
 
@@ -23,7 +24,7 @@ app.get('/',function(req,res){
 app.get('/currentData',function(req,res){
 	res.json({
 		"views": Object.values(views),
-		"elementRules": elementRules,
+		/*"elementRules": elementRules,*/
 		"cssRules": cssRules
 	});
 });
@@ -32,10 +33,12 @@ app.post('/cloneOriginal', function(req, res) {
 	var clonedView = cloneViewObj();
 	views[clonedView["id"]] = clonedView;
 	
+	writeDataToJSONFile();
+	
 	// Send back to client
 	res.json({
-		"view": clonedView,
-		"elementRules": elementRules
+		"view": clonedView/*,
+		"elementRules": elementRules*/
 	});
 });
 
@@ -53,6 +56,8 @@ app.post('/deleteKeyframe', function(req, res){
 		convertClientDataToInts(views[viewId]);
 	}
 
+	writeDataToJSONFile();
+
 	// Based on the remaining keyframes, should update CSS rules
 	updateCSSRules();
 
@@ -67,8 +72,8 @@ app.post('/view', function(req, res){
 
 	var viewId = parseInt(req.body.newViewId);
 	res.json({
-		"view": views[viewId],
-		"elementRules": elementRules
+		"view": views[viewId]/*,
+		"elementRules": elementRules*/
 	});
 });
 
@@ -82,6 +87,8 @@ app.post("/updateData", function(req, res){
 		convertClientDataToInts(views[viewId]);
 	}
 	
+	writeDataToJSONFile();
+
 	// Based on all keyframes, should update element and css rules here
 	updateCSSRules();
 	
@@ -92,7 +99,7 @@ app.post("/updateData", function(req, res){
 });
 
 app.post("/updateRules", function(req, res){
-	elementRules = req.body.rules;
+	//elementRules = req.body.rules;
 	
 	updateCSSRules();
 	
@@ -148,6 +155,16 @@ var updateElementAndPageData = function(viewObj){
 	if(viewElementsData){ // if undefined, then no updates have been made
 		oldViewServerObj["elements"] = viewElementsData;
 	}
+};
+
+var writeDataToJSONFile = function(){
+	//dataFile
+	var dataToWrite = { "keyframes": views };
+	var dataString = JSON.stringify(dataToWrite);
+	fs.writeFile(dataFile, dataString, function(err){
+		console.log("Data written");
+	});
+
 };
 
 var createViewObj = function(pageWidth, pageHeight){
@@ -570,16 +587,30 @@ for(var behaviorObjIndex = 0; behaviorObjIndex < behaviorObjList.length; behavio
 }
 
 // ------------ State ------------
-// View raw data
-//var views = [];
+var views = {};
+var viewCounter;
+
+// ------------ Render given webpage data ------------
+var dataFile = process.argv[2];
+// Read in file and store data in "views"
+fs.readFile(dataFile, function(err, data){
+	if(err){
+        console.log(err);
+    }else{
+    	var jsonFileData = JSON.parse(data);
+    	console.log(jsonFileData);
+    	views = jsonFileData["keyframes"];
+    	viewCounter = Object.keys(views).length;
+    	updateCSSRules();
+    }
+});
+
+/*// View raw data
 var views = {};
 var viewCounter = 0;
 
 var view0Element0 = {
 	"id": 0,
-	/*"background-color": {
-		"background-color": "blue"
-	},*/
 	"background-color": {
 		"background-color": {
 			"r": 0,
@@ -598,17 +629,10 @@ var view0Element0 = {
 	},
 	"height": {
 		"height": 250
-	}/*,
-	"text": "This is a box",
-	"font-size": {
-		"font-size": 16
-	}*/
+	}
 };
 var view0Element1 = {
 	"id": 1,
-	/*"background-color": {
-		"background-color": "red"
-	},*/
 	"background-color": {
 		"background-color": {
 			"r": 255,
@@ -641,9 +665,6 @@ views[view0["id"]] = view0;
 
 var view1Element0 = {
 	"id": 0,
-	/*"background-color": {
-		"background-color": "blue"
-	},*/
 	"background-color": {
 		"background-color": {
 			"r": 0,
@@ -662,17 +683,10 @@ var view1Element0 = {
 	},
 	"height": {
 		"height": 250
-	}/*,
-	"text": "This is a box",
-	"font-size": {
-		"font-size": 16
-	}*/
+	}
 };
 var view1Element1 = {
 	"id": 1,
-	/*"background-color": {
-		"background-color": "red"
-	},*/
 	"background-color": {
 		"background-color": {
 			"r": 255,
@@ -706,4 +720,4 @@ var elementRules = {};
 
 // List of CSS-style rules as strings, e.g. "#element0 { width: 5px; height: 10px; position: absolute; left: 20px}"
 var cssRules = [];
-updateCSSRules();
+updateCSSRules();*/

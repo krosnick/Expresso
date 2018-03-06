@@ -3,7 +3,7 @@ var dataChanged = false;
 var elementPositionInfoId = "elementPositionInfo";
 var elementDimensionsInfoId = "elementDimensionsInfo";
 var pageDimensionsInfoId = "pageDimensionsInfo";
-var allElementRules;
+//var allElementRules;
 var emptyElementName = "(select an element to see)";
 var currentlySelectedElement;
 var elementCSSRules = "elementCSSRules";
@@ -126,7 +126,7 @@ $(document).ready(function() {
         url: "/currentData"
     }).done(function(data) {
     	var views = data["views"];
-    	allElementRules = data["elementRules"];
+    	//allElementRules = data["elementRules"];
     	cssRules = data["cssRules"];
     	// Show menu of views at the bottom
     	views.forEach(function(view){
@@ -153,7 +153,7 @@ $(document).ready(function() {
 	        url: "/cloneOriginal"
 	    }).done(function(data) {
 
-	    	allElementRules = data["elementRules"];
+	    	//allElementRules = data["elementRules"];
 
 	    	var newCloneId = data["view"]["id"];
 	    	// Add link for this new clone
@@ -226,7 +226,6 @@ $(document).ready(function() {
     	dataChanged = true;
     });
 
-    //$("body").keydown(function(event){
     $("body").on("keydown", ".pageElement", function(event){
     	// If an element is currently selected, move it in the direction of pressed arrow key
     	if(currentlySelectedElement){
@@ -480,7 +479,7 @@ var updateView = function(viewId){
         url: "/view",
         data: viewData
     }).done(function(data) {
-    	allElementRules = data["elementRules"];
+    	//allElementRules = data["elementRules"];
 
     	currentViewId = viewId;
 

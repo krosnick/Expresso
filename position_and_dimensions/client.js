@@ -410,9 +410,11 @@ var captureElementData = function(){
 		
 		var elementColor = jqueryUIElement.css("background-color");
 		var elementText = jqueryUIElement.text();
+		var imageSource = jqueryUIElement.css("background-image");
 		var uiElementData = {
 			"id": elementId,
-			"text": elementText
+			"text": elementText,
+			"image": imageSource
 		};
 
 		var elementPropertyKeyValues = Object.entries(elementDataFormat);
@@ -533,6 +535,8 @@ var createDOMElement = function(elementData){
 	element.attr("elementId", elementData["id"]);
 	//element.css("background-color", elementData["background-color"]["background-color"]);
 	element.text(elementData["text"]);
+	element.css("background-image", elementData["image"]);
+	element.css("background-repeat", "no-repeat");
 	element.addClass("pageElement");
 	element.addClass("modifiable");
 	element.attr("tabindex", elementData["id"]);

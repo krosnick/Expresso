@@ -80,17 +80,6 @@ var elementDataFormat = {
 	]
 };
 
-/*var propertyToCSSStringFunction = {
-	"width": createSingleAttributeCSSString,
-	"height": createSingleAttributeCSSString,
-	"left": createSingleAttributeCSSString,
-	"right": createSingleAttributeCSSString,
-	"top": createSingleAttributeCSSString,
-	"bottom": createSingleAttributeCSSString,
-	"font-size": createSingleAttributeCSSString,
-	"background-color": createRGBCSSString
-};*/
-
 var propertyToCSSStringFunction = {
 	width: function(ruleObject, dimensionValue, elementId, propertyName){
 		return createSingleAttributeCSSString(ruleObject, dimensionValue, elementId, propertyName);
@@ -237,6 +226,37 @@ $(document).ready(function() {
     	dataChanged = true;
     });
 
+    //$("body").keydown(function(event){
+    $("body").on("keydown", ".pageElement", function(event){
+    	// If an element is currently selected, move it in the direction of pressed arrow key
+    	if(currentlySelectedElement){
+    		if(event.originalEvent.which >= 37 && event.originalEvent.which <= 40){
+    			var deltaMagnitude = 4;
+    			if(event.originalEvent.which === 37 || event.originalEvent.which === 39){ // If left/right arrow
+    				var delta;
+    				if(event.originalEvent.which === 37){
+    					delta = -1 * deltaMagnitude;
+    				}else{ // 39
+    					delta = 1 * deltaMagnitude;
+    				}
+    				// Move element appropriately
+    				var currentLeftValue = $("[elementId=" + currentlySelectedElement + "]").offset().left;
+    				$("[elementId=" + currentlySelectedElement + "]").offset({ left: currentLeftValue + delta });
+    			}else{ // If up/down arrow (38 or 40)
+    				var delta;
+    				if(event.originalEvent.which === 38){
+    					delta = -1 * deltaMagnitude;
+    				}else{ // 40
+    					delta = 1 * deltaMagnitude;
+    				}
+    				// Move element appropriately
+    				var currentTopValue = $("[elementId=" + currentlySelectedElement + "]").offset().top;
+    				$("[elementId=" + currentlySelectedElement + "]").offset({ top: currentTopValue + delta });
+    			}
+    			dataChanged = true;
+    		}
+    	}
+    });
 
     // ------------- Behavior on element drag  -------------
     $("body").on("dragstart", ".pageElement", function(event, ui){
@@ -290,37 +310,6 @@ $(document).ready(function() {
     	updatePageDimensionsLabel();
     });
     // ----------------------------------------------------
-
-
-    /*
-    // ------------- Behavior on radio button change -------------
-    $("input[type=radio]").on("change", function(event){
-    	var elementRulesToUpdate = allElementRules[currentlySelectedElement];
-    	var elementProperty = event.target.name;
-    	var elementRuleType = event.target.value;
-    	//var elementRuleValue = event.target["rule-value"];
-    	var elementRuleValue = parseFloat($(event.target).attr("rule-value"));
-    	elementRulesToUpdate[elementProperty]["rule"] = elementRuleType;
-    	elementRulesToUpdate[elementProperty]["value"] = elementRuleValue;
-    	// Where is this value stored? Only directly in HTML text, or can it be stored as an attribute value or in a datastructure?
-
-    	// Need to update value here? Or probably value should be determined on server? For now update value here
-    	// If "ratio" is selected, include percentage; if "constant" is selected, include pixel value
-    	// Later on: Use logic (from processInput.js) to determine pattern, and to determine if rule is inconsistent for all keyframes
-    	
-    	// Send rules back to server
-    	$.ajax({
-	        type: "POST",
-	        url: "/updateRules",
-	        data: {"rules": allElementRules}
-	    }).done(function(data) {
-	    	cssRules = data["cssRules"];
-	    	replaceCSSRules();
-	    });
-    });
-    // -----------------------------------------------------------
-    */
-
 
     $(".userPage").resizable();
     
@@ -400,6 +389,9 @@ var selectElement = function(element){
 	$( "#amount" ).val( fontSize  + "px" );
 
 	//updateRulesMenu(element);
+
+	// Give focus to the element
+	$("[elementId=" + currentlySelectedElement + "]").focus();
 };
 
 var updatePageDimensionsLabel = function(){
@@ -419,13 +411,6 @@ var captureElementData = function(){
 		
 		var elementColor = jqueryUIElement.css("background-color");
 		var elementText = jqueryUIElement.text();
-		/*var uiElementData = {
-			"id": elementId,
-			"background-color": {
-				"background-color": elementColor
-			},
-			"text": elementText
-		};*/
 		var uiElementData = {
 			"id": elementId,
 			"text": elementText
@@ -444,14 +429,8 @@ var captureElementData = function(){
 				var optionData = propertyDataList[optionIndex];
 				var propertyName = optionData["property"];
 				var propertyValue = (optionData["get"]).call(jqueryUIElement);
-				//var propertyObj = {};
 				uiElementData[behaviorName][propertyName] = propertyValue;
-				//propertyObj[propertyName] = propertyValue;
-				//uiElementData[behaviorName] = propertyObj;
-				//propertyOptions.push(propertyObj);
 			}
-
-			//uiElementData[behaviorName] = propertyOptions;
 		}
 
 		uiElementsData.push(uiElementData);
@@ -557,12 +536,7 @@ var createDOMElement = function(elementData){
 	element.text(elementData["text"]);
 	element.addClass("pageElement");
 	element.addClass("modifiable");
-
-	// Commenting these out, since they'll be set by the CSS rules we inject
-	/*element.css("left", elementData["x"]);
-	element.css("top", elementData["y"]);
-	element.css("width", elementData["width"]);
-	element.css("height", elementData["height"]);*/
+	element.attr("tabindex", elementData["id"]);
 
 	return element;
 };
@@ -579,70 +553,12 @@ var replaceCSSRules = function(){
 		console.log(relevantCSSRule);
 		cssRulesString += relevantCSSRule;*/
 		var cssString = generateCSSString(ruleObject);
-		console.log(cssString);
+		//console.log(cssString);
 		cssRulesString += cssString;
 		//cssRulesString += cssRules[i];
 	}
 	$("#" + elementCSSRules).append("<style>" + cssRulesString + "</style>");
 };
-
-/*var generateCSSString = function(ruleObject){
-	var dimValue = getUserPageDimValue(ruleObject["pageDim"]);
-	console.log(dimValue);
-	var cssRulesList = ruleObject["cssRulesList"];
-	var behaviorName = ruleObject["behaviorName"];
-	var propertyName = ruleObject["propertyName"];
-	var pageDim = ruleObject["pageDim"];
-	var elementId = ruleObject["elementId"];
-	console.log(ruleObject);
-	for(var mediaQueryIndex = 0; mediaQueryIndex < cssRulesList.length; mediaQueryIndex++){
-		var ruleOption = cssRulesList[mediaQueryIndex];
-		var ruleStart = null;
-		var ruleEnd = null;
-		
-		if(mediaQueryIndex > 0){
-			ruleStart = ruleOption["start"];
-		}
-		if(mediaQueryIndex < cssRulesList.length-1){
-			ruleEnd = ruleOption["end"];
-		}
-
-		var m = ruleOption["m"];
-		var b = ruleOption["b"];
-
-		var isRelevantRule = false;
-
-		if(ruleStart === null && ruleEnd === null){
-			isRelevantRule = true;
-		}else if(ruleStart === null){
-			// Check ruleEnd
-			if(dimValue <= ruleEnd){
-				isRelevantRule = true;
-			}
-		}else if(ruleEnd === null){
-			// Check ruleStart
-			if(dimValue >= ruleStart){
-				isRelevantRule = true;
-			}
-		}else{
-			// Check both ruleStart and ruleEnd
-			if(dimValue >= ruleStart && dimValue <= ruleEnd){
-				isRelevantRule = true;
-			}
-		}
-
-		if(isRelevantRule){
-			var computedValue = m * dimValue + b;
-
-			// Construct CSS rule string
-			var singleRule = "#element" + elementId + "{";
-			singleRule += createPropertyValueString(propertyName, computedValue);
-			singleRule += "}";
-			console.log(singleRule);
-			return singleRule;
-		}
-	}
-}*/
 
 var createSingleAttributeCSSString = function(ruleObject, dimensionValue, elementId, propertyName){
 	var m = ruleObject["m"];
@@ -654,7 +570,7 @@ var createSingleAttributeCSSString = function(ruleObject, dimensionValue, elemen
 	//singleRule += createPropertyValueString(propertyName, computedValue);
 	singleRule += "" + propertyName + ": " + computedValue + "px;";
 	singleRule += "}";
-	console.log(singleRule);
+	//console.log(singleRule);
 	return singleRule;
 }
 
@@ -675,7 +591,7 @@ var createRGBCSSString = function(ruleObject, dimensionValue, elementId, propert
 	//rgbRule += createPropertyValueString(propertyName, rgbString);
 	rgbRule += "" + propertyName + ": " + rgbString + ";";
 	rgbRule += "}";
-	console.log(rgbRule);
+	//console.log(rgbRule);
 	return rgbRule;
 }
 
@@ -686,13 +602,13 @@ var postProcessRGBValue = function(value){
 
 var generateCSSString = function(ruleObject){
 	var dimValue = getUserPageDimValue(ruleObject["pageDim"]);
-	console.log(dimValue);
+	//console.log(dimValue);
 	var cssRulesList = ruleObject["cssRulesList"];
 	var behaviorName = ruleObject["behaviorName"];
 	var propertyName = ruleObject["propertyName"];
 	var pageDim = ruleObject["pageDim"];
 	var elementId = ruleObject["elementId"];
-	console.log(ruleObject);
+	//console.log(ruleObject);
 	for(var mediaQueryIndex = 0; mediaQueryIndex < cssRulesList.length; mediaQueryIndex++){
 		var ruleOption = cssRulesList[mediaQueryIndex];
 		var ruleStart = null;
@@ -725,23 +641,12 @@ var generateCSSString = function(ruleObject){
 				isRelevantRule = true;
 			}
 		}
-		console.log("isRelevantRule: " + isRelevantRule);
+		//console.log("isRelevantRule: " + isRelevantRule);
 		if(isRelevantRule){
 			var cssStringFunction = propertyToCSSStringFunction[propertyName];
 			var cssString = cssStringFunction(ruleOption, dimValue, elementId, propertyName);
-			console.log(cssString);
+			//console.log(cssString);
 			return cssString;
-			/*// This part will be different for every property (or each property will have a function for this)
-			var m = ruleOption["m"];
-			var b = ruleOption["b"];
-			var computedValue = m * dimValue + b;
-
-			// Construct CSS rule string
-			var singleRule = "#element" + elementId + "{";
-			singleRule += createPropertyValueString(propertyName, computedValue);
-			singleRule += "}";
-			console.log(singleRule);
-			return singleRule;*/
 		}
 	}
 }
@@ -749,35 +654,3 @@ var generateCSSString = function(ruleObject){
 var createPropertyValueString = function(property, value){
 	return "" + property + ": " + value + "px;";
 }
-
-/*var returnRelevantCSSRule = function(ruleObject){
-	// Get current .userPage width/height
-	var dimValue = getUserPageDimValue(ruleObject["pageDim"]);
-
-	// Determine which rule the .userPage width/height falls into
-	var ruleList = ruleObject["cssRulesList"];
-	for(var i = 0; i < ruleList.length; i++){
-		var ruleOption = ruleList[i];
-		var ruleStart = ruleOption["start"];
-		var ruleEnd = ruleOption["end"];
-
-		if(ruleStart === null && ruleEnd === null){
-			return ruleOption["cssRuleString"];
-		}else if(ruleStart === null){
-			// Check ruleEnd
-			if(dimValue <= ruleEnd){
-				return ruleOption["cssRuleString"];
-			}
-		}else if(ruleEnd === null){
-			// Check ruleStart
-			if(dimValue >= ruleStart){
-				return ruleOption["cssRuleString"];
-			}
-		}else{
-			// Check both ruleStart and ruleEnd
-			if(dimValue >= ruleStart && dimValue <= ruleEnd){
-				return ruleOption["cssRuleString"];
-			}
-		}
-	}
-}*/

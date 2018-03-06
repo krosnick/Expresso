@@ -107,27 +107,6 @@ app.listen(8080);
 
 // ------------ Helpers ------------
 
-/*var convertClientDataToInts = function(viewObj){
-	var elementsData = viewObj["elements"];
-	for(var i = 0; i < elementsData.length; i++){
-		var element = elementsData[i];
-		var elementBehaviorKeyValues = Object.entries(elementDataFormat);
-		for(var behaviorIndex = 0; behaviorIndex < elementBehaviorKeyValues.length; behaviorIndex++){
-			var behaviorKeyAndValue = elementBehaviorKeyValues[behaviorIndex];
-			var behaviorName = behaviorKeyAndValue[0];
-			
-			var elementBehaviorDictOfOptions = element[behaviorName];
-			var elementBehaviorListOfOptions = Object.keys(elementBehaviorDictOfOptions);
-			for(var optionIndex = 0; optionIndex < elementBehaviorListOfOptions.length; optionIndex++){
-				var propertyOptionName = elementBehaviorListOfOptions[optionIndex];
-				var propertyOptionValue = elementBehaviorDictOfOptions[propertyOptionName];
-				console.log(propertyOptionValue);
-				element[behaviorName][propertyOptionName] = parseInt(propertyOptionValue);
-			}
-		}
-	}
-};*/
-
 var convertClientDataToInts = function(viewObj){
 	var elementsData = viewObj["elements"];
 	for(var i = 0; i < elementsData.length; i++){
@@ -213,23 +192,6 @@ var createValue = function(m, b){
 var createPropertyValueString = function(property, value){
 	return "" + property + ": " + value + ";";
 }
-
-/*var createCSSRule = function(elementRules){
-	
-	var ruleString = "#element" + elementRules["id"] + "{";
-
-	for(var propertyIndex = 0; propertyIndex < properties.length; propertyIndex++){
-		var propertyName = properties[propertyIndex];
-
-		var elementXValueString = createValue(elementRules[propertyName][0]["m"], elementRules[propertyName][0]["b"]);
-		var elementXPropertyValueString = createPropertyValueString(propertyName, elementXValueString);
-		ruleString += elementXPropertyValueString;
-	}
-
-	ruleString += "}";
-
-	return ruleString;
-};*/
 
 var generateCSSRulesList = function(elementId, pageDim, behaviorName, propertyName, elementPropertyPattern){
 	var ruleList = [];
@@ -319,15 +281,6 @@ var updateCSSRules = function(){
 						}
 					}
 
-					/*var cssRulesList = generateCSSRulesList(elementId, pageDim, behaviorName, chosenPropertyName, chosenElementPropertyPattern);
-					var cssRulesObj = {
-						"cssRulesList": cssRulesList,
-						"behaviorName": behaviorName,
-						"propertyName": chosenPropertyName,
-						"pageDim": pageDim
-					}
-					cssRules.push(cssRulesObj);*/
-
 					var cssRulesObj = {
 						"cssRulesList": chosenElementPropertyPattern,
 						"behaviorName": behaviorName,
@@ -335,7 +288,7 @@ var updateCSSRules = function(){
 						"pageDim": pageDim,
 						"elementId": elementId
 					}
-					//console.log(cssRulesObj);
+					console.log(cssRulesObj);
 					cssRules.push(cssRulesObj);
 				}
 
@@ -379,14 +332,6 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 		var chunkStart = dataPoints[0][axisName];
 		var chunkEnd = dataPoints[0][axisName];
 
-		/*var m = 0;
-		var b = dataPoints[0][behaviorName][propertyName];
-		
-		var chunkStart = dataPoints[0][axisName];
-		var chunkEnd = dataPoints[0][axisName];
-		chunkLineFitData.push( { "m": m, "b": b, "start": chunkStart, "end": chunkEnd, "elementSelector": elementSelector } );*/
-
-
 		if(typeof(dataPoints[0][behaviorName][propertyName]) === "object"){
 			var valueAttributes = Object.keys(dataPoints[0][behaviorName][propertyName]);
 			var fitDataObject = {
@@ -422,16 +367,6 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 
 		var slopes = [];
 
-		/*// compute slopes
-		for(var i = 1; i < dataPoints.length; i++){
-			var point1 = dataPoints[i-1];
-			var point2 = dataPoints[i];
-
-			var leftPageWidthSlope = (point2[behaviorName][propertyName] - point1[behaviorName][propertyName])/(point2[axisName] - point1[axisName]);
-			
-			slopes.push(leftPageWidthSlope);
-		}*/
-
 		// compute slopes
 		for(var i = 1; i < dataPoints.length; i++){
 			var point1 = dataPoints[i-1];
@@ -456,18 +391,6 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 
 		var chunkStartIndices = [];
 		chunkStartIndices.push(0);
-
-		/*// compare slopes, identify chunks
-		for(var i = 1; i < slopes.length; i++){
-			var slope1 = slopes[i-1];
-			var slope2 = slopes[i];
-			if(slope1 == slope2){
-				// Same chunk, nothing to do
-			}else{
-				// Different chunk
-				chunkStartIndices.push(i);
-			}
-		}*/
 
 		// compare slopes, identify chunks
 		for(var i = 1; i < slopes.length; i++){
@@ -499,31 +422,6 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 				}
 			}
 		}
-		
-		/*for(var i = 0; i < chunkStartIndices.length; i++){
-			// Choose any 2 arbitrary points in the chunk (for ease, just the first two), and fit a line to them
-			// equation: y = m*x + c
-			// matrix multiplication for this? or just quick formula
-			var pointIndex1 = chunkStartIndices[i];
-			var pointIndex2 = pointIndex1 + 1;
-			var point1 = dataPoints[pointIndex1];
-			var point2 = dataPoints[pointIndex2];
-
-			var pointData = [ [point1[axisName], point1[behaviorName][propertyName]], [point2[axisName], point2[behaviorName][propertyName]] ];
-			result = regression.linear(pointData);
-			var m = result.equation[0];
-			var b = result.equation[1];
-
-			var chunkStart = point1[axisName];
-			var chunkEnd;
-			if(i < chunkStartIndices.length - 1){
-				chunkEnd = dataPoints[chunkStartIndices[i+1]][axisName];
-			}else{
-				chunkEnd = dataPoints[dataPoints.length - 1][axisName];
-			}
-
-			chunkLineFitData.push( { "m": m, "b": b, "start": chunkStart, "end": chunkEnd, "elementSelector": elementSelector } );
-		}*/
 
 		for(var i = 0; i < chunkStartIndices.length; i++){
 			// Choose any 2 arbitrary points in the chunk (for ease, just the first two), and fit a line to them
@@ -563,10 +461,11 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 			}else{
 				var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName], point2[axisName], point2[behaviorName][propertyName], chunkStart, chunkEnd, elementSelector);
 				chunkLineFitData.push(lineOfBestFit);
+				console.log(lineOfBestFit);
 			}
 		}
 	}
-
+	//console.log(chunkLineFitData);
 	return chunkLineFitData;
 };
 

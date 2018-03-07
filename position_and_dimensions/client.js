@@ -410,12 +410,24 @@ var captureElementData = function(){
 		
 		var elementColor = jqueryUIElement.css("background-color");
 		var elementText = jqueryUIElement.text();
-		var imageSource = jqueryUIElement.css("background-image");
-		var uiElementData = {
+		//var imageSource = jqueryUIElement.css("background-image");
+
+		/*var uiElementData = {
 			"id": elementId,
 			"text": elementText,
 			"image": imageSource
+		};*/
+
+		var uiElementData = {
+			"id": elementId,
+			"text": elementText
 		};
+
+		var imageChildren = jqueryUIElement.children("img");
+		if(imageChildren.length > 0){
+			var imageSource = imageChildren.attr("src");
+			uiElementData["image"] = imageSource;
+		}
 
 		var elementPropertyKeyValues = Object.entries(elementDataFormat);
 		for(var propertyIndex = 0; propertyIndex < elementPropertyKeyValues.length; propertyIndex++){
@@ -535,8 +547,14 @@ var createDOMElement = function(elementData){
 	element.attr("elementId", elementData["id"]);
 	//element.css("background-color", elementData["background-color"]["background-color"]);
 	element.text(elementData["text"]);
-	element.css("background-image", elementData["image"]);
-	element.css("background-repeat", "no-repeat");
+	//element.css("background-image", elementData["image"]);
+	//element.css("background-repeat", "no-repeat");
+	if(elementData["image"] !== undefined && elementData["image"] !== "none"){
+		var imageElement = $("<img>").attr("src", elementData["image"]);
+		imageElement.width("100%");
+		imageElement.height("100%");
+		element.append(imageElement);
+	}
 	element.addClass("pageElement");
 	element.addClass("modifiable");
 	element.attr("tabindex", elementData["id"]);

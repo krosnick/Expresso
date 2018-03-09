@@ -222,7 +222,11 @@ $(document).ready(function() {
     	replaceCSSRules();
     });
 
-    $("body").on("resizestop dragstop", ".modifiable", function(event, ui){
+    // Should this only be on non-.userPage elements?
+    /*$("body").on("resizestop dragstop", ".modifiable", function(event, ui){
+    	dataChanged = true;
+    });*/
+    $("body").on("resizestop dragstop", ".pageElement", function(event, ui){
     	dataChanged = true;
     });
 
@@ -427,6 +431,7 @@ var captureElementData = function(){
 		if(imageChildren.length > 0){
 			var imageSource = imageChildren.attr("src");
 			uiElementData["image"] = imageSource;
+			uiElementData["image-ratio"] = imageChildren.attr("image-ratio");
 		}
 
 		var elementPropertyKeyValues = Object.entries(elementDataFormat);
@@ -539,7 +544,12 @@ var renderView = function(viewData){
 
 	// Make pageElement elements (i.e., the box right now) draggable and resizable
 	$(".pageElement").draggable();
-	$(".pageElement").resizable();
+	
+	//$(".pageElement").resizable();
+	// pageElements that contain an image should get aspectRatio: true
+	$(".pageElement").has("img").resizable({aspectRatio: true});
+
+	$(".pageElement").not(":has(img)").resizable();
 };
 
 var createDOMElement = function(elementData){
@@ -553,6 +563,7 @@ var createDOMElement = function(elementData){
 		var imageElement = $("<img>").attr("src", elementData["image"]);
 		imageElement.width("100%");
 		imageElement.height("100%");
+		imageElement.attr("image-ratio", elementData["image-ratio"]);
 		element.append(imageElement);
 	}
 	element.addClass("pageElement");
@@ -581,7 +592,10 @@ var replaceCSSRules = function(){
 	$("#" + elementCSSRules).append("<style>" + cssRulesString + "</style>");
 };
 
-var createSingleAttributeCSSString = function(ruleObject, dimensionValue, elementId, propertyName){
+//var createSingleAttributeCSSString = function(ruleObject, dimensionValue, elementId, propertyName){
+// imageRatio will be null if the element is not an image
+var createSingleAttributeCSSString = function(ruleObject, dimensionValue, elementId, propertyName, imageRatio){
+
 	var m = ruleObject["m"];
 	var b = ruleObject["b"];
 	var computedValue = m * dimensionValue + b;
@@ -592,6 +606,16 @@ var createSingleAttributeCSSString = function(ruleObject, dimensionValue, elemen
 	singleRule += "" + propertyName + ": " + computedValue + "px;";
 	singleRule += "}";
 	//console.log(singleRule);
+
+	if(imageRatio != null && propertyName === "width"){
+		// Set the height that corresponds to the width we just set
+		var heightValue = 1.0*computedValue / imageRatio;
+		//console.log("heightValue: " + heightValue);
+		singleRule += "#element" + elementId + "{";
+		singleRule += "height: " + heightValue + "px;";
+		singleRule += "}";
+	}
+
 	return singleRule;
 }
 
@@ -629,7 +653,20 @@ var generateCSSString = function(ruleObject){
 	var propertyName = ruleObject["propertyName"];
 	var pageDim = ruleObject["pageDim"];
 	var elementId = ruleObject["elementId"];
+	var imageRatio = ruleObject["image-ratio"];
+	if(imageRatio){
+		console.log("imageRatio: " + imageRatio);
+	}
+	console.log(ruleObject);
+	//console.log("elementId: " + elementId + "; propertyName: " + propertyName + "; imageRatio: " + imageRatio);
+	//console.log("imageRatio: " + imageRatio);
 	//console.log(ruleObject);
+
+	// This is an image, and the propertyName is "height"; height will be set using imageRatio when the width is set
+	if(imageRatio != null && propertyName === "height"){
+		return "";
+	}
+
 	for(var mediaQueryIndex = 0; mediaQueryIndex < cssRulesList.length; mediaQueryIndex++){
 		var ruleOption = cssRulesList[mediaQueryIndex];
 		var ruleStart = null;
@@ -665,7 +702,7 @@ var generateCSSString = function(ruleObject){
 		//console.log("isRelevantRule: " + isRelevantRule);
 		if(isRelevantRule){
 			var cssStringFunction = propertyToCSSStringFunction[propertyName];
-			var cssString = cssStringFunction(ruleOption, dimValue, elementId, propertyName);
+			var cssString = cssStringFunction(ruleOption, dimValue, elementId, propertyName, imageRatio);
 			//console.log(cssString);
 			return cssString;
 		}

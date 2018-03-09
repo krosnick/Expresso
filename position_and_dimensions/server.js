@@ -253,6 +253,13 @@ var updateCSSRules = function(){
 
 	for(var elementIndex = 0; elementIndex < numElements; elementIndex++){
 		var elementId = firstViewCurrently["elements"][elementIndex]["id"];
+		/*var elementImageRatio = null;
+		if(firstViewCurrently["elements"][elementIndex]["imageRatio"]){
+			elementImageRatio = firstViewCurrently["elements"][elementIndex]["imageRatio"];
+			console.log(elementImageRatio);
+		}*/
+		var elementImageRatio = firstViewCurrently["elements"][elementIndex]["image-ratio"];
+		console.log("elementImageRatio: " + elementImageRatio);
 		var keyframesDataForThisElement = [];
 		for(var viewIndex = 0; viewIndex < viewIds.length; viewIndex++){
 			var viewKey = viewIds[viewIndex];
@@ -285,7 +292,7 @@ var updateCSSRules = function(){
 
 					// Need to consider the multiple properties per behavior, and choose the one with the fewest media queries?
 					
-					var propertiesList = elementDataFormat[behaviorName]["properties"];
+					/*var propertiesList = elementDataFormat[behaviorName]["properties"];
 					for(var propertyIndex = 0; propertyIndex < propertiesList.length; propertyIndex++){
 						var propertyName = propertiesList[propertyIndex];
 						// Hacky: Maybe test it out first to see if this property exists in this set of keyframes?
@@ -296,6 +303,28 @@ var updateCSSRules = function(){
 								chosenPropertyName = propertyName;
 							}
 						}
+					}*/
+
+					var propertiesList = elementDataFormat[behaviorName]["properties"];
+					for(var propertyIndex = 0; propertyIndex < propertiesList.length; propertyIndex++){
+						var propertyName = propertiesList[propertyIndex];
+						// Hacky: Maybe test it out first to see if this property exists in this set of keyframes?
+						if(keyframesDataForThisElement[0][behaviorName][propertyName] !== undefined){
+							var elementPropertyPattern = determinePattern(keyframesDataForThisElement, behaviorName, propertyName, pageDim);
+							
+							// Hacky: For now, if behavior is y and element is an image, only support "top" property
+							if(elementImageRatio && behaviorName === "y"){
+								if(propertyName === "top"){
+									chosenElementPropertyPattern = elementPropertyPattern;
+									chosenPropertyName = propertyName;
+								}
+							}else{
+								if(chosenElementPropertyPattern === undefined || elementPropertyPattern.length < chosenElementPropertyPattern.length){
+									chosenElementPropertyPattern = elementPropertyPattern;
+									chosenPropertyName = propertyName;
+								}
+							}
+						}
 					}
 
 					var cssRulesObj = {
@@ -303,10 +332,13 @@ var updateCSSRules = function(){
 						"behaviorName": behaviorName,
 						"propertyName": chosenPropertyName,
 						"pageDim": pageDim,
-						"elementId": elementId
+						"elementId": elementId,
+						"image-ratio": elementImageRatio
 					}
-					console.log(cssRulesObj);
-					cssRules.push(cssRulesObj);
+					//console.log(cssRulesObj);
+					if(!(elementImageRatio && propertyName === "height")){
+						cssRules.push(cssRulesObj);
+					}
 				}
 
 			}

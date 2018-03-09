@@ -527,6 +527,22 @@ var computeLineOfBestFit = function(axisVal1, attributeVal1, axisVal2, attribute
 	return lineOfBestFit;
 };
 
+var determineLargestId = function(){
+	console.log("determineLargestId - begin");
+	
+	var viewIds = Object.keys(views);
+	var largestId = 0;
+	for(var i = 0; i < viewIds.length; i++){
+		var currentViewId = views[viewIds[i]]["id"];
+		console.log(currentViewId);
+		if(currentViewId > largestId){
+			largestId = currentViewId;
+		}
+	}
+	console.log("determineLargestId - end");
+	return largestId;
+};
+
 // ------------ Constants ------------
 var constantUnit = "px";
 
@@ -632,7 +648,8 @@ fs.readFile(dataFile, function(err, data){
     	var jsonFileData = JSON.parse(data);
     	console.log(jsonFileData);
     	views = jsonFileData["keyframes"];
-    	viewCounter = Object.keys(views).length;
+    	//viewCounter = Object.keys(views).length;
+    	viewCounter = determineLargestId() + 1;
     	updateCSSRules();
     }
 });

@@ -74,7 +74,13 @@ var elementDataFormat = {
 		{
 			"property": "background-color",
 			"get": function(){
-				return this.css("background-color");
+				//return this.css("background-color");
+				var computedBackgroundColor = this.css("background-color");
+				if(computedBackgroundColor !== "rgba(0, 0, 0, 0)"){
+					return computedBackgroundColor;
+				}else{
+					return "";
+				}
 			}
 		}
 	]
@@ -422,7 +428,7 @@ var captureElementData = function(){
 		var jqueryUIElement = $("#" + uiElementId);
 		var elementId = parseInt(jqueryUIElement.attr("elementId"));
 		
-		var elementColor = jqueryUIElement.css("background-color");
+		//var elementColor = jqueryUIElement.css("background-color");
 		var elementText = jqueryUIElement.text();
 		//var imageSource = jqueryUIElement.css("background-image");
 
@@ -457,11 +463,21 @@ var captureElementData = function(){
 				var optionData = propertyDataList[optionIndex];
 				var propertyName = optionData["property"];
 				var propertyValue = (optionData["get"]).call(jqueryUIElement);
-				uiElementData[behaviorName][propertyName] = propertyValue;
+				//uiElementData[behaviorName][propertyName] = propertyValue;
+
+				if("propertyName" === "background-color"){
+					console.log(propertyValue);
+				}
+
+				// Perhaps a hack: don't set property value if it's undefined, null, or empty string ""
+				if(propertyValue !== "" && propertyValue !== null && propertyValue !== undefined){
+					uiElementData[behaviorName][propertyName] = propertyValue;
+				}
 			}
 		}
 
 		uiElementsData.push(uiElementData);
+		console.log(uiElementData);
 	}
 	return uiElementsData;
 }
@@ -665,10 +681,10 @@ var generateCSSString = function(ruleObject){
 	var pageDim = ruleObject["pageDim"];
 	var elementId = ruleObject["elementId"];
 	var imageRatio = ruleObject["image-ratio"];
-	if(imageRatio){
+	/*if(imageRatio){
 		console.log("imageRatio: " + imageRatio);
 	}
-	console.log(ruleObject);
+	console.log(ruleObject);*/
 	//console.log("elementId: " + elementId + "; propertyName: " + propertyName + "; imageRatio: " + imageRatio);
 	//console.log("imageRatio: " + imageRatio);
 	//console.log(ruleObject);

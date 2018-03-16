@@ -122,16 +122,20 @@ var convertClientDataToInts = function(viewObj){
 		for(var behaviorIndex = 0; behaviorIndex < elementBehaviorKeyValues.length; behaviorIndex++){
 			var behaviorKeyAndValue = elementBehaviorKeyValues[behaviorIndex];
 			var behaviorName = behaviorKeyAndValue[0];
-			
 			var elementBehaviorDictOfOptions = element[behaviorName];
+			//console.log(elementBehaviorDictOfOptions);
+			if(elementBehaviorDictOfOptions){
 			var elementBehaviorListOfOptions = Object.keys(elementBehaviorDictOfOptions);
-			for(var optionIndex = 0; optionIndex < elementBehaviorListOfOptions.length; optionIndex++){
-				var propertyOptionName = elementBehaviorListOfOptions[optionIndex];
-				var propertyOptionValue = elementBehaviorDictOfOptions[propertyOptionName];
-				if(typeof(propertyOptionValue) === "string"){
-					var parseClientDataFunc = elementDataFormat[behaviorName]["parseClientData"];
-					var parsedClientData = parseClientDataFunc(propertyOptionValue);
-					element[behaviorName][propertyOptionName] = parsedClientData;
+				for(var optionIndex = 0; optionIndex < elementBehaviorListOfOptions.length; optionIndex++){
+					var propertyOptionName = elementBehaviorListOfOptions[optionIndex];
+					var propertyOptionValue = elementBehaviorDictOfOptions[propertyOptionName];
+					console.log(propertyOptionValue);
+					if(typeof(propertyOptionValue) === "string"){
+						var parseClientDataFunc = elementDataFormat[behaviorName]["parseClientData"];
+						var parsedClientData = parseClientDataFunc(propertyOptionValue);
+						element[behaviorName][propertyOptionName] = parsedClientData;
+						console.log(parsedClientData);
+					}
 				}
 			}
 		}
@@ -259,7 +263,7 @@ var updateCSSRules = function(){
 			console.log(elementImageRatio);
 		}*/
 		var elementImageRatio = firstViewCurrently["elements"][elementIndex]["image-ratio"];
-		console.log("elementImageRatio: " + elementImageRatio);
+		//console.log("elementImageRatio: " + elementImageRatio);
 		var keyframesDataForThisElement = [];
 		for(var viewIndex = 0; viewIndex < viewIds.length; viewIndex++){
 			var viewKey = viewIds[viewIndex];
@@ -334,17 +338,20 @@ var updateCSSRules = function(){
 							}
 						}
 
-						var cssRulesObj = {
-							"cssRulesList": chosenElementPropertyPattern,
-							"behaviorName": behaviorName,
-							"propertyName": chosenPropertyName,
-							"pageDim": pageDim,
-							"elementId": elementId,
-							"image-ratio": elementImageRatio
-						}
-						//console.log(cssRulesObj);
-						if(!(elementImageRatio && propertyName === "height")){
-							cssRules.push(cssRulesObj);
+						// Only create the rule if we've actually succesfully generated chosenElementPropertyPattern
+						if(chosenPropertyName){
+							var cssRulesObj = {
+								"cssRulesList": chosenElementPropertyPattern,
+								"behaviorName": behaviorName,
+								"propertyName": chosenPropertyName,
+								"pageDim": pageDim,
+								"elementId": elementId,
+								"image-ratio": elementImageRatio
+							}
+							//console.log(cssRulesObj);
+							if(!(elementImageRatio && propertyName === "height")){
+								cssRules.push(cssRulesObj);
+							}
 						}
 					}
 				}
@@ -513,12 +520,12 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 					var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName][attributeName], point2[axisName], point2[behaviorName][propertyName][attributeName], chunkStart, chunkEnd, elementSelector);
 					fitDataObject[attributeName] = lineOfBestFit;
 				}
-				console.log(fitDataObject);
+				//console.log(fitDataObject);
 				chunkLineFitData.push(fitDataObject);
 			}else{
 				var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName], point2[axisName], point2[behaviorName][propertyName], chunkStart, chunkEnd, elementSelector);
 				chunkLineFitData.push(lineOfBestFit);
-				console.log(lineOfBestFit);
+				//console.log(lineOfBestFit);
 			}
 		}
 	}
@@ -536,18 +543,18 @@ var computeLineOfBestFit = function(axisVal1, attributeVal1, axisVal2, attribute
 };
 
 var determineLargestId = function(){
-	console.log("determineLargestId - begin");
+	//console.log("determineLargestId - begin");
 	
 	var viewIds = Object.keys(views);
 	var largestId = 0;
 	for(var i = 0; i < viewIds.length; i++){
 		var currentViewId = views[viewIds[i]]["id"];
-		console.log(currentViewId);
+		//console.log(currentViewId);
 		if(currentViewId > largestId){
 			largestId = currentViewId;
 		}
 	}
-	console.log("determineLargestId - end");
+	//console.log("determineLargestId - end");
 	return largestId;
 };
 
@@ -654,7 +661,7 @@ fs.readFile(dataFile, function(err, data){
         console.log(err);
     }else{
     	var jsonFileData = JSON.parse(data);
-    	console.log(jsonFileData);
+    	//console.log(jsonFileData);
     	views = jsonFileData["keyframes"];
     	//viewCounter = Object.keys(views).length;
     	viewCounter = determineLargestId() + 1;

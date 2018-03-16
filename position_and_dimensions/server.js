@@ -566,7 +566,7 @@ var pageDimensionsAndBehaviorsTheyInfluence = {
 		"compareFunc": comparePageWidths,
 		/*"behaviorsInfluenced": ["width", "x"],*/
 		/*"behaviorsInfluenced": ["width", "x", "font-size"],*/
-		"behaviorsInfluenced": ["width", "x", "font-size", "background-color"],
+		"behaviorsInfluenced": ["width", "x", "font-size", "background-color", "color"],
 		"mediaMaxProperty": "max-width",
 		"mediaMinProperty": "min-width",
 	},
@@ -617,6 +617,29 @@ var elementDataFormat = {
 	"background-color": {
 		"pageDimension": "pageWidth",
 		"properties": ["background-color"],
+		parseClientData: function(clientString){
+			//return parseInt(clientString);
+			// extract from rgb(r, g, b)
+			var indexOfOpenParen = clientString.indexOf("(");
+			var indexOfFirstComma = clientString.indexOf(",", indexOfOpenParen+1);
+			var indexOfSecondComma = clientString.indexOf(",", indexOfFirstComma+1);
+			var indexOfCloseParen = clientString.indexOf(")");
+
+			var rString = clientString.substring(indexOfOpenParen + 1, indexOfFirstComma);
+			var gString = clientString.substring(indexOfFirstComma + 1, indexOfSecondComma);
+			var bString = clientString.substring(indexOfSecondComma + 1, indexOfCloseParen);
+			
+			var rgbObject = {
+				"r": parseInt(rString),
+				"g": parseInt(gString),
+				"b": parseInt(bString)
+			};
+			return rgbObject;
+		}
+	},
+	"color": {
+		"pageDimension": "pageWidth",
+		"properties": ["color"],
 		parseClientData: function(clientString){
 			//return parseInt(clientString);
 			// extract from rgb(r, g, b)

@@ -83,6 +83,20 @@ var elementDataFormat = {
 				}
 			}
 		}
+	],
+	"color": [
+		{
+			"property": "color",
+			"get": function(){
+				var computedColor = this.css("color");
+				console.log(computedColor);
+				if(computedColor !== "rgba(0, 0, 0, 0)"){
+					return computedColor;
+				}else{
+					return "";
+				}
+			}
+		}
 	]
 };
 
@@ -109,6 +123,9 @@ var propertyToCSSStringFunction = {
 		return createSingleAttributeCSSString(ruleObject, dimensionValue, elementId, propertyName);
 	},
 	"background-color": function(ruleObject, dimensionValue, elementId, propertyName){
+		return createRGBCSSString(ruleObject, dimensionValue, elementId, propertyName);
+	},
+	"color": function(ruleObject, dimensionValue, elementId, propertyName){
 		return createRGBCSSString(ruleObject, dimensionValue, elementId, propertyName);
 	}
 };
@@ -353,7 +370,7 @@ $(document).ready(function() {
     }, 1000);
     //}, 10000);
 
-    $("#colorpicker").spectrum({
+    $("#background_color_colorpicker").spectrum({
 	    showButtons: false,
 	    allowEmpty: true,
 	    showPalette: true,
@@ -364,6 +381,21 @@ $(document).ready(function() {
 	    	// update selected element color
 	    	var hexColorString = color.toHexString();
 	    	$("[elementId=" + currentlySelectedElement + "]").css("background-color", hexColorString);
+	    	dataChanged = true;
+	    }
+	});
+
+	$("#text_color_colorpicker").spectrum({
+	    showButtons: false,
+	    allowEmpty: true,
+	    showPalette: true,
+	    showSelectionPalette: true,
+	    palette: [ ],
+	    localStorageKey: "spectrum.homepage",
+	    move: function(color) {
+	    	// update selected element color
+	    	var hexColorString = color.toHexString();
+	    	$("[elementId=" + currentlySelectedElement + "]").css("color", hexColorString);
 	    	dataChanged = true;
 	    }
 	});
@@ -392,7 +424,7 @@ var selectElement = function(element){
 	currentlySelectedElement = selectedElementNum;
 
 	// Set colorpicker color to that of selected element
-	$("#colorpicker").spectrum("set", element.css("background-color"));
+	$("#background_color_colorpicker").spectrum("set", element.css("background-color"));
 	
 	// Ensure tools menu is shown
 	$("#toolsMenu").show();
@@ -406,6 +438,7 @@ var selectElement = function(element){
 	var fontSize = extractPixelValue(element.css("font-size"));
 	$( "#slider" ).slider( "value", fontSize );
 	$( "#amount" ).val( fontSize  + "px" );
+	$("#text_color_colorpicker").spectrum("set", element.css("color"));	
 
 	//updateRulesMenu(element);
 
@@ -464,10 +497,6 @@ var captureElementData = function(){
 				var propertyName = optionData["property"];
 				var propertyValue = (optionData["get"]).call(jqueryUIElement);
 				//uiElementData[behaviorName][propertyName] = propertyValue;
-
-				if("propertyName" === "background-color"){
-					console.log(propertyValue);
-				}
 
 				// Perhaps a hack: don't set property value if it's undefined, null, or empty string ""
 				if(propertyValue !== "" && propertyValue !== null && propertyValue !== undefined){

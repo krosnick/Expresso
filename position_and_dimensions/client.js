@@ -209,8 +209,18 @@ $(document).ready(function() {
     	// Unselect any other selected elements (if there are any)
     	$(".pageElement.selected").removeClass("selected");
     	$("#toolsMenu").hide();
+    	/*if($(event.target).hasClass("pageElement")){
+	    	selectElement($(event.target));
+    	}else{
+    		currentlySelectedElement = undefined;
+    		// Clear rules menu
+    		$("#selectedElementRules").css("display", "none");
+    	}*/
     	if($(event.target).hasClass("pageElement")){
 	    	selectElement($(event.target));
+    	}else if($(event.target).parent(".pageElement").length > 0){
+    		// This means the user has clicked on an <img> element. We should select its parent
+    		selectElement($(event.target).parent(".pageElement"));
     	}else{
     		currentlySelectedElement = undefined;
     		// Clear rules menu
@@ -607,6 +617,7 @@ var createSingleAttributeCSSString = function(ruleObject, dimensionValue, elemen
 	singleRule += "}";
 	//console.log(singleRule);
 
+	// Is this needed? Is explicitly setting the "height" needed?
 	if(imageRatio != null && propertyName === "width"){
 		// Set the height that corresponds to the width we just set
 		var heightValue = 1.0*computedValue / imageRatio;

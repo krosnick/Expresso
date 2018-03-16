@@ -285,59 +285,67 @@ var updateCSSRules = function(){
 				// maybe need to do some more processing here, or maybe within "determinePattern"
 				// need to consider the possible properties for each element behavior
 
-				if(keyframesDataForThisElement[0][behaviorName] !== undefined){
+				if(!elementImageRatio || (elementImageRatio && behaviorName !== "height")){
+					if(keyframesDataForThisElement[0][behaviorName] !== undefined){
 
-					var chosenElementPropertyPattern = undefined;
-					var chosenPropertyName = undefined;
+						var chosenElementPropertyPattern = undefined;
+						var chosenPropertyName = undefined;
 
-					// Need to consider the multiple properties per behavior, and choose the one with the fewest media queries?
-					
-					/*var propertiesList = elementDataFormat[behaviorName]["properties"];
-					for(var propertyIndex = 0; propertyIndex < propertiesList.length; propertyIndex++){
-						var propertyName = propertiesList[propertyIndex];
-						// Hacky: Maybe test it out first to see if this property exists in this set of keyframes?
-						if(keyframesDataForThisElement[0][behaviorName][propertyName] !== undefined){
-							var elementPropertyPattern = determinePattern(keyframesDataForThisElement, behaviorName, propertyName, pageDim);
-							if(chosenElementPropertyPattern === undefined || elementPropertyPattern.length < chosenElementPropertyPattern.length){
-								chosenElementPropertyPattern = elementPropertyPattern;
-								chosenPropertyName = propertyName;
-							}
-						}
-					}*/
-
-					var propertiesList = elementDataFormat[behaviorName]["properties"];
-					for(var propertyIndex = 0; propertyIndex < propertiesList.length; propertyIndex++){
-						var propertyName = propertiesList[propertyIndex];
-						// Hacky: Maybe test it out first to see if this property exists in this set of keyframes?
-						if(keyframesDataForThisElement[0][behaviorName][propertyName] !== undefined){
-							var elementPropertyPattern = determinePattern(keyframesDataForThisElement, behaviorName, propertyName, pageDim);
-							
-							// Hacky: For now, if behavior is y and element is an image, only support "top" property
-							if(elementImageRatio && behaviorName === "y"){
-								if(propertyName === "top"){
+						// Need to consider the multiple properties per behavior, and choose the one with the fewest media queries?
+						
+						/*var propertiesList = elementDataFormat[behaviorName]["properties"];
+						for(var propertyIndex = 0; propertyIndex < propertiesList.length; propertyIndex++){
+							var propertyName = propertiesList[propertyIndex];
+							// Hacky: Maybe test it out first to see if this property exists in this set of keyframes?
+							if(keyframesDataForThisElement[0][behaviorName][propertyName] !== undefined){
+								var elementPropertyPattern = determinePattern(keyframesDataForThisElement, behaviorName, propertyName, pageDim);
+								if(chosenElementPropertyPattern === undefined || elementPropertyPattern.length < chosenElementPropertyPattern.length){
 									chosenElementPropertyPattern = elementPropertyPattern;
 									chosenPropertyName = propertyName;
 								}
-							}else{
+							}
+						}*/
+
+						var propertiesList = elementDataFormat[behaviorName]["properties"];
+						for(var propertyIndex = 0; propertyIndex < propertiesList.length; propertyIndex++){
+							var propertyName = propertiesList[propertyIndex];
+							// Hacky: Maybe test it out first to see if this property exists in this set of keyframes?
+							if(keyframesDataForThisElement[0][behaviorName][propertyName] !== undefined){
+								var elementPropertyPattern = determinePattern(keyframesDataForThisElement, behaviorName, propertyName, pageDim);
+								
+								/*
+								// Hacky: For now, if behavior is y and element is an image, only support "top" property
+								if(elementImageRatio && behaviorName === "y"){
+									if(propertyName === "top"){
+										chosenElementPropertyPattern = elementPropertyPattern;
+										chosenPropertyName = propertyName;
+									}
+								}else{
+									if(chosenElementPropertyPattern === undefined || elementPropertyPattern.length < chosenElementPropertyPattern.length){
+										chosenElementPropertyPattern = elementPropertyPattern;
+										chosenPropertyName = propertyName;
+									}
+								}
+								*/
 								if(chosenElementPropertyPattern === undefined || elementPropertyPattern.length < chosenElementPropertyPattern.length){
 									chosenElementPropertyPattern = elementPropertyPattern;
 									chosenPropertyName = propertyName;
 								}
 							}
 						}
-					}
 
-					var cssRulesObj = {
-						"cssRulesList": chosenElementPropertyPattern,
-						"behaviorName": behaviorName,
-						"propertyName": chosenPropertyName,
-						"pageDim": pageDim,
-						"elementId": elementId,
-						"image-ratio": elementImageRatio
-					}
-					//console.log(cssRulesObj);
-					if(!(elementImageRatio && propertyName === "height")){
-						cssRules.push(cssRulesObj);
+						var cssRulesObj = {
+							"cssRulesList": chosenElementPropertyPattern,
+							"behaviorName": behaviorName,
+							"propertyName": chosenPropertyName,
+							"pageDim": pageDim,
+							"elementId": elementId,
+							"image-ratio": elementImageRatio
+						}
+						//console.log(cssRulesObj);
+						if(!(elementImageRatio && propertyName === "height")){
+							cssRules.push(cssRulesObj);
+						}
 					}
 				}
 

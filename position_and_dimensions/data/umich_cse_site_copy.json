@@ -75,13 +75,6 @@
                 },
                 "font-size": {
                     "font-size": 16
-                },
-                "background-color": {
-                    "background-color": {
-                        "r": 255,
-                        "g": 255,
-                        "b": 255
-                    }
                 }
             }, {
                 "id": "3",
@@ -103,8 +96,8 @@
                 "font-size": {
                     "font-size": 11
                 },
-                "background-color": {
-                    "background-color": {
+                "color": {
+                    "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
@@ -130,8 +123,8 @@
                 "font-size": {
                     "font-size": 11
                 },
-                "background-color": {
-                    "background-color": {
+                "color": {
+                    "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
@@ -157,8 +150,8 @@
                 "font-size": {
                     "font-size": 11
                 },
-                "background-color": {
-                    "background-color": {
+                "color": {
+                    "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
@@ -184,8 +177,8 @@
                 "font-size": {
                     "font-size": 11
                 },
-                "background-color": {
-                    "background-color": {
+                "color": {
+                    "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
@@ -211,8 +204,8 @@
                 "font-size": {
                     "font-size": 11
                 },
-                "background-color": {
-                    "background-color": {
+                "color": {
+                    "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
@@ -238,8 +231,8 @@
                 "font-size": {
                     "font-size": 11
                 },
-                "background-color": {
-                    "background-color": {
+                "color": {
+                    "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
@@ -266,13 +259,6 @@
                 },
                 "font-size": {
                     "font-size": 16
-                },
-                "background-color": {
-                    "background-color": {
-                        "r": 255,
-                        "g": 255,
-                        "b": 255
-                    }
                 }
             }],
             "pageWidth": 1480,
@@ -354,13 +340,6 @@
                 },
                 "font-size": {
                     "font-size": 16
-                },
-                "background-color": {
-                    "background-color": {
-                        "r": 255,
-                        "g": 255,
-                        "b": 255
-                    }
                 }
             }, {
                 "id": "3",
@@ -382,8 +361,8 @@
                 "font-size": {
                     "font-size": 11
                 },
-                "background-color": {
-                    "background-color": {
+                "color": {
+                    "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
@@ -409,8 +388,8 @@
                 "font-size": {
                     "font-size": 11
                 },
-                "background-color": {
-                    "background-color": {
+                "color": {
+                    "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
@@ -436,8 +415,8 @@
                 "font-size": {
                     "font-size": 11
                 },
-                "background-color": {
-                    "background-color": {
+                "color": {
+                    "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
@@ -463,8 +442,8 @@
                 "font-size": {
                     "font-size": 11
                 },
-                "background-color": {
-                    "background-color": {
+                "color": {
+                    "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
@@ -490,8 +469,8 @@
                 "font-size": {
                     "font-size": 11
                 },
-                "background-color": {
-                    "background-color": {
+                "color": {
+                    "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
@@ -517,8 +496,8 @@
                 "font-size": {
                     "font-size": 11
                 },
-                "background-color": {
-                    "background-color": {
+                "color": {
+                    "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
@@ -545,13 +524,6 @@
                 },
                 "font-size": {
                     "font-size": 16
-                },
-                "background-color": {
-                    "background-color": {
-                        "r": 255,
-                        "g": 255,
-                        "b": 255
-                    }
                 }
             }],
             "pageWidth": 1031,
@@ -633,13 +605,6 @@
                 },
                 "font-size": {
                     "font-size": 16
-                },
-                "background-color": {
-                    "background-color": {
-                        "r": 255,
-                        "g": 255,
-                        "b": 255
-                    }
                 }
             }, {
                 "id": "3",
@@ -661,8 +626,8 @@
                 "font-size": {
                     "font-size": 7
                 },
-                "background-color": {
-                    "background-color": {
+                "color": {
+                    "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
@@ -688,8 +653,8 @@
                 "font-size": {
                     "font-size": 7
                 },
-                "background-color": {
-                    "background-color": {
+                "color": {
+                    "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
@@ -715,8 +680,8 @@
                 "font-size": {
                     "font-size": 7
                 },
-                "background-color": {
-                    "background-color": {
+                "color": {
+                    "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
@@ -742,8 +707,8 @@
                 "font-size": {
                     "font-size": 7
                 },
-                "background-color": {
-                    "background-color": {
+                "color": {
+                    "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
@@ -769,8 +734,8 @@
                 "font-size": {
                     "font-size": 7
                 },
-                "background-color": {
-                    "background-color": {
+                "color": {
+                    "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
@@ -796,8 +761,8 @@
                 "font-size": {
                     "font-size": 7
                 },
-                "background-color": {
-                    "background-color": {
+                "color": {
+                    "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
@@ -824,13 +789,6 @@
                 },
                 "font-size": {
                     "font-size": 16
-                },
-                "background-color": {
-                    "background-color": {
-                        "r": 255,
-                        "g": 255,
-                        "b": 255
-                    }
                 }
             }],
             "pageWidth": 662,

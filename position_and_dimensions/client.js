@@ -100,6 +100,23 @@ var elementDataFormat = {
 	]
 };
 
+var generateRuleInferenceHTML = function(widgetName){
+	var ruleInferenceSelectWidgetHTML = generateRuleInferenceDirectionHTML(widgetName, "Left") + generateRuleInferenceDirectionHTML(widgetName, "Right");
+	return ruleInferenceSelectWidgetHTML;
+};
+
+var generateRuleInferenceDirectionHTML = function(widgetName, direction){
+	var optionLinearInterp = '<option value="1" selected>Linear interpolation</option>';
+	var optionPrevRule = '<option value="2">Previous rule</option>';
+	var optionConstantValue = '<option value="3">Constant value</option>';
+	var selectWidgetId = widgetName + "_select_" + direction;
+	//var ruleInferenceSelectWidgetHTML = '<select class="ruleInferenceSelect">' + optionLinearInterp + optionPrevRule + optionConstantValue + '</select>';
+	var selectHTML = '<select class="ruleInferenceSelect" id=' + selectWidgetId +' >' + optionLinearInterp + optionPrevRule + optionConstantValue + '</select>';
+	var labelHTML = '<label for="' + selectWidgetId + '">' + direction + ':&nbsp;</label>';
+	var ruleInferenceDirectionSelectWidgetHTML = labelHTML + selectHTML;
+	return ruleInferenceDirectionSelectWidgetHTML;
+}
+
 var propertyToCSSStringFunction = {
 	width: function(ruleObject, dimensionValue, elementId, propertyName){
 		return createSingleAttributeCSSString(ruleObject, dimensionValue, elementId, propertyName);
@@ -409,6 +426,20 @@ $(document).ready(function() {
 	    dataChanged = true;
       }
     });
+
+	// Fill all .propertyRules divs with dropdown menu HTML
+	//var ruleInferenceQuestions = "<div>Test content</div>";
+	//var ruleInferenceQuestions = var generateRuleInferenceHTML = function(widgetName){
+	//$(".propertyRules").html(ruleInferenceQuestions);
+
+	$(".propertyRules").each(function(index, element){
+
+		var propertyToolAncestor = $(this).closest(".propertyTool");
+		var widgetName = propertyToolAncestor.attr("widgetName");
+		var ruleInferenceQuestions = generateRuleInferenceHTML(widgetName);
+		$(this).html(ruleInferenceQuestions);
+	});
+
     //$( "#amount" ).val( $( "#slider" ).slider( "value" ) + "px" );
 });
 

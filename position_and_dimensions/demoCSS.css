@@ -23,7 +23,9 @@ body {
 }*/
 
 #rightMenu {
-	width: 200px;
+	/*width: 200px;*/
+	/*width: 400px;*/
+	width: 420px;
 	height: calc(100% - 50px);
 	background-color: #f5f5dc;
 	position: fixed;
@@ -54,7 +56,8 @@ body {
     left: 0px;
 	top: 0px;
     width: 100%;
-    max-width: calc(100% - 200px);
+    /*max-width: calc(100% - 200px);*/
+    max-width: calc(100% - 420px);
 	height: calc(100% - 50px);
 	max-height: calc(100% - 50px + 1px);
 	background-color: white;
@@ -125,10 +128,34 @@ body {
 	display: none;
 }
 
+#amount {
+	width: 100%;
+}
+
 #slider {
 	margin: 10px;
 }
 
-#fontTools {
+/*#fontTools {
 	margin-top: 20px;
+}*/
+
+.propertyWidget {
+	max-width: 170px;
+	min-width: 170px;
+	/*padding-right: 10px;*/
+}
+
+.propertyTool {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	border-top: solid 1px #bbb;
+}
+
+.propertyHeader {
+
+}
+
+.propertyRules {
+
 }

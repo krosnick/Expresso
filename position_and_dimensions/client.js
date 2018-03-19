@@ -694,6 +694,10 @@ var renderView = function(viewData){
 	$(".pageElement").has("img").resizable({aspectRatio: true});
 
 	$(".pageElement").not(":has(img)").resizable();
+
+    if(currentlySelectedElement){
+    	selectElement($("[elementId=" + currentlySelectedElement + "]"));
+    }
 };
 
 var createDOMElement = function(elementData){

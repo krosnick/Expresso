@@ -123,18 +123,22 @@ var convertClientDataToInts = function(viewObj){
 			var behaviorKeyAndValue = elementBehaviorKeyValues[behaviorIndex];
 			var behaviorName = behaviorKeyAndValue[0];
 			var elementBehaviorDictOfOptions = element[behaviorName];
-			//console.log(elementBehaviorDictOfOptions);
-			if(elementBehaviorDictOfOptions){
+			console.log(elementBehaviorDictOfOptions);
+			//if(elementBehaviorDictOfOptions){
+			if(elementBehaviorDictOfOptions !== undefined && elementBehaviorDictOfOptions !== null){
 				var elementBehaviorListOfOptions = Object.keys(elementBehaviorDictOfOptions);
 				for(var optionIndex = 0; optionIndex < elementBehaviorListOfOptions.length; optionIndex++){
 					var propertyOptionName = elementBehaviorListOfOptions[optionIndex];
 					var propertyOptionValue = elementBehaviorDictOfOptions[propertyOptionName];
+					console.log(propertyOptionName);
 					console.log(propertyOptionValue);
-					if(typeof(propertyOptionValue) === "string"){
+					//if(typeof(propertyOptionValue) === "string"){
+					if(typeof(propertyOptionValue) === "string" && propertyOptionName !== "transition"){
 						var parseClientDataFunc = elementDataFormat[behaviorName]["parseClientData"];
 						var parsedClientData = parseClientDataFunc(propertyOptionValue);
 						element[behaviorName][propertyOptionName] = parsedClientData;
-						console.log(parsedClientData);
+					}else{
+
 					}
 				}
 			}
@@ -144,7 +148,6 @@ var convertClientDataToInts = function(viewObj){
 
 var confirmHasTransitionProperty = function(){
 	var viewIds = Object.keys(views);
-	console.log("viewIds.length: " + viewIds.length);
 	for(var keyframeIndex = 0; keyframeIndex < viewIds.length; keyframeIndex++){
 		var viewId = viewIds[keyframeIndex];
 		var viewObj = views[viewId];
@@ -156,15 +159,12 @@ var confirmHasTransitionProperty = function(){
 				var behaviorKeyAndValue = elementBehaviorKeyValues[behaviorIndex];
 				var behaviorName = behaviorKeyAndValue[0];
 				var elementBehaviorDictOfOptions = element[behaviorName];
-				//console.log(elementBehaviorDictOfOptions);
-				console.log(element[behaviorName]);
 				if(elementBehaviorDictOfOptions){
 					// Doesn't have "transition" property?
 					if(!elementBehaviorDictOfOptions["transition"]){
 						element[behaviorName]["transition"] = defaultTransition;
 					}
 				}
-				console.log(element[behaviorName]);
 			}
 		}
 	}
@@ -288,10 +288,8 @@ var updateCSSRules = function(){
 		/*var elementImageRatio = null;
 		if(firstViewCurrently["elements"][elementIndex]["imageRatio"]){
 			elementImageRatio = firstViewCurrently["elements"][elementIndex]["imageRatio"];
-			console.log(elementImageRatio);
 		}*/
 		var elementImageRatio = firstViewCurrently["elements"][elementIndex]["image-ratio"];
-		//console.log("elementImageRatio: " + elementImageRatio);
 		var keyframesDataForThisElement = [];
 		for(var viewIndex = 0; viewIndex < viewIds.length; viewIndex++){
 			var viewKey = viewIds[viewIndex];
@@ -376,7 +374,6 @@ var updateCSSRules = function(){
 								"elementId": elementId,
 								"image-ratio": elementImageRatio
 							}
-							//console.log(cssRulesObj);
 							if(!(elementImageRatio && propertyName === "height")){
 								cssRules.push(cssRulesObj);
 							}
@@ -548,16 +545,13 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 					var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName][attributeName], point2[axisName], point2[behaviorName][propertyName][attributeName], chunkStart, chunkEnd, elementSelector);
 					fitDataObject[attributeName] = lineOfBestFit;
 				}
-				//console.log(fitDataObject);
 				chunkLineFitData.push(fitDataObject);
 			}else{
 				var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName], point2[axisName], point2[behaviorName][propertyName], chunkStart, chunkEnd, elementSelector);
 				chunkLineFitData.push(lineOfBestFit);
-				//console.log(lineOfBestFit);
 			}
 		}
 	}
-	//console.log(chunkLineFitData);
 	return chunkLineFitData;
 };
 
@@ -571,18 +565,15 @@ var computeLineOfBestFit = function(axisVal1, attributeVal1, axisVal2, attribute
 };
 
 var determineLargestId = function(){
-	//console.log("determineLargestId - begin");
 	
 	var viewIds = Object.keys(views);
 	var largestId = 0;
 	for(var i = 0; i < viewIds.length; i++){
 		var currentViewId = views[viewIds[i]]["id"];
-		//console.log(currentViewId);
 		if(currentViewId > largestId){
 			largestId = currentViewId;
 		}
 	}
-	//console.log("determineLargestId - end");
 	return largestId;
 };
 
@@ -715,7 +706,6 @@ fs.readFile(dataFile, function(err, data){
         console.log(err);
     }else{
     	var jsonFileData = JSON.parse(data);
-    	//console.log(jsonFileData);
     	views = jsonFileData["keyframes"];
 
     	// Confirm that element property of each keyframe has a "transition" property; if one doesn't, then set it to defaultTransition

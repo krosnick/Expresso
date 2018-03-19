@@ -89,7 +89,6 @@ var elementDataFormat = {
 			"property": "color",
 			"get": function(){
 				var computedColor = this.css("color");
-				console.log(computedColor);
 				if(computedColor !== "rgba(0, 0, 0, 0)"){
 					return computedColor;
 				}else{
@@ -100,15 +99,15 @@ var elementDataFormat = {
 	]
 };
 
-var generateRuleInferenceHTML = function(widgetName){
+var generateRuleInferenceHTML = function(behaviorName){
 	//var ruleInferenceSelectWidgetHTML = generateRuleInferenceDirectionHTML(widgetName, "Left") + generateRuleInferenceDirectionHTML(widgetName, "Right");
 	//var ruleInferenceSelectWidgetHTML = generateRuleInferenceDirectionHTML(widgetName, "Left");
-	var ruleInferenceSelectWidgetHTML = generateRuleInferenceDirectionHTML(widgetName);
+	var ruleInferenceSelectWidgetHTML = generateRuleInferenceDirectionHTML(behaviorName);
 	return ruleInferenceSelectWidgetHTML;
 };
 
 //var generateRuleInferenceDirectionHTML = function(widgetName, direction){
-var generateRuleInferenceDirectionHTML = function(widgetName){
+var generateRuleInferenceDirectionHTML = function(behaviorName){
 	/*var optionLinearInterp = '<option value="1" selected>Linear interpolation</option>';
 	var optionPrevRule = '<option value="2">Previous rule</option>';
 	var optionConstantValue = '<option value="3">Constant value</option>';*/
@@ -126,7 +125,7 @@ var generateRuleInferenceDirectionHTML = function(widgetName){
 	//var selectHTML = '<select class="ruleInferenceSelect" id=' + selectWidgetId +' >' + optionLinearInterp + optionPrevRule + optionConstantValue + '</select>';
 	
 	//var selectHTML = '<select class="ruleInferenceSelect" id=' + selectWidgetId +' >' + optionLinearInterp + optionPrevKeyframeRule + optionNextKeyframeRule + optionPrevKeyframeConstantValue + optionCurrentKeyframeConstantValue + '</select>';
-	var selectHTML = '<select class="ruleInferenceSelect" transition=' + selectWidgetId +' >' + optionLinearInterp + optionPrevKeyframeRule + optionNextKeyframeRule + optionPrevKeyframeConstantValue + optionCurrentKeyframeConstantValue + '</select>';
+	var selectHTML = '<select class="ruleInferenceSelect" behavior-name=' + behaviorName +' >' + optionLinearInterp + optionPrevKeyframeRule + optionNextKeyframeRule + optionPrevKeyframeConstantValue + optionCurrentKeyframeConstantValue + '</select>';
 
 	//var labelHTML = '<label for="' + selectWidgetId + '">' + direction + ':&nbsp;</label>';
 	//var ruleInferenceDirectionSelectWidgetHTML = labelHTML + selectHTML;
@@ -444,18 +443,16 @@ $(document).ready(function() {
       }
     });
 
-    //$(".ruleInferenceSelect").change(function(event) {
     $("body").on("change", ".ruleInferenceSelect", function(){
     	// Transition rule value
     	var newTransitionRule = $(this).val();
-    	//console.log($(this));
     	console.log(newTransitionRule);
-
-    	// Property widget
-    	var widgetId = $(this).attr("id");
-    	console.log(widgetId);
+    	
+    	var behaviorName = $(this).attr("behavior-name");
+    	//console.log(behaviorName);
 
     	// Update widget's "transition" property
+    	$("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-transition", newTransitionRule);
 
     	// Capture data/send to server
     	dataChanged = true;
@@ -469,8 +466,12 @@ $(document).ready(function() {
 	$(".propertyRules").each(function(index, element){
 
 		var propertyToolAncestor = $(this).closest(".propertyTool");
-		var widgetName = propertyToolAncestor.attr("widgetName");
-		var ruleInferenceQuestions = generateRuleInferenceHTML(widgetName);
+		//var widgetName = propertyToolAncestor.attr("widgetName");
+		var behaviorName = propertyToolAncestor.attr("behavior-name");
+		//var selectWidgetId = behaviorName;
+		//var ruleInferenceQuestions = generateRuleInferenceHTML(widgetName);
+		//var ruleInferenceQuestions = generateRuleInferenceHTML(selectWidgetId);
+		var ruleInferenceQuestions = generateRuleInferenceHTML(behaviorName);
 		$(this).html(ruleInferenceQuestions);
 	});
 
@@ -504,6 +505,20 @@ var selectElement = function(element){
 	$( "#slider" ).slider( "value", fontSize );
 	$( "#amount" ).val( fontSize  + "px" );
 	$("#text_color_colorpicker").spectrum("set", element.css("color"));	
+
+	var selectWidgets = $("select.ruleInferenceSelect");
+	selectWidgets.each(function(index, element){
+		// Update the <select> value given the transition value embedded in the currently selected element
+		//console.log(element);
+		//console.log($(this));
+		var behaviorName = $(this).attr("behavior-name");
+		//console.log(behaviorName);
+		var behaviorTransitionValue = $("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-transition");
+		//console.log(behaviorTransitionValue);
+		if(behaviorTransitionValue){
+			$(this).val(behaviorTransitionValue);
+		}
+	});
 
 	//updateRulesMenu(element);
 
@@ -561,6 +576,7 @@ var captureElementData = function(){
 			var propertyOptions = [];
 
 			uiElementData[behaviorName] = {};
+
 			for(var optionIndex = 0; optionIndex < propertyDataList.length; optionIndex++){
 				var optionData = propertyDataList[optionIndex];
 				var propertyName = optionData["property"];
@@ -574,8 +590,12 @@ var captureElementData = function(){
 			}
 		}
 
+		// Capture transition property
+		//console.log(behaviorName + "-transition");
+		//console.log(jqueryUIElement.attr(behaviorName + "-transition"));
+		uiElementData[behaviorName]["transition"] = jqueryUIElement.attr(behaviorName + "-transition");
+
 		uiElementsData.push(uiElementData);
-		console.log(uiElementData);
 	}
 	return uiElementsData;
 }
@@ -694,6 +714,18 @@ var createDOMElement = function(elementData){
 	element.addClass("modifiable");
 	element.attr("tabindex", elementData["id"]);
 
+	// for each key in elementData that has an object value, set an attribute on the DOM element
+	var behaviorNames = Object.keys(elementDataFormat);
+	for(var i = 0; i < behaviorNames.length; i++){
+		var behaviorName = behaviorNames[i];
+		var elementDataObject = elementData[behaviorName];
+		if(elementDataObject){
+			var transitionValue = elementDataObject["transition"];
+			var elementBehaviorTransitionAttr = behaviorName + "-transition";
+			element.attr(elementBehaviorTransitionAttr, transitionValue);
+		}
+	}
+
 	return element;
 };
 
@@ -706,10 +738,8 @@ var replaceCSSRules = function(){
 		var ruleObject = cssRules[i];
 		// Using cssRules, need to choose the rule that is correct for each object in the list, and then add it to cssRulesString
 		/*var relevantCSSRule = returnRelevantCSSRule(ruleObject);
-		console.log(relevantCSSRule);
 		cssRulesString += relevantCSSRule;*/
 		var cssString = generateCSSString(ruleObject);
-		//console.log(cssString);
 		cssRulesString += cssString;
 		//cssRulesString += cssRules[i];
 	}
@@ -729,13 +759,11 @@ var createSingleAttributeCSSString = function(ruleObject, dimensionValue, elemen
 	//singleRule += createPropertyValueString(propertyName, computedValue);
 	singleRule += "" + propertyName + ": " + computedValue + "px;";
 	singleRule += "}";
-	//console.log(singleRule);
-
+	
 	// Is this needed? Is explicitly setting the "height" needed?
 	if(imageRatio != null && propertyName === "width"){
 		// Set the height that corresponds to the width we just set
 		var heightValue = 1.0*computedValue / imageRatio;
-		//console.log("heightValue: " + heightValue);
 		singleRule += "#element" + elementId + "{";
 		singleRule += "height: " + heightValue + "px;";
 		singleRule += "}";
@@ -761,7 +789,6 @@ var createRGBCSSString = function(ruleObject, dimensionValue, elementId, propert
 	//rgbRule += createPropertyValueString(propertyName, rgbString);
 	rgbRule += "" + propertyName + ": " + rgbString + ";";
 	rgbRule += "}";
-	//console.log(rgbRule);
 	return rgbRule;
 }
 
@@ -772,20 +799,12 @@ var postProcessRGBValue = function(value){
 
 var generateCSSString = function(ruleObject){
 	var dimValue = getUserPageDimValue(ruleObject["pageDim"]);
-	//console.log(dimValue);
 	var cssRulesList = ruleObject["cssRulesList"];
 	var behaviorName = ruleObject["behaviorName"];
 	var propertyName = ruleObject["propertyName"];
 	var pageDim = ruleObject["pageDim"];
 	var elementId = ruleObject["elementId"];
 	var imageRatio = ruleObject["image-ratio"];
-	/*if(imageRatio){
-		console.log("imageRatio: " + imageRatio);
-	}
-	console.log(ruleObject);*/
-	//console.log("elementId: " + elementId + "; propertyName: " + propertyName + "; imageRatio: " + imageRatio);
-	//console.log("imageRatio: " + imageRatio);
-	//console.log(ruleObject);
 
 	// This is an image, and the propertyName is "height"; height will be set using imageRatio when the width is set
 	if(imageRatio != null && propertyName === "height"){
@@ -824,11 +843,9 @@ var generateCSSString = function(ruleObject){
 				isRelevantRule = true;
 			}
 		}
-		//console.log("isRelevantRule: " + isRelevantRule);
 		if(isRelevantRule){
 			var cssStringFunction = propertyToCSSStringFunction[propertyName];
 			var cssString = cssStringFunction(ruleOption, dimValue, elementId, propertyName, imageRatio);
-			//console.log(cssString);
 			return cssString;
 		}
 	}

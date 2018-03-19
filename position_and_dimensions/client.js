@@ -101,19 +101,36 @@ var elementDataFormat = {
 };
 
 var generateRuleInferenceHTML = function(widgetName){
-	var ruleInferenceSelectWidgetHTML = generateRuleInferenceDirectionHTML(widgetName, "Left") + generateRuleInferenceDirectionHTML(widgetName, "Right");
+	//var ruleInferenceSelectWidgetHTML = generateRuleInferenceDirectionHTML(widgetName, "Left") + generateRuleInferenceDirectionHTML(widgetName, "Right");
+	//var ruleInferenceSelectWidgetHTML = generateRuleInferenceDirectionHTML(widgetName, "Left");
+	var ruleInferenceSelectWidgetHTML = generateRuleInferenceDirectionHTML(widgetName);
 	return ruleInferenceSelectWidgetHTML;
 };
 
-var generateRuleInferenceDirectionHTML = function(widgetName, direction){
-	var optionLinearInterp = '<option value="1" selected>Linear interpolation</option>';
+//var generateRuleInferenceDirectionHTML = function(widgetName, direction){
+var generateRuleInferenceDirectionHTML = function(widgetName){
+	/*var optionLinearInterp = '<option value="1" selected>Linear interpolation</option>';
 	var optionPrevRule = '<option value="2">Previous rule</option>';
-	var optionConstantValue = '<option value="3">Constant value</option>';
-	var selectWidgetId = widgetName + "_select_" + direction;
+	var optionConstantValue = '<option value="3">Constant value</option>';*/
+
+	//var transitionOptions = ["linearInterpolation", "prevKeyframeRule", "nextKeyframeRule", "prevKeyframeConstantValue", "currentKeyframeConstantValue"];
+	var optionLinearInterp = '<option value="linearInterpolation" selected>Linear interpolation</option>';
+	var optionPrevKeyframeRule = '<option value="prevKeyframeRule">Previous keyframe rule</option>';
+	var optionNextKeyframeRule = '<option value="nextKeyframeRule">Next keyframe rule</option>';
+	var optionPrevKeyframeConstantValue = '<option value="prevKeyframeConstantValue">Previous keyframe constant value</option>';
+	var optionCurrentKeyframeConstantValue = '<option value="currentKeyframeConstantValue">Current keyframe constant value</option>';
+
+	//var selectWidgetId = widgetName + "_select_" + direction;
+	//var selectWidgetId = widgetName + "_select";
 	//var ruleInferenceSelectWidgetHTML = '<select class="ruleInferenceSelect">' + optionLinearInterp + optionPrevRule + optionConstantValue + '</select>';
-	var selectHTML = '<select class="ruleInferenceSelect" id=' + selectWidgetId +' >' + optionLinearInterp + optionPrevRule + optionConstantValue + '</select>';
-	var labelHTML = '<label for="' + selectWidgetId + '">' + direction + ':&nbsp;</label>';
-	var ruleInferenceDirectionSelectWidgetHTML = labelHTML + selectHTML;
+	//var selectHTML = '<select class="ruleInferenceSelect" id=' + selectWidgetId +' >' + optionLinearInterp + optionPrevRule + optionConstantValue + '</select>';
+	
+	//var selectHTML = '<select class="ruleInferenceSelect" id=' + selectWidgetId +' >' + optionLinearInterp + optionPrevKeyframeRule + optionNextKeyframeRule + optionPrevKeyframeConstantValue + optionCurrentKeyframeConstantValue + '</select>';
+	var selectHTML = '<select class="ruleInferenceSelect" transition=' + selectWidgetId +' >' + optionLinearInterp + optionPrevKeyframeRule + optionNextKeyframeRule + optionPrevKeyframeConstantValue + optionCurrentKeyframeConstantValue + '</select>';
+
+	//var labelHTML = '<label for="' + selectWidgetId + '">' + direction + ':&nbsp;</label>';
+	//var ruleInferenceDirectionSelectWidgetHTML = labelHTML + selectHTML;
+	var ruleInferenceDirectionSelectWidgetHTML = selectHTML;
 	return ruleInferenceDirectionSelectWidgetHTML;
 }
 
@@ -417,7 +434,7 @@ $(document).ready(function() {
 	    }
 	});
 
-	$( "#slider" ).slider({
+	$("#slider").slider({
       min: 8,
       max: 96,
       slide: function( event, ui ) {
@@ -426,6 +443,23 @@ $(document).ready(function() {
 	    dataChanged = true;
       }
     });
+
+    //$(".ruleInferenceSelect").change(function(event) {
+    $("body").on("change", ".ruleInferenceSelect", function(){
+    	// Transition rule value
+    	var newTransitionRule = $(this).val();
+    	//console.log($(this));
+    	console.log(newTransitionRule);
+
+    	// Property widget
+    	var widgetId = $(this).attr("id");
+    	console.log(widgetId);
+
+    	// Update widget's "transition" property
+
+    	// Capture data/send to server
+    	dataChanged = true;
+	});
 
 	// Fill all .propertyRules divs with dropdown menu HTML
 	//var ruleInferenceQuestions = "<div>Test content</div>";
@@ -482,6 +516,10 @@ var updatePageDimensionsLabel = function(){
 	var dimensions = "width: " + element.css("width") + ", height: " + element.css("height");
     $("#" + pageDimensionsInfoId).text(dimensions);
 };
+
+/*var captureTransitionRule = function(){
+
+};*/
 
 // Capture element width/height/x/y data
 var captureElementData = function(){

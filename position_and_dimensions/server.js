@@ -125,7 +125,7 @@ var convertClientDataToInts = function(viewObj){
 			var elementBehaviorDictOfOptions = element[behaviorName];
 			//console.log(elementBehaviorDictOfOptions);
 			if(elementBehaviorDictOfOptions){
-			var elementBehaviorListOfOptions = Object.keys(elementBehaviorDictOfOptions);
+				var elementBehaviorListOfOptions = Object.keys(elementBehaviorDictOfOptions);
 				for(var optionIndex = 0; optionIndex < elementBehaviorListOfOptions.length; optionIndex++){
 					var propertyOptionName = elementBehaviorListOfOptions[optionIndex];
 					var propertyOptionValue = elementBehaviorDictOfOptions[propertyOptionName];
@@ -137,6 +137,34 @@ var convertClientDataToInts = function(viewObj){
 						console.log(parsedClientData);
 					}
 				}
+			}
+		}
+	}
+};
+
+var confirmHasTransitionProperty = function(){
+	var viewIds = Object.keys(views);
+	console.log("viewIds.length: " + viewIds.length);
+	for(var keyframeIndex = 0; keyframeIndex < viewIds.length; keyframeIndex++){
+		var viewId = viewIds[keyframeIndex];
+		var viewObj = views[viewId];
+		var elementsData = viewObj["elements"];
+		for(var i = 0; i < elementsData.length; i++){
+			var element = elementsData[i];
+			var elementBehaviorKeyValues = Object.entries(elementDataFormat);
+			for(var behaviorIndex = 0; behaviorIndex < elementBehaviorKeyValues.length; behaviorIndex++){
+				var behaviorKeyAndValue = elementBehaviorKeyValues[behaviorIndex];
+				var behaviorName = behaviorKeyAndValue[0];
+				var elementBehaviorDictOfOptions = element[behaviorName];
+				//console.log(elementBehaviorDictOfOptions);
+				console.log(element[behaviorName]);
+				if(elementBehaviorDictOfOptions){
+					// Doesn't have "transition" property?
+					if(!elementBehaviorDictOfOptions["transition"]){
+						element[behaviorName]["transition"] = defaultTransition;
+					}
+				}
+				console.log(element[behaviorName]);
 			}
 		}
 	}
@@ -662,6 +690,9 @@ var elementDataFormat = {
 	}
 };
 
+var transitionOptions = ["linearInterpolation", "prevKeyframeRule", "nextKeyframeRule", "prevKeyframeConstantValue", "currentKeyframeConstantValue"];
+var defaultTransition = "linearInterpolation";
+
 var properties = [];
 var behaviorObjList = Object.values(elementDataFormat);
 for(var behaviorObjIndex = 0; behaviorObjIndex < behaviorObjList.length; behaviorObjIndex++){
@@ -686,6 +717,12 @@ fs.readFile(dataFile, function(err, data){
     	var jsonFileData = JSON.parse(data);
     	//console.log(jsonFileData);
     	views = jsonFileData["keyframes"];
+
+    	// Confirm that element property of each keyframe has a "transition" property; if one doesn't, then set it to defaultTransition
+    	// Later will probably want to have a specific defaultTransition per property type (e.g., "prevKeyframeConstantValue" for img src, "linearInterpolation" for element width)
+    	confirmHasTransitionProperty();
+    	writeDataToJSONFile();
+
     	//viewCounter = Object.keys(views).length;
     	viewCounter = determineLargestId() + 1;
     	updateCSSRules();

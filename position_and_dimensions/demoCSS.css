@@ -25,7 +25,8 @@ body {
 #rightMenu {
 	/*width: 200px;*/
 	/*width: 400px;*/
-	width: 420px;
+	/*width: 420px;*/
+	width: 480px;
 	height: calc(100% - 50px);
 	background-color: #f5f5dc;
 	position: fixed;
@@ -57,7 +58,8 @@ body {
 	top: 0px;
     width: 100%;
     /*max-width: calc(100% - 200px);*/
-    max-width: calc(100% - 420px);
+    /*max-width: calc(100% - 420px);*/
+    max-width: calc(100% - 480px);
 	height: calc(100% - 50px);
 	max-height: calc(100% - 50px + 1px);
 	background-color: white;

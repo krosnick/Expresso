@@ -681,7 +681,8 @@ var elementDataFormat = {
 	}
 };
 
-var transitionOptions = ["linearInterpolation", "prevKeyframeRule", "nextKeyframeRule", "prevKeyframeConstantValue", "currentKeyframeConstantValue"];
+//var transitionOptions = ["linearInterpolation", "prevKeyframeRule", "nextKeyframeRule", "prevKeyframeConstantValue", "currentKeyframeConstantValue"];
+var transitionOptions = ["linearInterpolation", "leftJump", "rightJump"]
 var defaultTransition = "linearInterpolation";
 
 var properties = [];

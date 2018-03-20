@@ -106,32 +106,40 @@ var generateRuleInferenceHTML = function(behaviorName){
 	return ruleInferenceSelectWidgetHTML;
 };
 
-//var generateRuleInferenceDirectionHTML = function(widgetName, direction){
 var generateRuleInferenceDirectionHTML = function(behaviorName){
-	/*var optionLinearInterp = '<option value="1" selected>Linear interpolation</option>';
-	var optionPrevRule = '<option value="2">Previous rule</option>';
-	var optionConstantValue = '<option value="3">Constant value</option>';*/
-
-	//var transitionOptions = ["linearInterpolation", "prevKeyframeRule", "nextKeyframeRule", "prevKeyframeConstantValue", "currentKeyframeConstantValue"];
-	var optionLinearInterp = '<option value="linearInterpolation" selected>Linear interpolation</option>';
+	/*var optionLinearInterp = '<option value="linearInterpolation" selected>Linear interpolation</option>';
 	var optionPrevKeyframeRule = '<option value="prevKeyframeRule">Previous keyframe rule</option>';
 	var optionNextKeyframeRule = '<option value="nextKeyframeRule">Next keyframe rule</option>';
 	var optionPrevKeyframeConstantValue = '<option value="prevKeyframeConstantValue">Previous keyframe constant value</option>';
-	var optionCurrentKeyframeConstantValue = '<option value="currentKeyframeConstantValue">Current keyframe constant value</option>';
+	var optionCurrentKeyframeConstantValue = '<option value="currentKeyframeConstantValue">Current keyframe constant value</option>';*/
 
-	//var selectWidgetId = widgetName + "_select_" + direction;
-	//var selectWidgetId = widgetName + "_select";
-	//var ruleInferenceSelectWidgetHTML = '<select class="ruleInferenceSelect">' + optionLinearInterp + optionPrevRule + optionConstantValue + '</select>';
-	//var selectHTML = '<select class="ruleInferenceSelect" id=' + selectWidgetId +' >' + optionLinearInterp + optionPrevRule + optionConstantValue + '</select>';
-	
-	//var selectHTML = '<select class="ruleInferenceSelect" id=' + selectWidgetId +' >' + optionLinearInterp + optionPrevKeyframeRule + optionNextKeyframeRule + optionPrevKeyframeConstantValue + optionCurrentKeyframeConstantValue + '</select>';
-	var selectHTML = '<select class="ruleInferenceSelect" behavior-name=' + behaviorName +' >' + optionLinearInterp + optionPrevKeyframeRule + optionNextKeyframeRule + optionPrevKeyframeConstantValue + optionCurrentKeyframeConstantValue + '</select>';
+	var optionsHTML = "";
+	optionsHTML += '<option disabled value="empty"></option>';
+	var transitionOptionIds = Object.keys(transitionOptions);
+	for(var i = 0; i < transitionOptionIds.length; i++){
+		var transitionKey = transitionOptionIds[i];
+		var transitionName = transitionOptions[transitionKey];
+		var selectedAttribute = "";
+		/*if(i == 0){
+			selectedAttribute = "selected";
+		}*/
+		var optionString = '<option value="' + transitionKey + '"' + selectedAttribute + '>' + transitionName + '</option>';
+		optionsHTML += optionString;
+	}
 
-	//var labelHTML = '<label for="' + selectWidgetId + '">' + direction + ':&nbsp;</label>';
-	//var ruleInferenceDirectionSelectWidgetHTML = labelHTML + selectHTML;
+	//var selectHTML = '<select class="ruleInferenceSelect" behavior-name=' + behaviorName +' >' + optionLinearInterp + optionPrevKeyframeRule + optionNextKeyframeRule + optionPrevKeyframeConstantValue + optionCurrentKeyframeConstantValue + '</select>';
+
+	var selectHTML = '<select class="ruleInferenceSelect" behavior-name=' + behaviorName +' >' + optionsHTML + '</select>';
+
 	var ruleInferenceDirectionSelectWidgetHTML = selectHTML;
 	return ruleInferenceDirectionSelectWidgetHTML;
 }
+
+var transitionOptions = {
+	"linearInterpolation": "No jump",
+	"leftJump": "Left jump",
+	"rightJump": "Right jump"
+};
 
 var propertyToCSSStringFunction = {
 	width: function(ruleObject, dimensionValue, elementId, propertyName){
@@ -452,7 +460,10 @@ $(document).ready(function() {
     	//console.log(behaviorName);
 
     	// Update widget's "transition" property
-    	$("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-transition", newTransitionRule);
+    	//$("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-transition", newTransitionRule);
+    	if(newTransitionRule && newTransitionRule !== "empty"){
+    		$("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-transition", newTransitionRule);
+    	}
 
     	// Capture data/send to server
     	dataChanged = true;
@@ -517,6 +528,8 @@ var selectElement = function(element){
 		//console.log(behaviorTransitionValue);
 		if(behaviorTransitionValue){
 			$(this).val(behaviorTransitionValue);
+		}else{
+			$(this).val("empty");
 		}
 	});
 
@@ -588,12 +601,12 @@ var captureElementData = function(){
 					uiElementData[behaviorName][propertyName] = propertyValue;
 				}
 			}
+			// Capture transition property
+			var transitionValue = jqueryUIElement.attr(behaviorName + "-transition");
+			if(transitionValue && transitionValue !== "empty"){
+				uiElementData[behaviorName]["transition"] = transitionValue;
+			}
 		}
-
-		// Capture transition property
-		//console.log(behaviorName + "-transition");
-		//console.log(jqueryUIElement.attr(behaviorName + "-transition"));
-		uiElementData[behaviorName]["transition"] = jqueryUIElement.attr(behaviorName + "-transition");
 
 		uiElementsData.push(uiElementData);
 	}
@@ -724,10 +737,14 @@ var createDOMElement = function(elementData){
 		var behaviorName = behaviorNames[i];
 		var elementDataObject = elementData[behaviorName];
 		if(elementDataObject){
+			console.log("behavior-transition updated");
 			var transitionValue = elementDataObject["transition"];
 			var elementBehaviorTransitionAttr = behaviorName + "-transition";
 			element.attr(elementBehaviorTransitionAttr, transitionValue);
-		}
+		}/*else{
+			var elementBehaviorTransitionAttr = behaviorName + "-transition";
+			element.attr(elementBehaviorTransitionAttr, "empty");
+		}*/
 	}
 
 	return element;

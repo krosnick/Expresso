@@ -271,6 +271,10 @@ $(document).ready(function() {
 	    	// Let's try this - yes this worked
 	    	replaceCSSRules();
 
+	    	if(currentlySelectedElement){
+		    	selectElement($("[elementId=" + currentlySelectedElement + "]"));
+		    }
+
 	    	// Now select what was currentlySelectedElement before
 	    	$("[elementId=" + currentlySelectedElement + "]").addClass("selected");    	
 	    });
@@ -671,6 +675,10 @@ var updateView = function(viewId){
     	renderView(data["view"]);
 
     	replaceCSSRules();
+
+    	if(currentlySelectedElement){
+	    	selectElement($("[elementId=" + currentlySelectedElement + "]"));
+	    }
 
     	$(".userPage").resizable();
     	

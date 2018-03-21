@@ -1,0 +1,833 @@
+{
+    "keyframes": {
+        "0": {
+            "elements": [{
+                "id": "0",
+                "text": "",
+                "width": {
+                    "width": 1467
+                },
+                "height": {
+                    "height": 89
+                },
+                "x": {
+                    "left": 4,
+                    "right": 9
+                },
+                "y": {
+                    "top": 4,
+                    "bottom": 707
+                },
+                "font-size": {
+                    "font-size": 16
+                },
+                "background-color": {
+                    "background-color": {
+                        "r": 12,
+                        "g": 50,
+                        "b": 84
+                    }
+                }
+            }, {
+                "id": "1",
+                "text": "",
+                "width": {
+                    "width": 1466
+                },
+                "height": {
+                    "height": 35
+                },
+                "x": {
+                    "left": 4,
+                    "right": 10
+                },
+                "y": {
+                    "top": 94,
+                    "bottom": 671
+                },
+                "font-size": {
+                    "font-size": 16
+                },
+                "background-color": {
+                    "background-color": {
+                        "r": 56,
+                        "g": 82,
+                        "b": 109
+                    }
+                }
+            }, {
+                "id": "2",
+                "text": "",
+                "width": {
+                    "width": 430
+                },
+                "height": {
+                    "height": 82
+                },
+                "x": {
+                    "left": 232,
+                    "right": 817
+                },
+                "y": {
+                    "top": 7,
+                    "bottom": 711
+                },
+                "font-size": {
+                    "font-size": 16
+                },
+                "background-color": {
+                    "background-color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    }
+                }
+            }, {
+                "id": "3",
+                "text": "ACADEMICS+ADMISSIONS",
+                "width": {
+                    "width": 206
+                },
+                "height": {
+                    "height": 21
+                },
+                "x": {
+                    "left": 232,
+                    "right": 1041
+                },
+                "y": {
+                    "top": 99,
+                    "bottom": 680
+                },
+                "font-size": {
+                    "font-size": 11
+                },
+                "color": {
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255
+                    }
+                }
+            }, {
+                "id": "4",
+                "text": "RESEARCH",
+                "width": {
+                    "width": 92
+                },
+                "height": {
+                    "height": 22
+                },
+                "x": {
+                    "left": 457,
+                    "right": 930
+                },
+                "y": {
+                    "top": 99,
+                    "bottom": 679
+                },
+                "font-size": {
+                    "font-size": 11
+                },
+                "color": {
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255
+                    }
+                }
+            }, {
+                "id": "5",
+                "text": "PEOPLE",
+                "width": {
+                    "width": 72
+                },
+                "height": {
+                    "height": 21
+                },
+                "x": {
+                    "left": 564,
+                    "right": 843
+                },
+                "y": {
+                    "top": 99,
+                    "bottom": 680
+                },
+                "font-size": {
+                    "font-size": 11
+                },
+                "color": {
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255
+                    }
+                }
+            }, {
+                "id": "6",
+                "text": "INDUSTRY",
+                "width": {
+                    "width": 90
+                },
+                "height": {
+                    "height": 21
+                },
+                "x": {
+                    "left": 653,
+                    "right": 736
+                },
+                "y": {
+                    "top": 99,
+                    "bottom": 680
+                },
+                "font-size": {
+                    "font-size": 11
+                },
+                "color": {
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255
+                    }
+                }
+            }, {
+                "id": "7",
+                "text": "NEWS+AWARDS",
+                "width": {
+                    "width": 129
+                },
+                "height": {
+                    "height": 20
+                },
+                "x": {
+                    "left": 762,
+                    "right": 589
+                },
+                "y": {
+                    "top": 99,
+                    "bottom": 681
+                },
+                "font-size": {
+                    "font-size": 11
+                },
+                "color": {
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255
+                    }
+                }
+            }, {
+                "id": "8",
+                "text": "EVENTS",
+                "width": {
+                    "width": 72
+                },
+                "height": {
+                    "height": 20
+                },
+                "x": {
+                    "left": 903,
+                    "right": 504
+                },
+                "y": {
+                    "top": 99,
+                    "bottom": 681
+                },
+                "font-size": {
+                    "font-size": 11
+                },
+                "color": {
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255
+                    }
+                }
+            }, {
+                "id": "9",
+                "text": "",
+                "width": {
+                    "width": 1024
+                },
+                "height": {
+                    "height": 381
+                },
+                "x": {
+                    "left": 236,
+                    "right": 219
+                },
+                "y": {
+                    "top": 211,
+                    "bottom": 208
+                },
+                "font-size": {
+                    "font-size": 16
+                },
+                "background-color": {
+                    "background-color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    }
+                }
+
+            }],
+            "pageWidth": 1480,
+            "pageHeight": 800,
+            "id": 0
+        },
+        "1": {
+            "elements": [{
+                "id": "0",
+                "text": "",
+                "width": {
+                    "width": 1018
+                },
+                "height": {
+                    "height": 89
+                },
+                "x": {
+                    "left": 4,
+                    "right": 8
+                },
+                "y": {
+                    "top": 4,
+                    "bottom": 707
+                },
+                "font-size": {
+                    "font-size": 16
+                },
+                "background-color": {
+                    "background-color": {
+                        "r": 12,
+                        "g": 50,
+                        "b": 84
+                    }
+                }
+            }, {
+                "id": "1",
+                "text": "",
+                "width": {
+                    "width": 1017
+                },
+                "height": {
+                    "height": 35
+                },
+                "x": {
+                    "left": 4,
+                    "right": 9
+                },
+                "y": {
+                    "top": 94,
+                    "bottom": 671
+                },
+                "font-size": {
+                    "font-size": 16
+                },
+                "background-color": {
+                    "background-color": {
+                        "r": 56,
+                        "g": 82,
+                        "b": 109
+                    }
+                }
+            }, {
+                "id": "2",
+                "text": "",
+                "width": {
+                    "width": 430
+                },
+                "height": {
+                    "height": 82
+                },
+                "x": {
+                    "left": 0,
+                    "right": 601
+                },
+                "y": {
+                    "top": 7,
+                    "bottom": 711
+                },
+                "font-size": {
+                    "font-size": 16
+                },
+                "background-color": {
+                    "background-color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    }
+                }
+            }, {
+                "id": "3",
+                "text": "ACADEMICS+ADMISSIONS",
+                "width": {
+                    "width": 206
+                },
+                "height": {
+                    "height": 21
+                },
+                "x": {
+                    "left": 0,
+                    "right": 825
+                },
+                "y": {
+                    "top": 99,
+                    "bottom": 680
+                },
+                "font-size": {
+                    "font-size": 11
+                },
+                "color": {
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255
+                    }
+                }
+            }, {
+                "id": "4",
+                "text": "RESEARCH",
+                "width": {
+                    "width": 92
+                },
+                "height": {
+                    "height": 22
+                },
+                "x": {
+                    "left": 224,
+                    "right": 714
+                },
+                "y": {
+                    "top": 99,
+                    "bottom": 679
+                },
+                "font-size": {
+                    "font-size": 11
+                },
+                "color": {
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255
+                    }
+                }
+            }, {
+                "id": "5",
+                "text": "PEOPLE",
+                "width": {
+                    "width": 72
+                },
+                "height": {
+                    "height": 21
+                },
+                "x": {
+                    "left": 336,
+                    "right": 622
+                },
+                "y": {
+                    "top": 99,
+                    "bottom": 680
+                },
+                "font-size": {
+                    "font-size": 11
+                },
+                "color": {
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255
+                    }
+                }
+            }, {
+                "id": "6",
+                "text": "INDUSTRY",
+                "width": {
+                    "width": 90
+                },
+                "height": {
+                    "height": 21
+                },
+                "x": {
+                    "left": 429,
+                    "right": 511
+                },
+                "y": {
+                    "top": 99,
+                    "bottom": 680
+                },
+                "font-size": {
+                    "font-size": 11
+                },
+                "color": {
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255
+                    }
+                }
+            }, {
+                "id": "7",
+                "text": "NEWS+AWARDS",
+                "width": {
+                    "width": 129
+                },
+                "height": {
+                    "height": 20
+                },
+                "x": {
+                    "left": 542,
+                    "right": 359
+                },
+                "y": {
+                    "top": 99,
+                    "bottom": 681
+                },
+                "font-size": {
+                    "font-size": 11
+                },
+                "color": {
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255
+                    }
+                }
+            }, {
+                "id": "8",
+                "text": "EVENTS",
+                "width": {
+                    "width": 72
+                },
+                "height": {
+                    "height": 20
+                },
+                "x": {
+                    "left": 688,
+                    "right": 270
+                },
+                "y": {
+                    "top": 99,
+                    "bottom": 681
+                },
+                "font-size": {
+                    "font-size": 11
+                },
+                "color": {
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255
+                    }
+                }
+            }, {
+                "id": "9",
+                "text": "",
+                "width": {
+                    "width": 1024
+                },
+                "height": {
+                    "height": 381
+                },
+                "x": {
+                    "left": 0,
+                    "right": 11
+                },
+                "y": {
+                    "top": 211,
+                    "bottom": 424
+                },
+                "font-size": {
+                    "font-size": 16
+                },
+                "background-color": {
+                    "background-color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    }
+                }
+            }],
+            "pageWidth": 1031,
+            "pageHeight": 800,
+            "id": 1
+        },
+        "5": {
+            "elements": [{
+                "id": "0",
+                "text": "",
+                "width": {
+                    "width": 652
+                },
+                "height": {
+                    "height": 89
+                },
+                "x": {
+                    "left": 4,
+                    "right": 5
+                },
+                "y": {
+                    "top": 4,
+                    "bottom": 707
+                },
+                "font-size": {
+                    "font-size": 16
+                },
+                "background-color": {
+                    "background-color": {
+                        "r": 12,
+                        "g": 50,
+                        "b": 84
+                    }
+                }
+            }, {
+                "id": "1",
+                "text": "",
+                "width": {
+                    "width": 651
+                },
+                "height": {
+                    "height": 35
+                },
+                "x": {
+                    "left": 4,
+                    "right": 6
+                },
+                "y": {
+                    "top": 94,
+                    "bottom": 671
+                },
+                "font-size": {
+                    "font-size": 16
+                },
+                "background-color": {
+                    "background-color": {
+                        "r": 56,
+                        "g": 82,
+                        "b": 109
+                    }
+                }
+            }, {
+                "id": "2",
+                "text": "",
+                "width": {
+                    "width": 430
+                },
+                "height": {
+                    "height": 82
+                },
+                "x": {
+                    "left": 3,
+                    "right": 228
+                },
+                "y": {
+                    "top": 7,
+                    "bottom": 711
+                },
+                "font-size": {
+                    "font-size": 16
+                },
+                "background-color": {
+                    "background-color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    }
+                }
+            }, {
+                "id": "3",
+                "text": "ACADEMICS+ADMISSIONS",
+                "width": {
+                    "width": 154
+                },
+                "height": {
+                    "height": 21
+                },
+                "x": {
+                    "left": 3,
+                    "right": 504
+                },
+                "y": {
+                    "top": 99,
+                    "bottom": 680
+                },
+                "font-size": {
+                    "font-size": 7
+                },
+                "color": {
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255
+                    }
+                }
+            }, {
+                "id": "4",
+                "text": "RESEARCH",
+                "width": {
+                    "width": 66
+                },
+                "height": {
+                    "height": 22
+                },
+                "x": {
+                    "left": 172,
+                    "right": 422
+                },
+                "y": {
+                    "top": 99,
+                    "bottom": 679
+                },
+                "font-size": {
+                    "font-size": 7
+                },
+                "color": {
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255
+                    }
+                }
+            }, {
+                "id": "5",
+                "text": "PEOPLE",
+                "width": {
+                    "width": 49
+                },
+                "height": {
+                    "height": 21
+                },
+                "x": {
+                    "left": 254,
+                    "right": 357
+                },
+                "y": {
+                    "top": 99,
+                    "bottom": 680
+                },
+                "font-size": {
+                    "font-size": 7
+                },
+                "color": {
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255
+                    }
+                }
+            }, {
+                "id": "6",
+                "text": "INDUSTRY",
+                "width": {
+                    "width": 64
+                },
+                "height": {
+                    "height": 21
+                },
+                "x": {
+                    "left": 318,
+                    "right": 278
+                },
+                "y": {
+                    "top": 99,
+                    "bottom": 680
+                },
+                "font-size": {
+                    "font-size": 7
+                },
+                "color": {
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255
+                    }
+                }
+            }, {
+                "id": "7",
+                "text": "NEWS+AWARDS",
+                "width": {
+                    "width": 92
+                },
+                "height": {
+                    "height": 20
+                },
+                "x": {
+                    "left": 401,
+                    "right": 167
+                },
+                "y": {
+                    "top": 99,
+                    "bottom": 681
+                },
+                "font-size": {
+                    "font-size": 7
+                },
+                "color": {
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255
+                    }
+                }
+            }, {
+                "id": "8",
+                "text": "EVENTS",
+                "width": {
+                    "width": 53
+                },
+                "height": {
+                    "height": 20
+                },
+                "x": {
+                    "left": 510,
+                    "right": 97
+                },
+                "y": {
+                    "top": 99,
+                    "bottom": 681
+                },
+                "font-size": {
+                    "font-size": 7
+                },
+                "color": {
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255
+                    }
+                }
+            }, {
+                "id": "9",
+                "text": "",
+                "width": {
+                    "width": 643
+                },
+                "height": {
+                    "height": 239
+                },
+                "x": {
+                    "left": 3,
+                    "right": 15
+                },
+                "y": {
+                    "top": 211,
+                    "bottom": 424
+                },
+                "font-size": {
+                    "font-size": 16
+                },
+                "background-color": {
+                    "background-color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    }
+                }
+            }],
+            "pageWidth": 662,
+            "pageHeight": 800,
+            "id": 5
+        }
+    }
+}

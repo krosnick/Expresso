@@ -88,6 +88,9 @@ var elementDataFormat = {
 		{
 			"property": "color",
 			"get": function(){
+				if(this.html().length === 0){ // If there's no text, don't set "color" property
+					return "";
+				}
 				var computedColor = this.css("color");
 				if(computedColor !== "rgba(0, 0, 0, 0)"){
 					return computedColor;
@@ -135,11 +138,19 @@ var generateRuleInferenceDirectionHTML = function(behaviorName){
 	return ruleInferenceDirectionSelectWidgetHTML;
 }
 
-var transitionOptions = {
+/*var transitionOptions = {
 	"linearInterpolation": "No jump",
 	"leftJump": "Left jump",
 	"rightJump": "Right jump"
+};*/
+
+var transitionOptions = {
+	"smoothBoth": "Both smooth",
+	"smoothLeft": "Left smooth",
+	"smoothRight": "Right smooth"
 };
+
+//smoothBoth
 
 var propertyToCSSStringFunction = {
 	width: function(ruleObject, dimensionValue, elementId, propertyName){
@@ -250,12 +261,16 @@ $(document).ready(function() {
 	    	makeFontBold($("#view" + nextKeyframeToShowId + " a"), $(".clone a"));
 
 	    	cssRules = data["cssRules"];
-	    	replaceCSSRules();
+	    	//replaceCSSRules(); // Maybe this isn't needed?
 	    	
 	    	//allElementRules = data["elementRules"];
 	    	currentViewId = nextViewToShow["id"];
 	    	renderView(nextViewToShow);
 	    	$(".userPage").resizable();
+
+	    	// Let's try this - yes this worked
+	    	replaceCSSRules();
+
 	    	// Now select what was currentlySelectedElement before
 	    	$("[elementId=" + currentlySelectedElement + "]").addClass("selected");    	
 	    });
@@ -454,11 +469,9 @@ $(document).ready(function() {
     $("body").on("change", ".ruleInferenceSelect", function(){
     	// Transition rule value
     	var newTransitionRule = $(this).val();
-    	console.log(newTransitionRule);
     	
     	var behaviorName = $(this).attr("behavior-name");
-    	//console.log(behaviorName);
-
+    	
     	// Update widget's "transition" property
     	//$("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-transition", newTransitionRule);
     	if(newTransitionRule && newTransitionRule !== "empty"){
@@ -520,12 +533,8 @@ var selectElement = function(element){
 	var selectWidgets = $("select.ruleInferenceSelect");
 	selectWidgets.each(function(index, element){
 		// Update the <select> value given the transition value embedded in the currently selected element
-		//console.log(element);
-		//console.log($(this));
 		var behaviorName = $(this).attr("behavior-name");
-		//console.log(behaviorName);
 		var behaviorTransitionValue = $("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-transition");
-		//console.log(behaviorTransitionValue);
 		if(behaviorTransitionValue){
 			$(this).val(behaviorTransitionValue);
 		}else{
@@ -737,7 +746,6 @@ var createDOMElement = function(elementData){
 		var behaviorName = behaviorNames[i];
 		var elementDataObject = elementData[behaviorName];
 		if(elementDataObject){
-			console.log("behavior-transition updated");
 			var transitionValue = elementDataObject["transition"];
 			var elementBehaviorTransitionAttr = behaviorName + "-transition";
 			element.attr(elementBehaviorTransitionAttr, transitionValue);
@@ -753,6 +761,8 @@ var createDOMElement = function(elementData){
 var replaceCSSRules = function(){
 	$("#" + elementCSSRules).empty();
 	var cssRulesString = "";
+
+	console.log(cssRules);
 
 	for(var i = 0; i < cssRules.length; i++){
 
@@ -818,7 +828,7 @@ var postProcessRGBValue = function(value){
 	return Math.min(Math.max(Math.round(value), 0), 255);
 };
 
-var generateCSSString = function(ruleObject){
+/*var generateCSSString = function(ruleObject){
 	var dimValue = getUserPageDimValue(ruleObject["pageDim"]);
 	var cssRulesList = ruleObject["cssRulesList"];
 	var behaviorName = ruleObject["behaviorName"];
@@ -870,6 +880,73 @@ var generateCSSString = function(ruleObject){
 			return cssString;
 		}
 	}
+}*/
+
+var generateCSSString = function(ruleObject){
+	var dimValue = getUserPageDimValue(ruleObject["pageDim"]);
+	var cssRulesList = ruleObject["cssRulesList"];
+	var behaviorName = ruleObject["behaviorName"];
+	var propertyName = ruleObject["propertyName"];
+	var pageDim = ruleObject["pageDim"];
+	var elementId = ruleObject["elementId"];
+	var imageRatio = ruleObject["image-ratio"];
+
+	// This is an image, and the propertyName is "height"; height will be set using imageRatio when the width is set
+	if(imageRatio != null && propertyName === "height"){
+		return "";
+	}
+
+	for(var mediaQueryIndex = 0; mediaQueryIndex < cssRulesList.length; mediaQueryIndex++){
+		var ruleOption = cssRulesList[mediaQueryIndex];
+		var ruleStart = null;
+		var ruleEnd = null;
+		
+		if(mediaQueryIndex > 0){
+			ruleStart = ruleOption["start"];
+		}
+		if(mediaQueryIndex < cssRulesList.length-1){
+			ruleEnd = ruleOption["end"];
+		}
+
+		var containsStart = ruleOption["containsStart"];
+		var containsEnd = ruleOption["containsEnd"];
+
+		var isRelevantRule = false;
+
+		if(ruleStart === null && ruleEnd === null){
+			isRelevantRule = true;
+		}else if(ruleStart === null){
+			// Check ruleEnd
+			/*if(dimValue <= ruleEnd){
+				isRelevantRule = true;
+			}*/
+			if((containsEnd && dimValue <= ruleEnd) || (!containsEnd && dimValue < ruleEnd)){
+				isRelevantRule = true;
+			}
+		}else if(ruleEnd === null){
+			// Check ruleStart
+			/*if(dimValue >= ruleStart){
+				isRelevantRule = true;
+			}*/
+			if((containsStart && dimValue >= ruleStart) || (!containsStart && dimValue > ruleStart)){
+				isRelevantRule = true;
+			}
+		}else{
+			// Check both ruleStart and ruleEnd
+			/*if(dimValue >= ruleStart && dimValue <= ruleEnd){
+				isRelevantRule = true;
+			}*/
+			if(((containsStart && dimValue >= ruleStart) || (!containsStart && dimValue > ruleStart)) && ((containsEnd && dimValue <= ruleEnd) || (!containsEnd && dimValue < ruleEnd))){
+				isRelevantRule = true;
+			}
+		}
+		if(isRelevantRule){
+			var cssStringFunction = propertyToCSSStringFunction[propertyName];
+			var cssString = cssStringFunction(ruleOption, dimValue, elementId, propertyName, imageRatio);
+			return cssString;
+		}
+	}
+	console.log("behaviorName: " + behaviorName + "; no CSS string generated");
 }
 
 var createPropertyValueString = function(property, value){

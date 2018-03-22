@@ -45,10 +45,34 @@ app.post('/cloneOriginal', function(req, res) {
 app.post('/deleteKeyframe', function(req, res){
 	var viewIdToDelete = parseInt(req.body.viewId);
 
+	// Sort views and choose one adjacent to viewIdToDelete
+	var viewObjArray = Object.values(views);
+	viewObjArray.sort(comparePageWidths);
+	console.log(viewObjArray);
+
+	var viewToReturn; // The next smallest view compared to viewIdToDelete
+	for(var i = 1; i < viewObjArray.length; i++){
+		var viewObj = viewObjArray[i];
+		var viewObjId = viewObj["id"];
+		if(viewObjId == viewIdToDelete){
+			viewToReturn = viewObjArray[i-1];
+		}
+	}
+
+	if(!viewToReturn){
+		// Means that the viewIdToDelete was the smallest one
+		// We'll choose the new smallest view as the one to show
+		viewToReturn = viewObjArray[1];
+	}
+	console.log(viewToReturn);
+
 	delete views[viewIdToDelete];
 
-	// For simplicity, make viewToReturn the leftmost one/first in Object.values(views)[0]?
-	var viewToReturn = Object.values(views)[0];
+	/*// For simplicity, make viewToReturn the leftmost one/first in Object.values(views)[0]?
+	var viewToReturn = Object.values(views)[0];*/
+
+	// Should return adjacent view
+	//var viewToReturn = ;
 
 	var viewIds = Object.keys(views);
 	for(var i = 0; i < viewIds.length; i++){
@@ -170,7 +194,6 @@ var confirmHasTransitionProperty = function(){
 };
 
 var updateElementAndPageData = function(viewObj){
-
 	var viewId = viewObj.oldViewId;
 	var viewWidth = viewObj.oldViewWidth;
 	var viewHeight = viewObj.oldViewHeight;
@@ -677,9 +700,6 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 			var point1 = dataPoints[pointIndex1];
 			var point2 = dataPoints[pointIndex2];
 
-			console.log("behaviorName: " + behaviorName);
-			console.log("point1[behaviorName]: " + point1[behaviorName]);
-			console.log("point2[behaviorName]: " + point2[behaviorName]);
 			var point1Transition = point1[behaviorName]["transition"];
 			var point2Transition = point2[behaviorName]["transition"];
 

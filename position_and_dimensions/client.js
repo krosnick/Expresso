@@ -203,13 +203,22 @@ $(document).ready(function() {
     	var views = data["views"];
     	//allElementRules = data["elementRules"];
     	cssRules = data["cssRules"];
-    	// Show menu of views at the bottom
+    	
+    	views.sort(comparePageWidths);
+    	var initViewId = views[views.length-1]["id"]; // The last one (or the widest viewport)
+    	updateViewsMenu(views, initViewId);
+
+    	/*// Show menu of views at the bottom
+    	views.sort(comparePageWidths);
     	views.forEach(function(view){
     		//addViewMenuItem(view["id"]);
     		addViewMenuItem(view);
     	});
 
-    	makeFontBold($("#view" + 0 + " a"), $(".clone a"));
+    	//console.log(views);
+    	//console.log(initViewId);
+    	makeFontBold($("#view" + initViewId + " a"), $(".clone a"));
+    	//makeFontBold($("#view" + 0 + " a"), $(".clone a"));*/
 
     	// Should we inject cssRules here? And then when we render view0 below, only add elements, no styling?
     	// Technically maybe just need to insert element divs into the DOM; could have a list of all element ids + other properties that don't change as page dims change
@@ -217,7 +226,9 @@ $(document).ready(function() {
     	replaceCSSRules();
 
 		// Render view 0 by default
-		renderView(views[0]);
+		//renderView(views[0]);
+		//renderView(views[initViewId]);
+		renderView(views[views.length-1]);
 		$(".userPage").resizable();
     });
 
@@ -231,8 +242,8 @@ $(document).ready(function() {
 
 	    	//allElementRules = data["elementRules"];
 
-	    	/*var newCloneId = data["view"]["id"];
-	    	// Add link for this new clone
+	    	var newCloneId = data["view"]["id"];
+	    	/*// Add link for this new clone
 	    	addViewMenuItem(newCloneId);*/
 	    	// Add link for this new clone
 	    	addViewMenuItem(data["view"]);
@@ -509,6 +520,17 @@ $(document).ready(function() {
     //$( "#amount" ).val( $( "#slider" ).slider( "value" ) + "px" );
 });
 
+var comparePageWidths = function(a, b) {
+  if (a["pageWidth"] < b["pageWidth"]) {
+    return -1;
+  }
+  if (a["pageWidth"] > b["pageWidth"]) {
+    return 1;
+  }
+  // a must be equal to b
+  return 0;
+};
+
 var extractPixelValue = function(fontSizeString){
 	return fontSizeString.substring(0, fontSizeString.length - 2);
 };
@@ -731,6 +753,15 @@ var addViewMenuItem = function(viewObj){
 	//var newViewObject = $('<span class="clone" id="' + newViewIdString + '" viewId=' + viewId + '><a href="#">' + newViewContent + '</a></span>');
 
 	$("#viewsNavMenu").append(newViewObject);
+};
+
+var updateViewsMenu = function(views, activeViewId){
+	// Show menu of views at the bottom
+	views.sort(comparePageWidths);
+	views.forEach(function(view){
+		addViewMenuItem(view);
+	});
+	makeFontBold($("#view" + activeViewId + " a"), $(".clone a"));
 };
 
 /*<div class="container">

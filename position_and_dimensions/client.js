@@ -144,13 +144,17 @@ var generateRuleInferenceDirectionHTML = function(behaviorName){
 	"rightJump": "Right jump"
 };*/
 
-var transitionOptions = {
+/*var transitionOptions = {
 	"smoothBoth": "Both smooth",
 	"smoothLeft": "Left smooth",
 	"smoothRight": "Right smooth"
-};
+};*/
 
-//smoothBoth
+var transitionOptions = {
+	"smoothBoth": "Continuous left and right",
+	"smoothLeft": "Continuous on left",
+	"smoothRight": "Continuous on right"
+};
 
 var propertyToCSSStringFunction = {
 	width: function(ruleObject, dimensionValue, elementId, propertyName){

@@ -205,7 +205,8 @@ $(document).ready(function() {
     	cssRules = data["cssRules"];
     	// Show menu of views at the bottom
     	views.forEach(function(view){
-    		addViewMenuItem(view["id"]);
+    		//addViewMenuItem(view["id"]);
+    		addViewMenuItem(view);
     	});
 
     	makeFontBold($("#view" + 0 + " a"), $(".clone a"));
@@ -230,9 +231,11 @@ $(document).ready(function() {
 
 	    	//allElementRules = data["elementRules"];
 
-	    	var newCloneId = data["view"]["id"];
+	    	/*var newCloneId = data["view"]["id"];
 	    	// Add link for this new clone
-	    	addViewMenuItem(newCloneId);
+	    	addViewMenuItem(newCloneId);*/
+	    	// Add link for this new clone
+	    	addViewMenuItem(data["view"]);
 
 	    	// Make this link bold
 			makeFontBold($("#view" + newCloneId + " a"), $(".clone a"));
@@ -644,8 +647,10 @@ var captureElementAndPageData = function(){
 }
 
 var makeFontBold = function(elementToBeBold, elementsNotToBeBold){
-	elementsNotToBeBold.css("font-weight", "normal");
-	elementToBeBold.css("font-weight", "bold");
+	/*elementsNotToBeBold.css("font-weight", "normal");
+	elementToBeBold.css("font-weight", "bold");*/
+	elementsNotToBeBold.removeClass("active");
+	elementToBeBold.addClass("active");
 }
 
 var getCurrentViewWidthHeight = function(){
@@ -687,12 +692,56 @@ var updateView = function(viewId){
     });
 };
 
-var addViewMenuItem = function(viewId){
-	var newViewText = "Keyframe " + viewId;
+//var addViewMenuItem = function(viewId){
+/*var addViewMenuItem = function(viewObj){
+	var viewportWidth = viewObj["pageWidth"];
+	var viewportHeight = viewObj["pageHeight"];
+	var viewId = viewObj["id"];
 	var newViewIdString = "view" + viewId;
-	var newViewObject = $('<span class="clone" id="' + newViewIdString + '" viewId=' + viewId + '><a href="#">' + newViewText + '</a></span>');
+
+	//var newViewText = "width: " + viewportWidth + "px; " + "height: " + viewportHeight + "px";
+	var newViewContent = '<span>' + "width: " + viewportWidth + "px" + '</span>' + '<span>' + "height: " + viewportHeight + "px" + '</span>'
+
+	//var newViewObject = $('<span class="clone" id="' + newViewIdString + '" viewId=' + viewId + '><a href="#">' + newViewText + '</a></span>');
+	var newViewObject = $('<span class="clone" id="' + newViewIdString + '" viewId=' + viewId + '><a href="#">' + newViewContent + '</a></span>');
 	$("#viewsMenu").append(newViewObject);
+};*/
+
+// Instead maybe should have rows + cols?
+// Maybe instead (or in addition) should we recreate view menu?
+var addViewMenuItem = function(viewObj){
+	var viewportWidth = viewObj["pageWidth"];
+	var viewportHeight = viewObj["pageHeight"];
+	var viewId = viewObj["id"];
+	var newViewIdString = "view" + viewId;
+
+	//var newViewText = "width: " + viewportWidth + "px; " + "height: " + viewportHeight + "px";
+	//var newViewContent = '<span>' + "width: " + viewportWidth + "px" + '</span>' + '<span>' + "height: " + viewportHeight + "px" + '</span>';
+	/*var widthRow = '<div class="row">' + "width: " + viewportWidth + "px" + '</div>';
+	var heightRow = '<div class="row">' + "height: " + viewportHeight + "px" + '</div>';
+	var newViewContent = '<div class="col">' + widthRow + heightRow +  '</div>';*/
+
+	//var newViewContent = "width: " + viewportWidth + "px; height: " + viewportHeight + "px";
+	var newViewContent = "width: " + viewportWidth + "px <br> height: " + viewportHeight + "px";
+
+	//var newViewObject = $('<li class="nav-item">' + '<a class="nav-link" href="#">' + newViewContent + '</a>' + '</li>');
+	var newViewObject = $('<li class="clone nav-item" id="' + newViewIdString + '" viewId=' + viewId + '>' + '<a class="nav-link" href="#">' + newViewContent + '</a>' + '</li>');
+
+	//var newViewObject = $('<span class="clone" id="' + newViewIdString + '" viewId=' + viewId + '><a href="#">' + newViewText + '</a></span>');
+	//var newViewObject = $('<span class="clone" id="' + newViewIdString + '" viewId=' + viewId + '><a href="#">' + newViewContent + '</a></span>');
+
+	$("#viewsNavMenu").append(newViewObject);
 };
+
+/*<div class="container">
+  <div class="row">
+    <div class="col">Column</div>
+    <div class="col">Column</div>
+    <div class="w-100"></div>
+    <div class="col">Column</div>
+    <div class="col">Column</div>
+  </div>
+</div>*/
 
 var removeViewMenuItem = function(viewId){
 	$("[viewId=" + viewId + "]").remove();

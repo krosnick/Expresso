@@ -28,9 +28,25 @@
       <div id="pageDimensionsInfo">
       </div>
     </div>
-    <div id="viewsMenu">
-      <button id="cloneButton" class="keyframeButton">Create new keyframe</button>
-      <button id="deleteButton" class="keyframeButton">Delete current keyframe</button>
+    <!--<div id="viewsMenu">-->
+    <div id="viewsMenu" class="container-fluid">
+      <div class="row">
+        <div id="addDeleteButtonsArea" class="col-auto">
+          <div class="row">
+            <button id="cloneButton" class="btn btn-outline-primary keyframeButton">Create new keyframe</button>
+          </div>
+          <div class="row">
+            <button id="deleteButton" class="btn btn-outline-secondary keyframeButton">Delete current keyframe</button>
+          </div>
+        </div>
+        <div class="col">
+          <ul id=viewsNavMenu class="nav nav-pills" role="tablist">
+          </ul>
+        </div>
+      </div>
+      <!--<div id="viewsMenuContainer" class="container">-->
+        <!-- This will be a single row of columns, where each column also contains 2 rows -->
+      <!--</div>-->
     </div>
     <div id="rightMenu">
       <div id="toolsMenu" class="container">

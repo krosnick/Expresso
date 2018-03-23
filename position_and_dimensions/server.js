@@ -46,8 +46,6 @@ app.post('/createKeyframe', function(req, res) {
 	views[clonedView["id"]] = clonedView;*/
 	var viewObj = req.body.oldView;
 
-	console.log(viewObj["oldViewId"]);
-
 	var newViewId = viewCounter;
 	viewObj["oldViewId"] = newViewId;
 	viewCounter++;
@@ -72,7 +70,6 @@ app.post('/deleteKeyframe', function(req, res){
 	// Sort views and choose one adjacent to viewIdToDelete
 	var viewObjArray = Object.values(views);
 	viewObjArray.sort(comparePageWidths);
-	console.log(viewObjArray);
 
 	var viewToReturn; // The next smallest view compared to viewIdToDelete
 	for(var i = 1; i < viewObjArray.length; i++){
@@ -88,7 +85,6 @@ app.post('/deleteKeyframe', function(req, res){
 		// We'll choose the new smallest view as the one to show
 		viewToReturn = viewObjArray[1];
 	}
-	console.log(viewToReturn);
 
 	delete views[viewIdToDelete];
 
@@ -126,7 +122,6 @@ app.post('/deleteKeyframe', function(req, res){
 });*/
 
 app.post('/view', function(req, res){
-	console.log(req.body.oldView);
 	if(req.body.oldView.oldViewId){
 		updateElementAndPageData(req.body.oldView);
 	}

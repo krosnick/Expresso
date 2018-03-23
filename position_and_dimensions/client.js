@@ -88,7 +88,7 @@ var elementDataFormat = {
 		{
 			"property": "color",
 			"get": function(){
-				if(this.html().length === 0){ // If there's no text, don't set "color" property
+				if(this.text().trim().length === 0){ // If there's no text, don't set "color" property
 					return "";
 				}
 				var computedColor = this.css("color");
@@ -275,6 +275,8 @@ $(document).ready(function() {
 
 			// need to clear "final webpage" things and add keyframe things
 	    	
+	    	// Since we are adding a new keyframe, that means there are now at least 2 keyframes; ok for the delete keyframe button to be enabled now
+	    	$("#deleteButton").prop('disabled', false);
 	    });
 	});
 
@@ -328,7 +330,12 @@ $(document).ready(function() {
 		    }
 
 	    	// Now select what was currentlySelectedElement before
-	    	$("[elementId=" + currentlySelectedElement + "]").addClass("selected");    	
+	    	$("[elementId=" + currentlySelectedElement + "]").addClass("selected");
+
+	    	// If only one keyframe left, disable the delete button (we don't want to allow deleting the last keyframe; current version of our tool relies on having at least one keyframe)
+	    	if($(".clone").length == 1){
+	    		$("#deleteButton").prop('disabled', true);
+	    	}
 	    });
 	});
 
@@ -367,6 +374,9 @@ $(document).ready(function() {
 
 		destroyElementModifiable();
 		$(".userPage").resizable();
+
+		// Let's see if this works
+		replaceCSSRules();
 
 		// Clear rules menu
 		$("#selectedElementRules").css("display", "none"); // This element may not be used anymore

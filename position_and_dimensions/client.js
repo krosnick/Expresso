@@ -229,7 +229,8 @@ $(document).ready(function() {
 
     // Possibly want to use templates later (store views in json, then render in template)
 
-    $("#cloneButton").on("click", function(event){
+    // This should create a keyframe for the current page size in the "final webpage" view
+    /*$("#cloneButton").on("click", function(event){
 	    $.ajax({
 	        type: "POST",
 	        url: "/cloneOriginal"
@@ -238,20 +239,59 @@ $(document).ready(function() {
 	    	//allElementRules = data["elementRules"];
 
 	    	var newCloneId = data["view"]["id"];
-	    	/*// Add link for this new clone
-	    	addViewMenuItem(newCloneId);*/
 	    	// Add link for this new clone
 	    	addViewMenuItem(data["view"]);
 
 	    	// Make this link bold
-			//makeFontBold($("#view" + newCloneId + " a"), $(".clone a"));
 			makeFontBold($("#view" + newCloneId + " a"), $(".nav-pills a"));
 			
 			// Render this view in the UI
 			updateView(newCloneId);
 	    	
 	    });
+	});*/
+	$("#cloneButton").on("click", function(event){
+	    var viewData = captureElementAndPageData();
+	    $.ajax({
+	        type: "POST",
+	        url: "/createKeyframe",
+	        data: viewData
+	    }).done(function(data) {
+
+	    	//allElementRules = data["elementRules"];
+
+	    	var newCloneId = data["newView"]["id"];
+	    	/*// Add link for this new clone
+	    	addViewMenuItem(data["newView"]);*/
+
+	    	var views = data["views"];
+	    	updateViewsMenu(views, newCloneId);
+
+	    	// Make this link bold
+			makeFontBold($("#view" + newCloneId + " a"), $(".nav-pills a"));
+			
+			// Render this view in the UI
+			updateView(newCloneId);
+
+			// need to clear "final webpage" things and add keyframe things
+	    	
+	    });
 	});
+
+		/*var viewData = captureElementAndPageData();
+		dataChanged = false;
+
+		// should element rules be updated here? Or maybe let the server take care of that
+
+		// Send update to server
+		$.ajax({
+	        type: "POST",
+	        url: "/updateData",
+	        data: viewData
+	    }).done(function(data) {
+	    	cssRules = data["cssRules"];
+	    	replaceCSSRules();
+	    });*/
 
 	// Delete current keyframe
 	$("#deleteButton").on("click", function(event){
@@ -319,9 +359,15 @@ $(document).ready(function() {
 		$(".pageElement.selected").removeClass("selected");
     	$("#toolsMenu").hide();
 
+    	// Update buttons
+    	// Make sure the create new keyframe button is shown
+    	$("#cloneButton").show();
+    	// Make sure the delete keyframe button is hidden
+    	$("#deleteButton").hide();
+
 		destroyElementModifiable();
 		$(".userPage").resizable();
-		
+
 		// Clear rules menu
 		$("#selectedElementRules").css("display", "none"); // This element may not be used anymore
 	});
@@ -743,6 +789,12 @@ var updateView = function(viewId){
     	
     	// Now select what was currentlySelectedElement before
     	$("[elementId=" + currentlySelectedElement + "]").addClass("selected");
+
+    	// Update buttons
+    	// Make sure the delete keyframe button is shown
+    	$("#deleteButton").show();
+    	// Make sure the create new keyframe button is hidden
+    	$("#cloneButton").hide();
     });
 };
 
@@ -788,6 +840,9 @@ var addViewMenuItem = function(viewObj){
 };
 
 var updateViewsMenu = function(views, activeViewId){
+	// First empty 
+	$("#viewsNavMenu").empty();
+
 	// Show menu of views at the bottom
 	views.sort(comparePageWidths);
 	views.forEach(function(view){

@@ -31,17 +31,21 @@
     <!--<div id="viewsMenu">-->
     <div id="viewsMenu" class="container-fluid">
       <div class="row">
-        <div id="addDeleteButtonsArea" class="col-auto">
-          <div class="row">
+        <div class="col-auto">
+          <ul id=viewsNavMenu class="nav nav-pills" role="tablist">
+          </ul>
+        </div>
+        <div id="addDeleteButtonsArea" class="col">
+          <!--<div class="row">
             <button id="cloneButton" class="btn btn-outline-primary keyframeButton">Create new keyframe</button>
           </div>
           <div class="row">
             <button id="deleteButton" class="btn btn-outline-secondary keyframeButton">Delete current keyframe</button>
+          </div>-->
+          <div class="row">
+            <button id="cloneButton" class="btn btn-outline-primary keyframeButton">Create new keyframe</button>
+            <button id="deleteButton" class="btn btn-outline-secondary keyframeButton">Delete current keyframe</button>
           </div>
-        </div>
-        <div class="col-auto">
-          <ul id=viewsNavMenu class="nav nav-pills" role="tablist">
-          </ul>
         </div>
         <div id="viewOnlyArea" class="col-auto">
           <ul id=viewOnlyMode class="nav nav-pills" role="tablist">

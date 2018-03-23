@@ -29,7 +29,7 @@ app.get('/currentData',function(req,res){
 	});
 });
 
-app.post('/cloneOriginal', function(req, res) {
+/*app.post('/cloneOriginal', function(req, res) {
 	var clonedView = cloneViewObj();
 	views[clonedView["id"]] = clonedView;
 	
@@ -37,9 +37,33 @@ app.post('/cloneOriginal', function(req, res) {
 	
 	// Send back to client
 	res.json({
-		"view": clonedView/*,
-		"elementRules": elementRules*/
+		"view": clonedView
 	});
+});*/
+
+app.post('/createKeyframe', function(req, res) {
+	/*var clonedView = cloneViewObj();
+	views[clonedView["id"]] = clonedView;*/
+	var viewObj = req.body.oldView;
+
+	console.log(viewObj["oldViewId"]);
+
+	var newViewId = viewCounter;
+	viewObj["oldViewId"] = newViewId;
+	viewCounter++;
+
+	updateData(viewObj);
+	
+	writeDataToJSONFile();
+
+	// Send back to client
+	res.json({
+		"newView": views[newViewId],
+		"views": Object.values(views)
+	});
+	/*res.json({
+		"view": clonedView
+	});*/
 });
 
 app.post('/deleteKeyframe', function(req, res){
@@ -114,7 +138,7 @@ app.post('/view', function(req, res){
 });
 
 app.post("/updateData", function(req, res){
-	updateElementAndPageData(req.body.oldView);
+	/*updateElementAndPageData(req.body.oldView);
 
 	// For each view, call convertClientDataToInts(req.body.oldView);
 	var viewIds = Object.keys(views);
@@ -127,7 +151,9 @@ app.post("/updateData", function(req, res){
 	writeDataToJSONFile();
 
 	// Based on all keyframes, should update element and css rules here
-	updateCSSRules();
+	updateCSSRules();*/
+
+	updateData(req.body.oldView);
 	
 	// Perhaps also send elementRules back too?
 	res.json({
@@ -150,6 +176,23 @@ app.listen(8080);
 
 
 // ------------ Helpers ------------
+
+var updateData = function(viewObj){
+	updateElementAndPageData(viewObj);
+
+	// For each view, call convertClientDataToInts(req.body.oldView);
+	var viewIds = Object.keys(views);
+	for(var i = 0; i < viewIds.length; i++){
+		var viewId = viewIds[i];
+		convertClientDataToInts(views[viewId]);
+	}
+	confirmHasTransitionProperty();
+	
+	writeDataToJSONFile();
+
+	// Based on all keyframes, should update element and css rules here
+	updateCSSRules();
+}
 
 var convertClientDataToInts = function(viewObj){
 	var elementsData = viewObj["elements"];
@@ -204,7 +247,7 @@ var confirmHasTransitionProperty = function(){
 	}
 };
 
-var updateElementAndPageData = function(viewObj){
+/*var updateElementAndPageData = function(viewObj){
 	var viewId = viewObj.oldViewId;
 	var viewWidth = viewObj.oldViewWidth;
 	var viewHeight = viewObj.oldViewHeight;
@@ -220,6 +263,22 @@ var updateElementAndPageData = function(viewObj){
 	if(viewElementsData){ // if undefined, then no updates have been made
 		oldViewServerObj["elements"] = viewElementsData;
 	}
+};*/
+
+var updateElementAndPageData = function(viewObj){
+	var viewId = viewObj.oldViewId;
+	var viewWidth = viewObj.oldViewWidth;
+	var viewHeight = viewObj.oldViewHeight;
+	var viewElementsData = viewObj.elementsData;
+
+	var oldViewIdAsInt = parseInt(viewId);
+
+	views[oldViewIdAsInt] = {
+		"id": viewId,
+		"pageWidth": parseInt(viewWidth),
+		"pageHeight": parseInt(viewHeight),
+		"elements": viewElementsData
+	};
 };
 
 var writeDataToJSONFile = function(){
@@ -249,13 +308,13 @@ var getFirstViewObj = function(){
 	return firstViewCurrently;
 };
 
-var cloneViewObj = function(){
+/*var cloneViewObj = function(){
 	var firstViewCurrently = getFirstViewObj();
 	var clonedView = Object.assign({}, firstViewCurrently);
 	clonedView["id"] = viewCounter;
 	viewCounter++;
 	return clonedView;
-};
+};*/
 
 var createValue = function(m, b){
 	var valueString;

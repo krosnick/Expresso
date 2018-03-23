@@ -159,7 +159,15 @@ body {
 }
 
 #addDeleteButtonsArea {
-	border-right: solid 1px #bbb;
+	/*border-right: solid 1px #bbb;*/
+	border-left: solid 1px #bbb;
+	min-width: 225px;
+	max-width: 225px;
+	padding-top: 17px;
+}
+
+#cloneButton {
+	display: none;
 }
 
 #viewOnlyArea {

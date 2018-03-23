@@ -162,6 +162,11 @@ body {
 	border-right: solid 1px #bbb;
 }
 
+#viewOnlyArea {
+	border-left: solid 1px #bbb;
+	padding-top: 25px;
+}
+
 .keyframeButton {
 	margin-top: 10px;
 	margin-right: 10px;

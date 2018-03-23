@@ -1,4 +1,4 @@
-var currentViewId = 0;
+var currentViewId = 0; // Should this start as 0?
 var dataChanged = false;
 var elementPositionInfoId = "elementPositionInfo";
 var elementDimensionsInfoId = "elementDimensionsInfo";
@@ -212,18 +212,6 @@ $(document).ready(function() {
     	var initViewId = views[views.length-1]["id"]; // The last one (or the widest viewport)
     	updateViewsMenu(views, initViewId);
 
-    	/*// Show menu of views at the bottom
-    	views.sort(comparePageWidths);
-    	views.forEach(function(view){
-    		//addViewMenuItem(view["id"]);
-    		addViewMenuItem(view);
-    	});
-
-    	//console.log(views);
-    	//console.log(initViewId);
-    	makeFontBold($("#view" + initViewId + " a"), $(".clone a"));
-    	//makeFontBold($("#view" + 0 + " a"), $(".clone a"));*/
-
     	// Should we inject cssRules here? And then when we render view0 below, only add elements, no styling?
     	// Technically maybe just need to insert element divs into the DOM; could have a list of all element ids + other properties that don't change as page dims change
 
@@ -233,7 +221,10 @@ $(document).ready(function() {
 		//renderView(views[0]);
 		//renderView(views[initViewId]);
 		renderView(views[views.length-1]);
-		$(".userPage").resizable();
+		
+
+		// Commenting this out, since initially a keyframe is shown, and the page size should not be resizable
+		//$(".userPage").resizable();
     });
 
     // Possibly want to use templates later (store views in json, then render in template)
@@ -253,7 +244,8 @@ $(document).ready(function() {
 	    	addViewMenuItem(data["view"]);
 
 	    	// Make this link bold
-			makeFontBold($("#view" + newCloneId + " a"), $(".clone a"));
+			//makeFontBold($("#view" + newCloneId + " a"), $(".clone a"));
+			makeFontBold($("#view" + newCloneId + " a"), $(".nav-pills a"));
 			
 			// Render this view in the UI
 			updateView(newCloneId);
@@ -276,7 +268,8 @@ $(document).ready(function() {
 
 	    	var nextViewToShow = data["nextViewToShow"];
 	    	var nextKeyframeToShowId =  nextViewToShow["id"]; // sent from server; in the future maybe ask from client?
-	    	makeFontBold($("#view" + nextKeyframeToShowId + " a"), $(".clone a"));
+	    	//makeFontBold($("#view" + nextKeyframeToShowId + " a"), $(".clone a"));
+	    	makeFontBold($("#view" + nextKeyframeToShowId + " a"), $(".nav-pills a"));
 
 	    	cssRules = data["cssRules"];
 	    	//replaceCSSRules(); // Maybe this isn't needed?
@@ -284,7 +277,8 @@ $(document).ready(function() {
 	    	//allElementRules = data["elementRules"];
 	    	currentViewId = nextViewToShow["id"];
 	    	renderView(nextViewToShow);
-	    	$(".userPage").resizable();
+	    	// Commenting this out, since initially a keyframe is shown, and the page size should not be resizable
+			//$(".userPage").resizable();
 
 	    	// Let's try this - yes this worked
 	    	replaceCSSRules();
@@ -301,9 +295,35 @@ $(document).ready(function() {
     $("#viewsMenu").on("click", ".clone a", function(event){
     	var viewId = $(event.target).parent().attr("viewId"); // need to call "parent()" because $(event.target) is the <a> element and its parent has the "viewId" attribute 
     	// Make this link bold
-		makeFontBold($(event.target), $(".clone a"));
+		//makeFontBold($(event.target), $(".clone a"));
+		makeFontBold($(event.target), $(".nav-pills a"));
 		// Render this view in the UI
 		updateView(viewId);
+	});
+
+	// Need a on-click for #viewOnlyMode
+	$("#viewOnlyMode").on("click", "a", function(event){
+
+		currentlySelectedElement = undefined;
+		dataChanged = false;
+		currentViewId = null;
+
+		// Perhaps also send updated keyframe view (before this point) to the server, to make sure it's update to date?
+		//---------------------
+
+		makeFontBold($(event.target), $(".nav-pills a"));
+
+		// There's no particular view to select though. But we need to update the view to show the "view only" view;
+		// elements not editable, but keyframe size is
+
+		$(".pageElement.selected").removeClass("selected");
+    	$("#toolsMenu").hide();
+
+		destroyElementModifiable();
+		$(".userPage").resizable();
+		
+		// Clear rules menu
+		$("#selectedElementRules").css("display", "none"); // This element may not be used anymore
 	});
 
     $(".userPage").on("click", function(event){
@@ -317,20 +337,26 @@ $(document).ready(function() {
     		// Clear rules menu
     		$("#selectedElementRules").css("display", "none");
     	}*/
-    	if($(event.target).hasClass("pageElement")){
-	    	selectElement($(event.target));
-    	}else if($(event.target).parent(".pageElement").length > 0){
-    		// This means the user has clicked on an <img> element. We should select its parent
-    		selectElement($(event.target).parent(".pageElement"));
-    	}else{
-    		currentlySelectedElement = undefined;
-    		// Clear rules menu
-    		$("#selectedElementRules").css("display", "none");
-    	}
+    	// Only even consider selecting the element if we are in keyframe mode (so not when the page is resizable)
+    	if(!$(".userPage").hasClass("ui-resizable")){
+	    	if($(event.target).hasClass("pageElement")){
+		    	selectElement($(event.target));
+	    	}else if($(event.target).parent(".pageElement").length > 0){
+	    		// This means the user has clicked on an <img> element. We should select its parent
+	    		selectElement($(event.target).parent(".pageElement"));
+	    	}else{
+	    		currentlySelectedElement = undefined;
+	    		// Clear rules menu
+	    		$("#selectedElementRules").css("display", "none");
+	    	}
+	    }
     });
 
     $("body").on("resize", ".userPage", function(event, ui){
     	replaceCSSRules();
+
+    	// Show page's width, height
+    	updatePageDimensionsLabel();
     });
 
     // Should this only be on non-.userPage elements?
@@ -418,14 +444,15 @@ $(document).ready(function() {
     // -------------------------------------------------------
     
 
-    // ------------- Behavior on page resize  -------------
+    /*// ------------- Behavior on page resize  -------------
     $("body").on("resize", ".userPage", function(event){
     	// Show page's width, height
     	updatePageDimensionsLabel();
-    });
+    });*/
     // ----------------------------------------------------
 
-    $(".userPage").resizable();
+    // Commenting this out, since initially a keyframe is shown, and the page size should not be resizable
+	//$(".userPage").resizable();
     
     // Probably should have a timer to send updated element data to server to be saved
     window.setInterval(function(){
@@ -711,7 +738,8 @@ var updateView = function(viewId){
 	    	selectElement($("[elementId=" + currentlySelectedElement + "]"));
 	    }
 
-    	$(".userPage").resizable();
+    	// Commenting this out, since initially a keyframe is shown, and the page size should not be resizable
+		//$(".userPage").resizable();
     	
     	// Now select what was currentlySelectedElement before
     	$("[elementId=" + currentlySelectedElement + "]").addClass("selected");
@@ -783,6 +811,13 @@ var removeViewMenuItem = function(viewId){
 };
 
 var renderView = function(viewData){
+	
+	// When a particular keyframe is shown, the page size should not be resizable
+	//$(".userPage").resizable("destroy");
+	if($(".userPage").hasClass("ui-resizable")){
+		$(".userPage").resizable("destroy");
+	}
+
 	var viewWidth = viewData["pageWidth"];
 	var viewHeight = viewData["pageHeight"];
 
@@ -812,6 +847,12 @@ var renderView = function(viewData){
     if(currentlySelectedElement){
     	selectElement($("[elementId=" + currentlySelectedElement + "]"));
     }
+
+};
+
+var destroyElementModifiable = function(){
+	$(".pageElement").draggable("destroy");
+	$(".pageElement").resizable("destroy");
 };
 
 var createDOMElement = function(elementData){

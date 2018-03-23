@@ -92,13 +92,24 @@ app.post('/deleteKeyframe', function(req, res){
 	});
 });
 
-app.post('/view', function(req, res){
+/*app.post('/view', function(req, res){
 	updateElementAndPageData(req.body.oldView);
 
 	var viewId = parseInt(req.body.newViewId);
 	res.json({
-		"view": views[viewId]/*,
-		"elementRules": elementRules*/
+		"view": views[viewId]
+	});
+});*/
+
+app.post('/view', function(req, res){
+	console.log(req.body.oldView);
+	if(req.body.oldView.oldViewId){
+		updateElementAndPageData(req.body.oldView);
+	}
+
+	var viewId = parseInt(req.body.newViewId);
+	res.json({
+		"view": views[viewId]
 	});
 });
 

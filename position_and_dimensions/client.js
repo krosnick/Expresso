@@ -99,6 +99,14 @@ var elementDataFormat = {
 				}
 			}
 		}
+	],
+	"visibility": [
+		{
+			"property": "visibility",
+			"get": function(){
+				return this.css("visibility");
+			}
+		}
 	]
 };
 
@@ -156,7 +164,7 @@ var transitionOptions = {
 	"smoothRight": "Continuous on right"
 };
 
-var propertyToCSSStringFunction = {
+/*var propertyToCSSStringFunction = {
 	width: function(ruleObject, dimensionValue, elementId, propertyName){
 		return createSingleAttributeCSSString(ruleObject, dimensionValue, elementId, propertyName);
 	},
@@ -183,8 +191,44 @@ var propertyToCSSStringFunction = {
 	},
 	"color": function(ruleObject, dimensionValue, elementId, propertyName){
 		return createRGBCSSString(ruleObject, dimensionValue, elementId, propertyName);
+	},
+	"visibility": function(ruleObject, dimensionValue, elementId, propertyName){
+		return createSingleAttributeCSSString(ruleObject, dimensionValue, elementId, propertyName);
+	}
+};*/
+var propertyToCSSStringFunction = {
+	width: function(ruleObject, elementId, propertyName, dimensionValue, imageRatio){
+		return createSingleAttributeCSSString(ruleObject, elementId, propertyName, dimensionValue, imageRatio);
+	},
+	"height": function(ruleObject, elementId, propertyName, dimensionValue, imageRatio){
+		return createSingleAttributeCSSString(ruleObject, elementId, propertyName, dimensionValue, imageRatio);
+	},
+	"left": function(ruleObject, elementId, propertyName, dimensionValue, imageRatio){
+		return createSingleAttributeCSSString(ruleObject, elementId, propertyName, dimensionValue, imageRatio);
+	},
+	"right": function(ruleObject, elementId, propertyName, dimensionValue, imageRatio){
+		return createSingleAttributeCSSString(ruleObject, elementId, propertyName, dimensionValue, imageRatio);
+	},
+	"top": function(ruleObject, elementId, propertyName, dimensionValue, imageRatio){
+		return createSingleAttributeCSSString(ruleObject, elementId, propertyName, dimensionValue, imageRatio);
+	},
+	"bottom": function(ruleObject, elementId, propertyName, dimensionValue, imageRatio){
+		return createSingleAttributeCSSString(ruleObject, elementId, propertyName, dimensionValue, imageRatio);
+	},
+	"font-size": function(ruleObject, elementId, propertyName, dimensionValue, imageRatio){
+		return createSingleAttributeCSSString(ruleObject, elementId, propertyName, dimensionValue, imageRatio);
+	},
+	"background-color": function(ruleObject, elementId, propertyName, dimensionValue, imageRatio){
+		return createRGBCSSString(ruleObject, elementId, propertyName, dimensionValue, imageRatio);
+	},
+	"color": function(ruleObject, elementId, propertyName, dimensionValue, imageRatio){
+		return createRGBCSSString(ruleObject, elementId, propertyName, dimensionValue, imageRatio);
+	},
+	"visibility": function(ruleObject, elementId, propertyName, dimensionValue, imageRatio){
+		return createDiscreteSingleAttributeCSSString(ruleObject, elementId, propertyName, dimensionValue, imageRatio);
 	}
 };
+
 
 var getUserPageDimValue = function(relevantPageDim){
 	var userPageObj = $(".userPage");
@@ -571,6 +615,13 @@ $(document).ready(function() {
       }
     });
 
+    $("#visibilityWidget").on("change", function(event){
+    	// Based on the value, update the element's "visibility" property
+    	var visibilityWidgetValue = $("#visibilityWidget").val();
+    	$("[elementId=" + currentlySelectedElement + "]").css("visibility", visibilityWidgetValue);
+    	dataChanged = true;
+    });
+
     $("body").on("change", ".ruleInferenceSelect", function(){
     	// Transition rule value
     	var newTransitionRule = $(this).val();
@@ -645,6 +696,8 @@ var selectElement = function(element){
 	$( "#slider" ).slider( "value", fontSize );
 	$( "#amount" ).val( fontSize  + "px" );
 	$("#text_color_colorpicker").spectrum("set", element.css("color"));	
+
+	$("#visibilityWidget").val(element.css("visibility"));
 
 	var selectWidgets = $("select.ruleInferenceSelect");
 	selectWidgets.each(function(index, element){
@@ -975,12 +1028,27 @@ var replaceCSSRules = function(){
 	$("#" + elementCSSRules).append("<style>" + cssRulesString + "</style>");
 };
 
+var createDiscreteSingleAttributeCSSString = function(ruleObject, elementId, propertyName, dimensionValue, imageRatio){
+	//var computedValue = ruleObject["value"];
+	var computedValue = ruleObject["valueData"]["value"];
+	console.log(computedValue);
+	// Construct CSS rule string
+	var singleRule = "#element" + elementId + "{";
+	//singleRule += createPropertyValueString(propertyName, computedValue);
+	singleRule += "" + propertyName + ": " + computedValue + ";";
+	singleRule += "}";
+
+	return singleRule;
+}
+
 //var createSingleAttributeCSSString = function(ruleObject, dimensionValue, elementId, propertyName){
 // imageRatio will be null if the element is not an image
-var createSingleAttributeCSSString = function(ruleObject, dimensionValue, elementId, propertyName, imageRatio){
-
-	var m = ruleObject["m"];
-	var b = ruleObject["b"];
+var createSingleAttributeCSSString = function(ruleObject, elementId, propertyName, dimensionValue, imageRatio){
+	var valueData = ruleObject["valueData"];
+	var m = valueData["m"];
+	var b = valueData["b"];
+	/*var m = ruleObject["m"];
+	var b = ruleObject["b"];*/
 	var computedValue = m * dimensionValue + b;
 
 	// Construct CSS rule string
@@ -1001,10 +1069,14 @@ var createSingleAttributeCSSString = function(ruleObject, dimensionValue, elemen
 	return singleRule;
 }
 
-var createRGBCSSString = function(ruleObject, dimensionValue, elementId, propertyName){
-	var rData = ruleObject["r"];
+var createRGBCSSString = function(ruleObject, elementId, propertyName, dimensionValue, imageRatio){
+	var valueData = ruleObject["valueData"];
+	/*var rData = ruleObject["r"];
 	var gData = ruleObject["g"];
-	var bData = ruleObject["b"];
+	var bData = ruleObject["b"];*/
+	var rData = valueData["r"];
+	var gData = valueData["g"];
+	var bData = valueData["b"];
 
 	var rComputedValue = postProcessRGBValue(rData["m"] * dimensionValue + rData["b"]);
 	var gComputedValue = postProcessRGBValue(gData["m"] * dimensionValue + gData["b"]);
@@ -1140,11 +1212,12 @@ var generateCSSString = function(ruleObject){
 		}
 		if(isRelevantRule){
 			var cssStringFunction = propertyToCSSStringFunction[propertyName];
-			var cssString = cssStringFunction(ruleOption, dimValue, elementId, propertyName, imageRatio);
+			//function(ruleObject, elementId, propertyName, dimensionValue, imageRatio){
+			//var cssString = cssStringFunction(ruleOption, dimValue, elementId, propertyName, imageRatio);
+			var cssString = cssStringFunction(ruleOption, elementId, propertyName, dimValue, imageRatio);
 			return cssString;
 		}
 	}
-	console.log("behaviorName: " + behaviorName + "; no CSS string generated");
 }
 
 var createPropertyValueString = function(property, value){

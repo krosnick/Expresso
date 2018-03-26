@@ -242,6 +242,25 @@ var confirmHasTransitionProperty = function(){
 	}
 };
 
+var confirmHasVisibilityProperty = function(){
+	var viewIds = Object.keys(views);
+	for(var keyframeIndex = 0; keyframeIndex < viewIds.length; keyframeIndex++){
+		var viewId = viewIds[keyframeIndex];
+		var viewObj = views[viewId];
+		var elementsData = viewObj["elements"];
+		for(var i = 0; i < elementsData.length; i++){
+			var element = elementsData[i];
+			if(!element["visibility"] || !element["visibility"]["visibility"]){
+				// If "visibility" isn't set, set it to "visible"
+				//element["visibility"]["visibility"] = "visible";
+				element["visibility"] = {
+					"visibility": "visible"
+				};
+			}
+		}
+	}
+};
+
 /*var updateElementAndPageData = function(viewObj){
 	var viewId = viewObj.oldViewId;
 	var viewWidth = viewObj.oldViewWidth;
@@ -482,152 +501,7 @@ var comparePageHeights = function(a, b) {
   return 0;
 };
 
-/*// axisName is "pageWidth" or "pageHeight"
-var determinePattern = function(dataPoints, behaviorName, propertyName, axisName){
-
-	var elementSelector = dataPoints[0]["id"];
-	var chunkLineFitData = [];
-
-	if(dataPoints.length == 1){
-		// If one point only, assume properties will remain constant throughout all viewport sizes
-
-		var chunkStart = dataPoints[0][axisName];
-		var chunkEnd = dataPoints[0][axisName];
-
-		if(typeof(dataPoints[0][behaviorName][propertyName]) === "object"){
-			var valueAttributes = Object.keys(dataPoints[0][behaviorName][propertyName]);
-			var fitDataObject = {
-				"start": chunkStart,
-				"end": chunkEnd,
-				"elementSelector": elementSelector
-			};
-			for(var attrIndex = 0; attrIndex < valueAttributes.length; attrIndex++){
-				var attributeName = valueAttributes[attrIndex];
-				// compute y=mx+b fit for attribute; then create data to add to chunkLineFitData
-				var m = 0;
-				var b = dataPoints[0][behaviorName][propertyName][attributeName];
-				var lineOfBestFit = { "m": m, "b": b, "start": chunkStart, "end": chunkEnd, "elementSelector": elementSelector };
-				fitDataObject[attributeName] = lineOfBestFit;
-			}
-			chunkLineFitData.push(fitDataObject);
-		}else{
-			//var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName], point2[axisName], point2[behaviorName][propertyName], chunkStart, chunkEnd, elementSelector);
-			var m = 0;
-			var b = dataPoints[0][behaviorName][propertyName];
-			var lineOfBestFit = { "m": m, "b": b, "start": chunkStart, "end": chunkEnd, "elementSelector": elementSelector };
-			chunkLineFitData.push(lineOfBestFit);
-		}
-
-	}else{
-		// sort dataPoints by pageWidth value
-		dataPoints.sort(comparePageWidths);
-
-		// for left and for right (separately)
-		// Let's do "left" first
-		// possibly only 1 of left/right will follow a behavior based on pageWidth; possibly only 2/3 of left/right/elementWidth could follow a behavior based on pageWidth
-		// if there are no adjacent pairs with the same slope, assume there is no pageWidth-based pattern for that property (left or right)
-
-		var slopes = [];
-
-		// compute slopes
-		for(var i = 1; i < dataPoints.length; i++){
-			var point1 = dataPoints[i-1];
-			var point2 = dataPoints[i];
-
-			var slope;
-
-			if(typeof(point1[behaviorName][propertyName]) === "object"){
-				// For each key in the object, compute a slope. Put in an object or array?
-				slope = {};
-				var valueAttributes = Object.keys(point1[behaviorName][propertyName]);
-				for(var attrIndex = 0; attrIndex < valueAttributes.length; attrIndex++){
-					var attributeName = valueAttributes[attrIndex];
-					slope[attributeName] = (point2[behaviorName][propertyName][attributeName] - point1[behaviorName][propertyName][attributeName])/(point2[axisName] - point1[axisName]);
-				}
-			}else{
-				slope = (point2[behaviorName][propertyName] - point1[behaviorName][propertyName])/(point2[axisName] - point1[axisName]);
-			}
-			
-			slopes.push(slope);
-		}
-
-		var chunkStartIndices = [];
-		chunkStartIndices.push(0);
-
-		// compare slopes, identify chunks
-		for(var i = 1; i < slopes.length; i++){
-			var slope1 = slopes[i-1];
-			var slope2 = slopes[i];
-			if(typeof(slope1) === "object"){
-				var allAttributesSame = true;
-				var valueAttributes = Object.keys(slope1);
-				for(var attrIndex = 0; attrIndex < valueAttributes.length; attrIndex++){
-					var attributeName = valueAttributes[attrIndex];
-					if(slope1[attributeName] === slope2[attributeName]){
-						// Same chunk, nothing to do
-					}else{
-						allAttributesSame = false;
-					}
-				}
-				if(allAttributesSame){
-					// Same chunk, nothing to do
-				}else{
-					// Different chunk
-					chunkStartIndices.push(i);
-				}
-			}else{
-				if(slope1 == slope2){
-				// Same chunk, nothing to do
-				}else{
-					// Different chunk
-					chunkStartIndices.push(i);
-				}
-			}
-		}
-
-		for(var i = 0; i < chunkStartIndices.length; i++){
-			// Choose any 2 arbitrary points in the chunk (for ease, just the first two), and fit a line to them
-			// equation: y = m*x + c
-			// matrix multiplication for this? or just quick formula
-			var pointIndex1 = chunkStartIndices[i];
-			var pointIndex2 = pointIndex1 + 1;
-			var point1 = dataPoints[pointIndex1];
-			var point2 = dataPoints[pointIndex2];
-
-			var chunkStart = point1[axisName];
-			var chunkEnd;
-			if(i < chunkStartIndices.length - 1){
-				chunkEnd = dataPoints[chunkStartIndices[i+1]][axisName];
-			}else{
-				chunkEnd = dataPoints[dataPoints.length - 1][axisName];
-			}
-
-			// what should be the format of this?
-			//var fitDataObject = {};
-
-			if(typeof(point1[behaviorName][propertyName]) === "object"){
-				var valueAttributes = Object.keys(point1[behaviorName][propertyName]);
-				var fitDataObject = {
-					"start": chunkStart,
-					"end": chunkEnd,
-					"elementSelector": elementSelector
-				};
-				for(var attrIndex = 0; attrIndex < valueAttributes.length; attrIndex++){
-					var attributeName = valueAttributes[attrIndex];
-					// compute y=mx+b fit for attribute; then create data to add to chunkLineFitData
-					var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName][attributeName], point2[axisName], point2[behaviorName][propertyName][attributeName], chunkStart, chunkEnd, elementSelector);
-					fitDataObject[attributeName] = lineOfBestFit;
-				}
-				chunkLineFitData.push(fitDataObject);
-			}else{
-				var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName], point2[axisName], point2[behaviorName][propertyName], chunkStart, chunkEnd, elementSelector);
-				chunkLineFitData.push(lineOfBestFit);
-			}
-		}
-	}
-	return chunkLineFitData;
-};*/
-
+/*
 // axisName is "pageWidth" or "pageHeight"
 var determinePattern = function(dataPoints, behaviorName, propertyName, axisName){
 
@@ -683,69 +557,6 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 	}else{
 		// sort dataPoints by pageWidth value
 		dataPoints.sort(comparePageWidths);
-
-		// for left and for right (separately)
-		// Let's do "left" first
-		// possibly only 1 of left/right will follow a behavior based on pageWidth; possibly only 2/3 of left/right/elementWidth could follow a behavior based on pageWidth
-		// if there are no adjacent pairs with the same slope, assume there is no pageWidth-based pattern for that property (left or right)
-
-		/*var slopes = [];
-
-		// compute slopes
-		for(var i = 1; i < dataPoints.length; i++){
-			var point1 = dataPoints[i-1];
-			var point2 = dataPoints[i];
-
-			var slope;
-
-			if(typeof(point1[behaviorName][propertyName]) === "object"){
-				// For each key in the object, compute a slope. Put in an object or array?
-				slope = {};
-				var valueAttributes = Object.keys(point1[behaviorName][propertyName]);
-				for(var attrIndex = 0; attrIndex < valueAttributes.length; attrIndex++){
-					var attributeName = valueAttributes[attrIndex];
-					slope[attributeName] = (point2[behaviorName][propertyName][attributeName] - point1[behaviorName][propertyName][attributeName])/(point2[axisName] - point1[axisName]);
-				}
-			}else{
-				slope = (point2[behaviorName][propertyName] - point1[behaviorName][propertyName])/(point2[axisName] - point1[axisName]);
-			}
-			
-			slopes.push(slope);
-		}
-
-		var chunkStartIndices = [];
-		chunkStartIndices.push(0);
-
-		// compare slopes, identify chunks
-		for(var i = 1; i < slopes.length; i++){
-			var slope1 = slopes[i-1];
-			var slope2 = slopes[i];
-			if(typeof(slope1) === "object"){
-				var allAttributesSame = true;
-				var valueAttributes = Object.keys(slope1);
-				for(var attrIndex = 0; attrIndex < valueAttributes.length; attrIndex++){
-					var attributeName = valueAttributes[attrIndex];
-					if(slope1[attributeName] === slope2[attributeName]){
-						// Same chunk, nothing to do
-					}else{
-						allAttributesSame = false;
-					}
-				}
-				if(allAttributesSame){
-					// Same chunk, nothing to do
-				}else{
-					// Different chunk
-					chunkStartIndices.push(i);
-				}
-			}else{
-				if(slope1 == slope2){
-				// Same chunk, nothing to do
-				}else{
-					// Different chunk
-					chunkStartIndices.push(i);
-				}
-			}
-		}*/
 
 		// chunkStartIndices should now just be numbers between 0 and (dataPoints.length-1)
 		var chunkStartIndices = [];
@@ -838,8 +649,6 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 					chunkLineFitData[i] = fitDataObject;
 				}else{
 					//var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName], point2[axisName], point2[behaviorName][propertyName], chunkStart, chunkEnd, elementSelector);
-					/*lineOfBestFit["containsStart"] = true;
-					lineOfBestFit["containsEnd"] = false;*/
 					var m = 0;
 					var b = point1[behaviorName][propertyName];
 					var lineOfBestFit = {
@@ -877,8 +686,6 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 					chunkLineFitData[i] = fitDataObject;
 				}else{
 					//var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName], point2[axisName], point2[behaviorName][propertyName], chunkStart, chunkEnd, elementSelector);
-					/*lineOfBestFit["containsStart"] = true;
-					lineOfBestFit["containsEnd"] = false;*/
 					var m = 0;
 					var b = point2[behaviorName][propertyName];
 					var lineOfBestFit = {
@@ -946,8 +753,6 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 					chunkLineFitData[pointIndex1] = fitDataObject;
 				}else{
 					//var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName], point2[axisName], point2[behaviorName][propertyName], chunkStart, chunkEnd, elementSelector);
-					/*lineOfBestFit["containsStart"] = true;
-					lineOfBestFit["containsEnd"] = false;*/
 					var m = previousChunkRule["m"];
 					var b = previousChunkRule["b"];
 					var lineOfBestFit = {
@@ -980,8 +785,6 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 						var attributeName = valueAttributes[attrIndex];
 						// compute y=mx+b fit for attribute; then create data to add to chunkLineFitData
 						//var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName][attributeName], point2[axisName], point2[behaviorName][propertyName][attributeName], chunkStart, chunkEnd, elementSelector);
-						/*var m = previousChunkRule[attributeName]["m"];
-						var b = previousChunkRule[attributeName]["b"];*/
 						var m;
 						var b;
 						if(nextChunkRule){
@@ -999,10 +802,6 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 					chunkLineFitData[pointIndex1] = fitDataObject;
 				}else{
 					//var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName], point2[axisName], point2[behaviorName][propertyName], chunkStart, chunkEnd, elementSelector);
-					/*lineOfBestFit["containsStart"] = true;
-					lineOfBestFit["containsEnd"] = false;*/
-					/*var m = previousChunkRule["m"];
-					var b = previousChunkRule["b"];*/
 					var m;
 					var b;
 					if(nextChunkRule){
@@ -1034,13 +833,265 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 	// Combine chunks with same rule
 
 	return chunkLineFitData;
+};*/
+
+// axisName is "pageWidth" or "pageHeight"
+var determinePattern = function(dataPoints, behaviorName, propertyName, axisName){
+
+	var elementSelector = dataPoints[0]["id"];
+	var chunkLineFitData = [];
+	/*for(var i = 0; i < dataPoints.length - 1; i++){
+		chunkLineFitData.push(undefined);
+	}*/
+	// Push an undefined for each chunk interval (external and internal) and each keyframe
+	// So there will be 2*(dataPoints.length)+1
+	// Indexing into this to get ith interval: 2*i
+	// Indexing into this to get ith keyframe: 2*i+1
+	//for(var i = 0; i < dataPoints.length - 1; i++){
+	for(var i = 0; i < 2*(dataPoints.length)+1; i++){
+		chunkLineFitData.push(undefined);
+	}
+
+	var conciseChunkLineFitData = [];
+
+	if(dataPoints.length == 1){
+		// If one point only, assume properties will remain constant throughout all viewport sizes
+		var chunkStart = dataPoints[0][axisName];
+		var chunkEnd = dataPoints[0][axisName];
+
+		var ruleDataObj = {
+			"start": chunkStart,
+			"end": chunkEnd,
+			"containsStart": true,
+			"containsEnd": true,
+			"elementSelector": elementSelector
+		};
+
+		var getSingleKeyframeRuleFunc = elementDataFormat[behaviorName]["type"]["getSingleKeyframeRule"];
+		var valueData = getSingleKeyframeRuleFunc(dataPoints[0][behaviorName][propertyName]);
+		ruleDataObj["valueData"] = valueData;
+		//chunkLineFitData[0] = ruleDataObj;
+		var keyframeRuleIndex = 2 * 0 + 1; // === 1
+		chunkLineFitData[keyframeRuleIndex] = ruleDataObj;
+		conciseChunkLineFitData.push(ruleDataObj);
+	}else{
+		// sort dataPoints by pageWidth value
+		dataPoints.sort(comparePageWidths);
+
+		/*// chunkStartIndices should now just be numbers between 0 and (dataPoints.length-1)
+		var chunkStartIndices = []; // Do we need "chunkStartIndices"?
+		for(var i = 0; i < dataPoints.length - 1; i++){
+			chunkStartIndices.push(i);
+		}*/
+		// a chunk index i represents the behavior between the ith and (i+1)th keyframes 
+
+		var chunksIndicesToBeAddressInSecondIteration = [];
+
+		// First round of computing rules; only compute for linear interpolation segments and for leftmost and rightmost keyframes
+		//for(var i = 0; i < chunkStartIndices.length; i++){
+		for(var i = 0; i < dataPoints.length-1; i++){
+		//for(var i = 1; i < dataPoints.length; i++){
+			// Choose any 2 arbitrary points in the chunk (for ease, just the first two), and fit a line to them
+			// equation: y = m*x + c
+			// matrix multiplication for this? or just quick formula
+			/*var pointIndex1 = chunkStartIndices[i];
+			var pointIndex2 = pointIndex1 + 1;*/
+			var pointIndex1 = i;
+			var pointIndex2 = pointIndex1+1;
+			var point1 = dataPoints[pointIndex1];
+			var point2 = dataPoints[pointIndex2];
+
+			var point1Transition = point1[behaviorName]["transition"];
+			var point2Transition = point2[behaviorName]["transition"];
+
+			/*var chunkStart = point1[axisName];
+			var chunkEnd;
+			if(i < chunkStartIndices.length - 1){
+				chunkEnd = dataPoints[chunkStartIndices[i+1]][axisName];
+			}else{
+				chunkEnd = dataPoints[dataPoints.length - 1][axisName];
+			}*/
+			var chunkStart = point1[axisName];
+			var chunkEnd = point2[axisName];
+
+			// (In first round, only compute for linear interpolation segments and for leftmost and rightmost keyframes)
+			// (will come back and fill in other chunks in second round)
+
+			// For continuous behaviors, if linear interpolation
+			// This should only be possible for continuous behaviors; shouldn't happen for discrete behaviors (we won't allow these adjacent rules)
+			var isLinearInterpolation = (point1Transition === "smoothRight" || point1Transition === "smoothBoth") && (point2Transition === "smoothLeft" || point2Transition === "smoothBoth");
+
+			if(isLinearInterpolation){
+				var ruleDataObj = {
+					"start": chunkStart,
+					"end": chunkEnd,
+					"containsStart": true,
+					"containsEnd": true,
+					"elementSelector": elementSelector
+				};
+				//
+				//var valueData = getLinearInterpolationRule(point1, point2);
+				//var valueData = Continuous["getLinearInterpolationRule"](point1, point2);
+				//function(dataPoint1, dataPoint2, behaviorName, propertyName, axisName
+				var valueData = Continuous["getLinearInterpolationRule"](point1, point2, behaviorName, propertyName, axisName);
+				ruleDataObj["valueData"] = valueData;
+				//var index = 2 * i + 2;
+				var index = 2 * pointIndex1 + 2;
+				chunkLineFitData[index] = ruleDataObj;
+			}else{
+				chunksIndicesToBeAddressInSecondIteration.push(i);
+			}
+		}
+
+		// Second round
+		// Iterate through chunksIndicesToBeAddressInSecondIteration and set rules
+		// These are inner chunks
+		for(var i = 0; i < chunksIndicesToBeAddressInSecondIteration.length; i++){
+			var pointIndex1 = chunksIndicesToBeAddressInSecondIteration[i];
+			var pointIndex2 = pointIndex1 + 1;
+			var point1 = dataPoints[pointIndex1];
+			var point2 = dataPoints[pointIndex2];
+
+			var point1Transition = point1[behaviorName]["transition"];
+			var point2Transition = point2[behaviorName]["transition"];
+
+			var chunkStart = point1[axisName];
+			var chunkEnd = point2[axisName];
+			/*var chunkEnd;
+			if(i < chunksIndicesToBeAddressInSecondIteration.length - 1){
+				chunkEnd = dataPoints[chunksIndicesToBeAddressInSecondIteration[i+1]][axisName];
+			}else{
+				chunkEnd = dataPoints[dataPoints.length - 1][axisName];
+			}*/
+
+
+			if((point1Transition === "smoothRight" || point1Transition === "smoothBoth") && (point2Transition !== "smoothLeft" && point2Transition !== "smoothBoth")){
+				// If this segment is connected to the left keyframe, but disconnected from the right keyframe
+				var ruleDataObj = {
+					"start": chunkStart,
+					"end": chunkEnd,
+					"containsStart": true,
+					"containsEnd": false,
+					"elementSelector": elementSelector
+				};
+
+				// Use rule from previous chunk
+				var prevChunkIndex = pointIndex1 * 2;
+				var valueData = chunkLineFitData[prevChunkIndex]["valueData"];
+				// Need to do a deep copy of valueData
+				// but maybe "deepCopy" should be a method on Discrete and Continuous?
+				var propertyValue = point1[behaviorName][propertyName];
+				var getDeepCopyFunc = elementDataFormat[behaviorName]["type"]["getDeepCopy"];
+				ruleDataObj["valueData"] = getDeepCopyFunc(valueData, propertyValue);
+				// Need to add this to chunkLineFitData
+				var ruleIndex = 2 * pointIndex1 + 2;
+				chunkLineFitData[ruleIndex] = ruleDataObj;
+			}else if((point1Transition !== "smoothRight" && point1Transition !== "smoothBoth") && (point2Transition === "smoothLeft" || point2Transition === "smoothBoth")){
+				// If this segment is connected to the right keyframe, but disconnected from the left keyframe
+				var ruleDataObj = {
+					"start": chunkStart,
+					"end": chunkEnd,
+					"containsStart": false,
+					"containsEnd": true,
+					"elementSelector": elementSelector
+				};
+
+				// Use rule from next chunk
+				var nextChunkIndex = pointIndex2 * 2 + 2;
+				var valueData = chunkLineFitData[nextChunkIndex]["valueData"];
+				var propertyValue = point2[behaviorName][propertyName];
+				var getDeepCopyFunc = elementDataFormat[behaviorName]["type"]["getDeepCopy"];
+				ruleDataObj["valueData"] = getDeepCopyFunc(valueData, propertyValue);
+				var ruleIndex = 2 * pointIndex1 + 2;
+				chunkLineFitData[ruleIndex] = ruleDataObj;
+			}else{
+				// This state isn't possible
+			}
+
+			// TODO
+			// In the second round, do we also need to check whether each keyframe is contained within one of the adjacent chunks?
+				// We would do this only for inner keyframes (i=1 through i=length-2)?
+				// Outer keyframes (i=0 and i=length-1) will at the very least be covered in the third round (where we cover the outer chunks)
+			// We can do this for just point1 in each iteration for example
+			// Doesn't need to be done, but should be done later when we ask the user 2 separate questions per keyframe (about left interval and right interval)
+			// and they could potentially answer discontinuous for both
+		}
+
+		// Third round - outer chunks
+		// Chunk before the first keyframe
+		var pointIndex = 0;
+		var point = dataPoints[pointIndex];
+		var pointTransition = point[behaviorName]["transition"];
+		var chunkStart = point[axisName]; // On the client will be treated as applying to left of the keyframe too
+		var chunkEnd = point[axisName];
+		var ruleDataObj = {
+			"start": chunkStart,
+			"end": chunkEnd,
+			"containsStart": true,
+			"containsEnd": true,
+			"elementSelector": elementSelector
+		};
+		if(pointTransition === "smoothRight" || pointTransition === "smoothBoth"){
+			// If the first keyframe is connected to its right chunk, then use this rule
+			var rightChunkRuleIndex = 2;
+			var valueData = chunkLineFitData[rightChunkRuleIndex]["valueData"];
+			var propertyValue = point[behaviorName][propertyName];
+			var getDeepCopyFunc = elementDataFormat[behaviorName]["type"]["getDeepCopy"];
+			ruleDataObj["valueData"] = getDeepCopyFunc(valueData, propertyValue);
+		}else{
+			// If the first keyframe is disconnected from its right chunk, then just use constant value
+			var getSingleKeyframeRuleFunc = elementDataFormat[behaviorName]["type"]["getSingleKeyframeRule"];
+			var valueData = getSingleKeyframeRuleFunc(point[behaviorName][propertyName]);
+			ruleDataObj["valueData"] = valueData;
+		}
+		chunkLineFitData[0] = ruleDataObj;
+
+
+		// Chunk after the last keyframe
+		var pointIndex = dataPoints.length-1;
+		var point = dataPoints[pointIndex];
+		var pointTransition = point[behaviorName]["transition"];
+		var chunkStart = point[axisName]; // On the client will be treated as applying to left of the keyframe too
+		var chunkEnd = point[axisName];
+		var ruleDataObj = {
+			"start": chunkStart,
+			"end": chunkEnd,
+			"containsStart": true,
+			"containsEnd": true,
+			"elementSelector": elementSelector
+		};
+		if(pointTransition === "smoothLeft" || pointTransition === "smoothBoth"){
+			// If the last keyframe is connected to its left chunk, then use this rule
+			var leftChunkRuleIndex = 2 * pointIndex;
+			var valueData = chunkLineFitData[leftChunkRuleIndex]["valueData"];
+			var propertyValue = point[behaviorName][propertyName];
+			var getDeepCopyFunc = elementDataFormat[behaviorName]["type"]["getDeepCopy"];
+			ruleDataObj["valueData"] = getDeepCopyFunc(valueData, propertyValue);
+		}else{
+			// If the last keyframe is disconnected from its left chunk, then just use constant value
+			var getSingleKeyframeRuleFunc = elementDataFormat[behaviorName]["type"]["getSingleKeyframeRule"];
+			var valueData = getSingleKeyframeRuleFunc(point[behaviorName][propertyName]);
+			ruleDataObj["valueData"] = valueData;
+		}
+		chunkLineFitData[chunkLineFitData.length-1] = ruleDataObj;
+
+		// Only include non "undefined" entries in conciseChunkLineFitData
+		for(var chunkRuleIndex = 0; chunkRuleIndex < chunkLineFitData.length; chunkRuleIndex++){
+			var chunkRule = chunkLineFitData[chunkRuleIndex];
+			if(chunkRule){
+				conciseChunkLineFitData.push(chunkRule);
+			}
+		}
+
+		// Combine chunks with same rule
+	}
+
+	return conciseChunkLineFitData;
+	//return chunkLineFitData;
 };
 
-var computeLineOfBestFit = function(axisVal1, attributeVal1, axisVal2, attributeVal2, chunkStart, chunkEnd, containsStart, containsEnd, elementSelector){
+/*var computeLineOfBestFit = function(axisVal1, attributeVal1, axisVal2, attributeVal2, chunkStart, chunkEnd, containsStart, containsEnd, elementSelector){
 	var pointData = [ [axisVal1, attributeVal1], [axisVal2, attributeVal2] ];
-	/*result = regression.linear(pointData);
-	var m = result.equation[0];
-	var b = result.equation[1];*/
 	var m;
 	var b;
 	if(axisVal1 === axisVal2){
@@ -1054,10 +1105,175 @@ var computeLineOfBestFit = function(axisVal1, attributeVal1, axisVal2, attribute
 	}
 	var lineOfBestFit = { "m": m, "b": b, "start": chunkStart, "end": chunkEnd, "containsStart": containsStart, "containsEnd": containsEnd, "elementSelector": elementSelector };
 	return lineOfBestFit;
+};*/
+
+var computeLineOfBestFit = function(axisVal1, attributeVal1, axisVal2, attributeVal2){
+	var pointData = [ [axisVal1, attributeVal1], [axisVal2, attributeVal2] ];
+	var m;
+	var b;
+	if(axisVal1 === axisVal2){
+		// attributeVal1 and attributeVal2 should be the same
+		m = 0;
+		b = attributeVal1;
+	}else{
+		result = regression.linear(pointData);
+		m = result.equation[0];
+		b = result.equation[1];
+	}
+	//var lineOfBestFit = { "m": m, "b": b, "start": chunkStart, "end": chunkEnd, "containsStart": containsStart, "containsEnd": containsEnd, "elementSelector": elementSelector };
+	var lineOfBestFit = {
+		"m": m,
+		"b": b
+	};
+	return lineOfBestFit;
+};
+
+/*var deepCopy = function(ruleObject){
+	if(typeof(point1[behaviorName][propertyName]) === "object"){
+		var valueAttributes = Object.keys(point1[behaviorName][propertyName]);
+		var fitDataObject = {
+			"start": chunkStart,
+			"end": chunkEnd,
+			"containsStart": true,
+			"containsEnd": false,
+			"elementSelector": elementSelector
+		};
+		for(var attrIndex = 0; attrIndex < valueAttributes.length; attrIndex++){
+			var attributeName = valueAttributes[attrIndex];
+			// compute y=mx+b fit for attribute; then create data to add to chunkLineFitData
+			//var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName][attributeName], point2[axisName], point2[behaviorName][propertyName][attributeName], chunkStart, chunkEnd, elementSelector);
+			var m = previousChunkRule[attributeName]["m"];
+			var b = previousChunkRule[attributeName]["b"];
+			var lineOfBestFit = { "m": m, "b": b, "start": chunkStart, "end": chunkEnd, "elementSelector": elementSelector, "containsStart": true, "containsEnd": false };
+			fitDataObject[attributeName] = lineOfBestFit;
+		}
+		//chunkLineFitData.push(fitDataObject);
+		chunkLineFitData[pointIndex1] = fitDataObject;
+	}else{
+		//var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName], point2[axisName], point2[behaviorName][propertyName], chunkStart, chunkEnd, elementSelector);
+		var m = previousChunkRule["m"];
+		var b = previousChunkRule["b"];
+		var lineOfBestFit = {
+			"m": m,
+			"b": b,
+			"start": chunkStart,
+			"end": chunkEnd,
+			"containsStart": true,
+			"containsEnd": false,
+			"elementSelector": elementSelector
+		};
+		//chunkLineFitData.push(lineOfBestFit);
+		chunkLineFitData[pointIndex1] = lineOfBestFit;
+	}
+}
+
+// For a given segment, return the rule dictated by its left side
+var getLeftRule = function(){
+
+};
+
+// For a given segment, return the rule dictated by its right side
+var getRightRule = function(){
+	
+};*/
+
+var Discrete = {
+	getLeftRule: function(){
+
+	},
+	getRightRule: function(){
+
+	},
+	getDefaultRule: function(){
+		// We'll just say "getLeftRule" is the default
+		return getLeftRule();
+	},
+	getSingleKeyframeRule: function(dataPointForThisProperty){
+		return {
+			"value": dataPointForThisProperty
+		}
+	},
+	getDeepCopy: function(ruleObject, propertyValue){
+		return {
+			"value": ruleObject["value"]
+		}
+	}
+};
+
+var Continuous = {
+	getLeftRule: function(){
+
+	},
+	getRightRule: function(){
+
+	},
+	getDefaultRule: function(dataPoint1, dataPoint2){
+		// Linear interpolation
+		return getLinearInterpolationRule(dataPoint1, dataPoint2);
+	},
+	getSingleKeyframeRule: function(dataPointForThisProperty){
+		if(typeof(dataPointForThisProperty) === "object"){
+			var valueAttributes = Object.keys(dataPointForThisProperty);
+			var dataObj = {};
+			for(var attrIndex = 0; attrIndex < valueAttributes.length; attrIndex++){
+				var attributeName = valueAttributes[attrIndex];
+				// compute y=mx+b fit for attribute; then create data to add to chunkLineFitData
+				dataObj[attributeName] = {
+					"m": 0,
+					"b": dataPointForThisProperty[attributeName]
+				}
+			}
+			return dataObj;
+		}else{
+			//var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName], point2[axisName], point2[behaviorName][propertyName], chunkStart, chunkEnd, elementSelector);
+			return {
+				"m": 0,
+				"b": dataPointForThisProperty
+			}
+		}
+	},
+	getLinearInterpolationRule: function(dataPoint1, dataPoint2, behaviorName, propertyName, axisName){
+		if(typeof(dataPoint1[behaviorName][propertyName]) === "object"){
+			var valueAttributes = Object.keys(dataPoint1[behaviorName][propertyName]);
+			var dataObj = {};
+			for(var attrIndex = 0; attrIndex < valueAttributes.length; attrIndex++){
+				var attributeName = valueAttributes[attrIndex];
+				// compute y=mx+b fit for attribute; then create data to add to chunkLineFitData
+				//var lineOfBestFit = computeLineOfBestFit(dataPoint1[axisName], dataPoint1[behaviorName][propertyName][attributeName], dataPoint2[axisName], dataPoint2[behaviorName][propertyName][attributeName], chunkStart, chunkEnd, containsStart, containsEnd, elementSelector);
+				var lineOfBestFit = computeLineOfBestFit(dataPoint1[axisName], dataPoint1[behaviorName][propertyName][attributeName], dataPoint2[axisName], dataPoint2[behaviorName][propertyName][attributeName]);
+				dataObj[attributeName] = lineOfBestFit;
+			}
+			return dataObj;
+		}else{
+			var lineOfBestFit = computeLineOfBestFit(dataPoint1[axisName], dataPoint1[behaviorName][propertyName], dataPoint2[axisName], dataPoint2[behaviorName][propertyName]);
+			return lineOfBestFit;
+		}
+	},
+	getDeepCopy: function(ruleObject, propertyValue){
+		if(typeof(propertyValue) === "object"){
+			var valueAttributes = Object.keys(ruleObject);
+			var ruleObjectCopy = {};
+			for(var attrIndex = 0; attrIndex < valueAttributes.length; attrIndex++){
+				var attributeName = valueAttributes[attrIndex];
+				var m = ruleObject[attributeName]["m"];
+				var b = ruleObject[attributeName]["b"];
+				ruleObjectCopy[attributeName] = {
+					"m": m,
+					"b": b
+				};
+			}
+			return ruleObjectCopy;
+		}else{
+			var ruleObjectCopy = {
+				"m": ruleObject["m"],
+				"b": ruleObject["b"]
+			};
+			return ruleObjectCopy;
+		}
+	}
 };
 
 var determineLargestId = function(){
-	
 	var viewIds = Object.keys(views);
 	var largestId = 0;
 	for(var i = 0; i < viewIds.length; i++){
@@ -1077,7 +1293,8 @@ var pageDimensionsAndBehaviorsTheyInfluence = {
 		"compareFunc": comparePageWidths,
 		/*"behaviorsInfluenced": ["width", "x"],*/
 		/*"behaviorsInfluenced": ["width", "x", "font-size"],*/
-		"behaviorsInfluenced": ["width", "x", "font-size", "background-color", "color"],
+		/*"behaviorsInfluenced": ["width", "x", "font-size", "background-color", "color"],*/
+		"behaviorsInfluenced": ["width", "x", "font-size", "background-color", "color", "visibility"],
 		"mediaMaxProperty": "max-width",
 		"mediaMinProperty": "min-width",
 	},
@@ -1095,35 +1312,40 @@ var elementDataFormat = {
 		"properties": ["width"],
 		parseClientData: function(clientString){
 			return parseInt(clientString);
-		}
+		},
+		"type": Continuous
 	},
 	"height": {
 		"pageDimension": "pageHeight",
 		"properties": ["height"],
 		parseClientData: function(clientString){
 			return parseInt(clientString);
-		}
+		},
+		"type": Continuous
 	},
 	"x": {
 		"pageDimension": "pageWidth",
 		"properties": ["left", "right"],
 		parseClientData: function(clientString){
 			return parseInt(clientString);
-		}
+		},
+		"type": Continuous
 	},
 	"y": {
 		"pageDimension": "pageHeight",
 		"properties": ["top", "bottom"],
 		parseClientData: function(clientString){
 			return parseInt(clientString);
-		}
+		},
+		"type": Continuous
 	},
 	"font-size": {
 		"pageDimension": "pageWidth",
 		"properties": ["font-size"],
 		parseClientData: function(clientString){
 			return parseInt(clientString);
-		}
+		},
+		"type": Continuous
 	},
 	"background-color": {
 		"pageDimension": "pageWidth",
@@ -1146,7 +1368,8 @@ var elementDataFormat = {
 				"b": parseInt(bString)
 			};
 			return rgbObject;
-		}
+		},
+		"type": Continuous
 	},
 	"color": {
 		"pageDimension": "pageWidth",
@@ -1169,7 +1392,16 @@ var elementDataFormat = {
 				"b": parseInt(bString)
 			};
 			return rgbObject;
-		}
+		},
+		"type": Continuous
+	},
+	"visibility": {
+		"pageDimension": "pageWidth",
+		"properties": ["visibility"],
+		parseClientData: function(clientString){
+			return clientString;
+		},
+		"type": Discrete
 	}
 };
 
@@ -1205,6 +1437,7 @@ fs.readFile(dataFile, function(err, data){
 
     	// Confirm that element property of each keyframe has a "transition" property; if one doesn't, then set it to defaultTransition
     	// Later will probably want to have a specific defaultTransition per property type (e.g., "prevKeyframeConstantValue" for img src, "linearInterpolation" for element width)
+    	confirmHasVisibilityProperty();
     	confirmHasTransitionProperty();
     	writeDataToJSONFile();
 

@@ -155,7 +155,11 @@ body {
 .propertyTool {
 	padding-top: 10px;
 	padding-bottom: 10px;
-	border-top: solid 1px #bbb;
+	/*border-top: solid 1px #bbb;*/ /* Need to comment out for now, for custom select widgets to work*/
+}
+
+.propertyRules {
+	z-index: 10;
 }
 
 #addDeleteButtonsArea {
@@ -179,4 +183,47 @@ body {
 	margin-top: 10px;
 	margin-right: 10px;
 	margin-left: 10px;
+}
+
+
+
+
+/* Some copied from jquery-ui: https://jqueryui.com/selectmenu/#custom_render */
+fieldset {
+  border: 0;
+}
+
+/* select with custom icons */
+.ui-selectmenu-menu .ui-menu.customicons .ui-menu-item-wrapper {
+  padding: 0.5em 0 0.5em 3em;
+}
+.ui-selectmenu-menu .ui-menu.customicons .ui-menu-item .ui-icon {
+  height: 24px;
+  width: 24px;
+  top: 0.1em;
+}
+/*.ui-icon.video {
+  background: url("images/24-video-square.png") 0 0 no-repeat;
+}
+.ui-icon.podcast {
+  background: url("images/24-podcast-square.png") 0 0 no-repeat;
+}
+.ui-icon.rss {
+  background: url("images/24-rss-square.png") 0 0 no-repeat;
+}*/
+
+.ui-icon.left-closed-right-closed {
+  background: url("tool_icons/line_both_closed.png") 0 0 no-repeat;
+  background-size: contain;
+  width: 100% !important;
+}
+.ui-icon.left-closed-right-open {
+  background: url("tool_icons/line_left_closed_right_open.png") 0 0 no-repeat;
+  background-size: contain;
+  width: 100% !important;
+}
+.ui-icon.left-open-right-closed {
+  background: url("tool_icons/line_left_open_right_closed.png") 0 0 no-repeat;
+  background-size: contain;
+  width: 100% !important;
 }

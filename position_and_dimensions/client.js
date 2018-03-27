@@ -117,13 +117,8 @@ var generateRuleInferenceHTML = function(behaviorName){
 	return ruleInferenceSelectWidgetHTML;
 };
 
-var generateRuleInferenceDirectionHTML = function(behaviorName){
-	/*var optionLinearInterp = '<option value="linearInterpolation" selected>Linear interpolation</option>';
-	var optionPrevKeyframeRule = '<option value="prevKeyframeRule">Previous keyframe rule</option>';
-	var optionNextKeyframeRule = '<option value="nextKeyframeRule">Next keyframe rule</option>';
-	var optionPrevKeyframeConstantValue = '<option value="prevKeyframeConstantValue">Previous keyframe constant value</option>';
-	var optionCurrentKeyframeConstantValue = '<option value="currentKeyframeConstantValue">Current keyframe constant value</option>';*/
-
+/*var generateRuleInferenceDirectionHTML = function(behaviorName){
+	
 	var optionsHTML = "";
 	optionsHTML += '<option disabled value="empty"></option>';
 	var transitionOptionIds = Object.keys(transitionOptions);
@@ -131,20 +126,56 @@ var generateRuleInferenceDirectionHTML = function(behaviorName){
 		var transitionKey = transitionOptionIds[i];
 		var transitionName = transitionOptions[transitionKey];
 		var selectedAttribute = "";
-		/*if(i == 0){
-			selectedAttribute = "selected";
-		}*/
+
 		var optionString = '<option value="' + transitionKey + '"' + selectedAttribute + '>' + transitionName + '</option>';
 		optionsHTML += optionString;
 	}
-
-	//var selectHTML = '<select class="ruleInferenceSelect" behavior-name=' + behaviorName +' >' + optionLinearInterp + optionPrevKeyframeRule + optionNextKeyframeRule + optionPrevKeyframeConstantValue + optionCurrentKeyframeConstantValue + '</select>';
 
 	var selectHTML = '<select class="ruleInferenceSelect" behavior-name=' + behaviorName +' >' + optionsHTML + '</select>';
 
 	var ruleInferenceDirectionSelectWidgetHTML = selectHTML;
 	return ruleInferenceDirectionSelectWidgetHTML;
+}*/
+
+var generateRuleInferenceDirectionHTML = function(behaviorName){
+	
+	var optionsHTML = "";
+	//optionsHTML += '<option disabled value="empty"></option>';
+	var transitionOptionIds = Object.keys(transitionOptions);
+	for(var i = 0; i < transitionOptionIds.length; i++){
+		var transitionKey = transitionOptionIds[i];
+		//var transitionName = transitionOptions[transitionKey];
+		var transitionDataClass = transitionOptions[transitionKey];
+		
+		//var optionString = '<option value="' + transitionKey + '"' + selectedAttribute + '>' + transitionName + '</option>';
+		//var optionString = '<option value="' + transitionKey + '"data-class="' + transitionDataClass + '"></option>';
+		//var optionString = '<option value="' + transitionKey + '"data-class="' + transitionDataClass + '"></option>';
+		//var optionString = '<option value="' + transitionKey + '"data-class="' + transitionDataClass + '">&nbsp;</option>';
+		//var optionString = '<option value="' + transitionKey + '"data-class="' + transitionDataClass + '">' + transitionKey + '</option>';
+		var optionString = '<option value="' + transitionKey + '"data-class="' + transitionDataClass + '">&nbsp;</option>';
+		optionsHTML += optionString;
+	}
+
+	//var selectHTML = '<fieldset><select class="ruleInferenceSelect" behavior-name=' + behaviorName +' >' + optionsHTML + '</select></fieldset>';
+	var name = "ruleInferenceSelect_" + behaviorName;
+	var id = "ruleInferenceSelect_" + behaviorName;
+	var selectHTML = '<fieldset><select name="' + name + '" id="' + id + '" class="ruleInferenceSelect" behavior-name=' + behaviorName +' >' + optionsHTML + '</select></fieldset>';
+
+
+	var ruleInferenceDirectionSelectWidgetHTML = selectHTML;
+	return ruleInferenceDirectionSelectWidgetHTML;
 }
+
+/*var transitionOptions = {
+	"mypodcast": "podcast",
+	"myvideo": "video",
+	"myrss": "rss"
+};*/
+var transitionOptions = {
+	"left-closed-right-closed": "left-closed-right-closed",
+	"left-closed-right-open": "left-closed-right-open",
+	"left-open-right-closed": "left-open-right-closed"
+};
 
 /*var transitionOptions = {
 	"linearInterpolation": "No jump",
@@ -158,11 +189,11 @@ var generateRuleInferenceDirectionHTML = function(behaviorName){
 	"smoothRight": "Right smooth"
 };*/
 
-var transitionOptions = {
+/*var transitionOptions = {
 	"smoothBoth": "Continuous left and right",
 	"smoothLeft": "Continuous on left",
 	"smoothRight": "Continuous on right"
-};
+};*/
 
 /*var propertyToCSSStringFunction = {
 	width: function(ruleObject, dimensionValue, elementId, propertyName){
@@ -622,7 +653,42 @@ $(document).ready(function() {
     	dataChanged = true;
     });
 
-    $("body").on("change", ".ruleInferenceSelect", function(){
+    /*$( ".ruleInferenceSelect" ).iconselectmenu().iconselectmenu( "menuWidget" ).on( "selectmenuchange", function( event, ui ) {
+    	console.log("CHANGED - selectmenuchange");
+    } );*/
+    //ruleInferenceSelect_visibility-button
+
+    //ruleInferenceSelect_visibility-menu
+
+    /*$("body").on("selectmenuchange", "#ruleInferenceSelect_visibility", function( event, ui ) {
+    	console.log("selectmenuchange");
+    });
+
+    $("body").on("selectmenuselect", "#ruleInferenceSelect_visibility", function( event, ui ) {
+    	console.log("selectmenuselect");
+    });*/
+
+    /*$("body").on("selectmenuchange", ".ui-selectmenu-menu", function( event, ui ) {
+    	console.log("selectmenuchange");
+    });
+
+    $("body").on("selectmenuselect", ".ui-selectmenu-menu", function( event, ui ) {
+    	console.log("selectmenuselect");
+    });*/
+
+    //ui-selectmenu-button ui-selectmenu-button-closed ui-corner-all ui-button ui-widget
+
+    /*$("body").on("change", ".ui-selectmenu-button.ui-widget", function( event, ui ) {
+    	console.log(".ui-selectmenu-button.ui-widget changed!");
+    });
+    
+    $("body").on("change", ".ui-selectmenu-text", function( event, ui ) {
+    	console.log(".ui-selectmenu-text changed!");
+    });*/
+
+    //$( ".selector" ).on( "selectmenuchange", function( event, ui ) {} );
+    // Comment out for now?
+    /*$("body").on("change", ".ruleInferenceSelect", function(){
     	// Transition rule value
     	var newTransitionRule = $(this).val();
     	
@@ -636,7 +702,12 @@ $(document).ready(function() {
 
     	// Capture data/send to server
     	dataChanged = true;
-	});
+	});*/
+
+    /*$( ".ruleInferenceSelect" ).on( "selectmenuchange", function( event, ui ) {
+    	console.log("CHANGED - selectmenuchange");
+    } );*/
+
 
 	// Fill all .propertyRules divs with dropdown menu HTML
 	//var ruleInferenceQuestions = "<div>Test content</div>";
@@ -655,7 +726,85 @@ $(document).ready(function() {
 		$(this).html(ruleInferenceQuestions);
 	});
 
+	/* Some copied/adapted from jquery-ui */
+	$.widget( "custom.iconselectmenu", $.ui.selectmenu, {
+		_renderItem: function( ul, item ) {
+	        var li = $( "<li>" ),
+	          wrapper = $( "<div>", { text: item.label } );
+	 
+	        if ( item.disabled ) {
+	          li.addClass( "ui-state-disabled" );
+	        }
+	 
+	        $( "<span>", {
+	          style: item.element.attr( "data-style" ),
+	          "class": "ui-icon " + item.element.attr( "data-class" )
+	        })
+	        .appendTo( wrapper );
+ 
+			return li.append( wrapper ).appendTo( ul );
+		},
+		_renderButtonItem: function( item ) {
+			var buttonItem = $( "<span>", {
+			/*"class": "ui-selectmenu-text"*/
+			});
+			//console.log(item);
+			//this._setText( buttonItem, item.label );
+
+			//buttonItem.css( "background-color", item.value );
+			//.ui-icon.left-closed-right-closed
+			//buttonItem.addClass("ui-icon left-closed-right-closed");
+			buttonItem.addClass("ui-icon");
+			//buttonItem.addClass(item.label);
+			buttonItem.addClass(item.value);
+
+			//console.log("_renderButtonItem is being called");
+
+			return buttonItem;
+		}
+    });
+
+	$( ".ruleInferenceSelect" )
+      .iconselectmenu({
+      	change: function( event, ui ) {
+      		console.log("Change has actually been called this time");
+      		// Use this as the event handler for updating element attributes, updating transition rules
+      		
+      		console.log($(this));
+
+	    	// Transition rule value
+	    	var newTransitionRule = $(this).val();
+	    	console.log($(this).val());
+	    	
+	    	var behaviorName = $(this).attr("behavior-name");
+	    	
+	    	// Update widget's "transition" property
+	    	//$("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-transition", newTransitionRule);
+	    	if(newTransitionRule && newTransitionRule !== "empty"){
+	    		$("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-transition", newTransitionRule);
+	    	}
+
+	    	// Capture data/send to server
+	    	dataChanged = true;
+      	}
+      })
+      .iconselectmenu( "menuWidget" )
+        .addClass( "ui-menu-icons customicons" );
+
+    /*$( ".ruleInferenceSelect" )
+      .iconselectmenu()
+      .iconselectmenu( "menuWidget" )
+        .addClass( "ui-menu-icons customicons" );*/
+
+
+    /*var selectMenuObj = $( ".ruleInferenceSelect" )
+      .iconselectmenu()
+      .iconselectmenu( "menuWidget" );
+      console.log(selectMenuObj);
+      selectMenuObj.addClass( "ui-menu-icons customicons" );*/
+
     //$( "#amount" ).val( $( "#slider" ).slider( "value" ) + "px" );
+
 });
 
 var comparePageWidths = function(a, b) {

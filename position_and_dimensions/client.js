@@ -110,10 +110,18 @@ var elementDataFormat = {
 	]
 };
 
-var generateRuleInferenceHTML = function(behaviorName){
+/*var generateRuleInferenceHTML = function(behaviorName){
 	//var ruleInferenceSelectWidgetHTML = generateRuleInferenceDirectionHTML(widgetName, "Left") + generateRuleInferenceDirectionHTML(widgetName, "Right");
 	//var ruleInferenceSelectWidgetHTML = generateRuleInferenceDirectionHTML(widgetName, "Left");
 	var ruleInferenceSelectWidgetHTML = generateRuleInferenceDirectionHTML(behaviorName);
+	return ruleInferenceSelectWidgetHTML;
+};*/
+
+var generateRuleInferenceHTML = function(behaviorName){
+	//var ruleInferenceSelectWidgetHTML = generateRuleInferenceDirectionHTML(widgetName, "Left") + generateRuleInferenceDirectionHTML(widgetName, "Right");
+	//var ruleInferenceSelectWidgetHTML = generateRuleInferenceDirectionHTML(widgetName, "Left");
+	//var ruleInferenceSelectWidgetHTML = '<div>Left keyframe </div>' + generateRuleInferenceDirectionHTML(behaviorName, "left") + '<div> Current keyframe </div>' + generateRuleInferenceDirectionHTML(behaviorName, "right") + '<div> Right keyframe</div>';
+	var ruleInferenceSelectWidgetHTML = '<div class="transitionPiece">Left </div>' + generateRuleInferenceDirectionHTML(behaviorName, "left") + '<div class="transitionPiece"> Current </div>' + generateRuleInferenceDirectionHTML(behaviorName, "right") + '<div class="transitionPiece"> Right </div>';
 	return ruleInferenceSelectWidgetHTML;
 };
 
@@ -137,30 +145,39 @@ var generateRuleInferenceHTML = function(behaviorName){
 	return ruleInferenceDirectionSelectWidgetHTML;
 }*/
 
-var generateRuleInferenceDirectionHTML = function(behaviorName){
+/*var generateRuleInferenceDirectionHTML = function(behaviorName){
 	
 	var optionsHTML = "";
-	//optionsHTML += '<option disabled value="empty"></option>';
 	var transitionOptionIds = Object.keys(transitionOptions);
 	for(var i = 0; i < transitionOptionIds.length; i++){
 		var transitionKey = transitionOptionIds[i];
-		//var transitionName = transitionOptions[transitionKey];
 		var transitionDataClass = transitionOptions[transitionKey];
-		
-		//var optionString = '<option value="' + transitionKey + '"' + selectedAttribute + '>' + transitionName + '</option>';
-		//var optionString = '<option value="' + transitionKey + '"data-class="' + transitionDataClass + '"></option>';
-		//var optionString = '<option value="' + transitionKey + '"data-class="' + transitionDataClass + '"></option>';
-		//var optionString = '<option value="' + transitionKey + '"data-class="' + transitionDataClass + '">&nbsp;</option>';
-		//var optionString = '<option value="' + transitionKey + '"data-class="' + transitionDataClass + '">' + transitionKey + '</option>';
 		var optionString = '<option value="' + transitionKey + '"data-class="' + transitionDataClass + '">&nbsp;</option>';
 		optionsHTML += optionString;
 	}
 
-	//var selectHTML = '<fieldset><select class="ruleInferenceSelect" behavior-name=' + behaviorName +' >' + optionsHTML + '</select></fieldset>';
 	var name = "ruleInferenceSelect_" + behaviorName;
 	var id = "ruleInferenceSelect_" + behaviorName;
 	var selectHTML = '<fieldset><select name="' + name + '" id="' + id + '" class="ruleInferenceSelect" behavior-name=' + behaviorName +' >' + optionsHTML + '</select></fieldset>';
 
+	var ruleInferenceDirectionSelectWidgetHTML = selectHTML;
+	return ruleInferenceDirectionSelectWidgetHTML;
+}*/
+
+var generateRuleInferenceDirectionHTML = function(behaviorName, side){
+	
+	var optionsHTML = "";
+	var transitionOptionIds = Object.keys(transitionOptions);
+	for(var i = 0; i < transitionOptionIds.length; i++){
+		var transitionKey = transitionOptionIds[i];
+		var transitionDataClass = transitionOptions[transitionKey];
+		var optionString = '<option value="' + transitionKey + '"data-class="' + transitionDataClass + '">&nbsp;</option>';
+		optionsHTML += optionString;
+	}
+
+	var name = "ruleInferenceSelect_" + behaviorName;
+	var id = "ruleInferenceSelect_" + behaviorName;
+	var selectHTML = '<fieldset class="transitionPiece"><select name="' + name + '" id="' + id + '" class="ruleInferenceSelect" behavior-name=' + behaviorName +' side="' + side + '">' + optionsHTML + '</select></fieldset>';
 
 	var ruleInferenceDirectionSelectWidgetHTML = selectHTML;
 	return ruleInferenceDirectionSelectWidgetHTML;

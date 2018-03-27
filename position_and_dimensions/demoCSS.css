@@ -227,3 +227,15 @@ fieldset {
   background-size: contain;
   width: 100% !important;
 }
+
+.propertyRules .ui-selectmenu-button {
+	width: 75px;
+}
+
+.propertyRules .ui-button {
+	padding: 0px;
+}
+
+.transitionPiece {
+	float: left;
+}

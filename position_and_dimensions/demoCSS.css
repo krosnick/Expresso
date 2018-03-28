@@ -154,7 +154,13 @@ body {
 	/*padding-right: 10px;*/
 }
 
-.propertyTool {
+/*.propertyTool {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	border-top: solid 1px #bbb;
+}*/
+
+.propertyInfo {
 	padding-top: 10px;
 	padding-bottom: 10px;
 	border-top: solid 1px #bbb;
@@ -254,4 +260,12 @@ fieldset {
 
 .rightWidgets { /* starts out hidden */
 	display: none;
+}
+
+.bottomWidgets { /* starts out hidden */
+	display: none;
+}
+
+[type='radio'] {
+	font-size: 15px;
 }

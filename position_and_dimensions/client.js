@@ -601,6 +601,38 @@ $(document).ready(function() {
       }
     });
 
+    $("#topSlider").slider({
+      /*min: 0,
+      max: 1200,*/
+      min: -800,
+      max: 800,
+      slide: function( event, ui ) {
+        $( "#topAmount" ).val( ui.value  + "px" );
+        //$("[elementId=" + currentlySelectedElement + "]").css("left", ui.value + "px");
+        $("[elementId=" + currentlySelectedElement + "]").css({
+        	"top": ui.value + "px",
+        	"bottom": "auto"
+        });
+	    dataChanged = true;
+      }
+    });
+
+    $("#bottomSlider").slider({
+      /*min: 0,
+      max: 1200,*/
+      min: -800,
+      max: 800,
+      slide: function( event, ui ) {
+        $( "#bottomAmount" ).val( ui.value  + "px" );
+        //$("[elementId=" + currentlySelectedElement + "]").css("right", ui.value + "px");
+        $("[elementId=" + currentlySelectedElement + "]").css({
+        	"top": "auto",
+        	"bottom": ui.value + "px"
+        });
+	    dataChanged = true;
+      }
+    });
+
     $("#visibilityWidget").on("change", function(event){
     	// Based on the value, update the element's "visibility" property
     	var visibilityWidgetValue = $("#visibilityWidget").val();
@@ -619,6 +651,20 @@ $(document).ready(function() {
     	}else{ // === "right"
     		$(".leftWidgets").hide();
     		$(".rightWidgets").show();
+    	}
+    });
+
+    $("body").on("change", "[name='yPosition']", function(event){
+    	/*console.log("radio button changed!");
+    	console.log($(event.target).val());*/
+    	// switch which widget is visible
+    	var selectedRadioButtonValue = $(event.target).val();
+    	if(selectedRadioButtonValue === "top"){
+    		$(".topWidgets").show();
+    		$(".bottomWidgets").hide();
+    	}else{ // === "right"
+    		$(".topWidgets").hide();
+    		$(".bottomWidgets").show();
     	}
     });
 
@@ -778,6 +824,19 @@ var updateRightMenuWidgets = function(element){
 	var rightAmount = $(".userPage").width() - element.width() - element.offset().left;
 	$( "#rightSlider" ).slider( "value", rightAmount);
 	$( "#rightAmount" ).val( rightAmount  + "px" );
+
+
+
+	// top, bottom
+
+	var topAmount = element.offset().top;
+	$( "#topSlider" ).slider( "value", topAmount);
+	$( "#topAmount" ).val( topAmount  + "px" );
+
+	var bottomAmount = $(".userPage").height() - element.height() - element.offset().top;
+	$( "#bottomSlider" ).slider( "value", bottomAmount);
+	$( "#bottomAmount" ).val( bottomAmount  + "px" );
+
 
 	$("#text_color_colorpicker").spectrum("set", element.css("color"));	
 

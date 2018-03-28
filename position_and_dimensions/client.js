@@ -475,15 +475,22 @@ $(document).ready(function() {
     
     // Probably should have a timer to send updated element data to server to be saved
     
-    window.setInterval(function(){
+    // Commenting out for now; clogging the JS event loop
+    /*window.setInterval(function(){
     	if(currentlySelectedElement){
 			var elementObj = $("[elementId=" + currentlySelectedElement + "]");
 			updateRightMenuWidgets(elementObj);
 		}
-    }, 500);
+    }, 500);*/
 
     window.setInterval(function(){
     	if(dataChanged){
+			
+			if(currentlySelectedElement){
+				var elementObj = $("[elementId=" + currentlySelectedElement + "]");
+				updateRightMenuWidgets(elementObj);
+			}
+
 			var viewData = captureElementAndPageData();
 			dataChanged = false;
 
@@ -563,21 +570,33 @@ $(document).ready(function() {
     });
 
     $("#leftSlider").slider({
-      min: 0,
+      /*min: 0,
+      max: 1200,*/
+      min: -1200,
       max: 1200,
       slide: function( event, ui ) {
         $( "#leftAmount" ).val( ui.value  + "px" );
-        $("[elementId=" + currentlySelectedElement + "]").css("left", ui.value + "px");
+        //$("[elementId=" + currentlySelectedElement + "]").css("left", ui.value + "px");
+        $("[elementId=" + currentlySelectedElement + "]").css({
+        	"left": ui.value + "px",
+        	"right": "auto"
+        });
 	    dataChanged = true;
       }
     });
 
     $("#rightSlider").slider({
-      min: 0,
+      /*min: 0,
+      max: 1200,*/
+      min: -1200,
       max: 1200,
       slide: function( event, ui ) {
         $( "#rightAmount" ).val( ui.value  + "px" );
-        $("[elementId=" + currentlySelectedElement + "]").css("right", ui.value + "px");
+        //$("[elementId=" + currentlySelectedElement + "]").css("right", ui.value + "px");
+        $("[elementId=" + currentlySelectedElement + "]").css({
+        	"left": "auto",
+        	"right": ui.value + "px"
+        });
 	    dataChanged = true;
       }
     });
@@ -588,6 +607,21 @@ $(document).ready(function() {
     	$("[elementId=" + currentlySelectedElement + "]").css("visibility", visibilityWidgetValue);
     	dataChanged = true;
     });
+
+    $("body").on("change", "[name='xPosition']", function(event){
+    	/*console.log("radio button changed!");
+    	console.log($(event.target).val());*/
+    	// switch which widget is visible
+    	var selectedRadioButtonValue = $(event.target).val();
+    	if(selectedRadioButtonValue === "left"){
+    		$(".leftWidgets").show();
+    		$(".rightWidgets").hide();
+    	}else{ // === "right"
+    		$(".leftWidgets").hide();
+    		$(".rightWidgets").show();
+    	}
+    });
+
 
 	// Fill all .propertyRules divs with dropdown menu HTML
 	$(".propertyRules").each(function(index, element){
@@ -621,7 +655,7 @@ $(document).ready(function() {
 			});
 			//this._setText( buttonItem, item.label );
 
-			console.log(item);
+			//console.log(item);
 
 			//buttonItem.css( "background-color", item.value );
 			//.ui-icon.left-closed-right-closed
@@ -638,18 +672,18 @@ $(document).ready(function() {
 	$( ".ruleInferenceSelect" )
       .iconselectmenu({
       	change: function( event, ui ) {
-      		console.log("Change has actually been called this time");
+      		//console.log("Change has actually been called this time");
       		// Use this as the event handler for updating element attributes, updating transition rules
       		
-      		console.log($(this));
+      		//console.log($(this));
 
 	    	// Transition rule value
 	    	var newTransitionRule = $(this).val();
-	    	console.log($(this).val());
+	    	//console.log($(this).val());
 	    	
 	    	var behaviorName = $(this).attr("behavior-name");
 	    	var transitionSide = $(this).attr("side");
-	    	console.log("transitionSide: " + transitionSide);
+	    	//console.log("transitionSide: " + transitionSide);
 	    	
 	    	// Update widget's "transition" property
 	    	//$("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-transition", newTransitionRule);
@@ -1122,7 +1156,7 @@ var replaceCSSRules = function(){
 	$("#" + elementCSSRules).empty();
 	var cssRulesString = "";
 
-	console.log(cssRules);
+	//console.log(cssRules);
 
 	for(var i = 0; i < cssRules.length; i++){
 

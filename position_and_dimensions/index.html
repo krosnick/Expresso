@@ -110,7 +110,33 @@
 
           <!-- x position-->
           <div>
-            <b>x position</b>
+            <i>x position</i>
+            <div class="row propertyTool" behavior-name="x">
+              <div class="col propertyWidget">
+                
+
+                <input type="radio" id="leftRadioButton" name="xPosition" value="left" checked>
+                <label for="leftRadioButton">Left</label>
+                <input type="radio" id="rightRadioButton" name="xPosition" value="right">
+                <label for="rightRadioButton">Right</label>
+
+                <div class="leftWidgets">
+                  <!--<label for="leftAmount">Left:</label>-->
+                  <input type="text" id="leftAmount" readonly style="border:0; color:#f6931f; font-weight:bold;"/>
+                  <div id="leftSlider" class="sliderWidget"></div>
+                </div>
+                <div class="rightWidgets">
+                  <!--<label for="rightAmount">Right:</label>-->
+                  <input type="text" id="rightAmount" readonly style="border:0; color:#f6931f; font-weight:bold;"/>
+                  <div id="rightSlider" class="sliderWidget"></div>
+                </div>
+              </div>
+              <div class="col propertyRules">
+              </div>
+            </div>
+          </div>
+          <!--<div>
+            <i>x position</i>
             <div class="row propertyTool" behavior-name="x" attribute-name="left">
               <div class="col propertyWidget">
                 <label for="leftAmount">Left:</label>
@@ -129,7 +155,7 @@
               <div class="col propertyRules">
               </div>
             </div>
-          </div>
+          </div>-->
 
           <div class="row propertyTool" behavior-name="background-color">
             <div class="col propertyWidget">

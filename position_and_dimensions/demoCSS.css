@@ -155,7 +155,7 @@ body {
 .propertyTool {
 	padding-top: 10px;
 	padding-bottom: 10px;
-	/*border-top: solid 1px #bbb;*/ /* Need to comment out for now, for custom select widgets to work*/
+	border-top: solid 1px #bbb;
 }
 
 .propertyRules {

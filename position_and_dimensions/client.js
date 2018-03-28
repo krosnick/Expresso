@@ -996,6 +996,27 @@ var renderView = function(viewData){
     	selectElement($("[elementId=" + currentlySelectedElement + "]"));
     }
 
+    // Determine if we need to disable/enable left-transition and right-transition selectmenus
+    // If leftmost keyframe, should disable left-transition selectmenus
+    var leftmostKeyframeId = $(".clone").first().attr("viewid");
+    if(currentViewId == leftmostKeyframeId){
+    	// Disable left-transition selectmenus
+    	$("select.ruleInferenceSelect[side='left']").iconselectmenu("disable");
+    }else{
+    	// Enable left-transition selectmenus
+    	$("select.ruleInferenceSelect[side='left']").iconselectmenu("enable");
+    }
+
+    // If righmost keyframe, should disable right-transition selectmenus
+    var rightmostKeyframeId = $(".clone").last().attr("viewid");
+    if(currentViewId == rightmostKeyframeId){
+    	// Disable right-transition selectmenus
+    	$("select.ruleInferenceSelect[side='right']").iconselectmenu("disable");
+    }else{
+    	// Enable right-transition selectmenus
+    	$("select.ruleInferenceSelect[side='right']").iconselectmenu("enable");
+    }
+
 };
 
 var destroyElementModifiable = function(){

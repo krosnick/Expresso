@@ -524,6 +524,26 @@ $(document).ready(function() {
       }
     });
 
+    $("#widthSlider").slider({
+      min: 1,
+      max: 1200,
+      slide: function( event, ui ) {
+        $( "#widthAmount" ).val( ui.value  + "px" );
+        $("[elementId=" + currentlySelectedElement + "]").css("width", ui.value  + "px");
+	    dataChanged = true;
+      }
+    });
+
+    $("#heightSlider").slider({
+      min: 1,
+      max: 800,
+      slide: function( event, ui ) {
+        $( "#heightAmount" ).val( ui.value  + "px" );
+        $("[elementId=" + currentlySelectedElement + "]").css("height", ui.value  + "px");
+	    dataChanged = true;
+      }
+    });
+
     $("#visibilityWidget").on("change", function(event){
     	// Based on the value, update the element's "visibility" property
     	var visibilityWidgetValue = $("#visibilityWidget").val();
@@ -657,9 +677,21 @@ var selectElement = function(element){
 		$("#fontTools").hide();
 	}
 
+	// Font size slider
 	var fontSize = extractPixelValue(element.css("font-size"));
 	$( "#slider" ).slider( "value", fontSize );
 	$( "#amount" ).val( fontSize  + "px" );
+	
+	// Width slider
+	var widthAmount = element.width();
+	$( "#widthSlider" ).slider( "value", widthAmount);
+	$( "#widthAmount" ).val( widthAmount  + "px" );
+
+	// Height slider
+	var heightAmount = element.height();
+	$( "#heightSlider" ).slider( "value", heightAmount);
+	$( "#heightAmount" ).val( heightAmount  + "px" );
+
 	$("#text_color_colorpicker").spectrum("set", element.css("color"));	
 
 	$("#visibilityWidget").val(element.css("visibility"));

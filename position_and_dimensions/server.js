@@ -294,6 +294,65 @@ var updateElementAndPageData = function(viewObj){
 		"pageHeight": parseInt(viewHeight),
 		"elements": viewElementsData
 	};
+
+	// Now need to update adjacent keyframes transitions (to make sure they are consistent)
+
+	// Sort
+	var viewObjArray = Object.values(views);
+	viewObjArray.sort(comparePageWidths);
+
+	// Find index of current keyframe (i.e., the one we're updating on the server)
+	var currentKeyframeIndex = -1;
+	for(var i = 0; i < viewObjArray.length; i++){
+		if(viewObjArray[i]["pageWidth"] == parseInt(viewWidth)){
+			currentKeyframeIndex = i;
+		}
+	}
+
+	// Update left keyframe's "right-transition" values to be this keyframe's "left-transition" values
+	if(currentKeyframeIndex > 0){ // Is there a keyframe to the left?
+		var leftKeyframeElements = viewObjArray[currentKeyframeIndex-1]["elements"];
+
+		// Loop through current keyframe's elements/properties; for each left-transition, update left keyframe's right-transition
+		for(var i = 0; i < viewElementsData.length; i++){
+			var element = viewElementsData[i];
+			// Can we assume elements have the same order for each keyframe?
+			var elementBehaviorKeyValues = Object.entries(elementDataFormat);
+			for(var behaviorIndex = 0; behaviorIndex < elementBehaviorKeyValues.length; behaviorIndex++){
+				var behaviorKeyAndValue = elementBehaviorKeyValues[behaviorIndex];
+				var behaviorName = behaviorKeyAndValue[0];
+				//console.log(element[behaviorName]);
+				if(element[behaviorName]){
+					var currentKeyframeBehaviorLeftTransition = element[behaviorName]["left-transition"];
+					//leftKeyframeElements[behaviorName]["right-transition"] = currentKeyframeBehaviorLeftTransition;
+					leftKeyframeElements[i][behaviorName]["right-transition"] = currentKeyframeBehaviorLeftTransition;
+					console.log(currentKeyframeBehaviorLeftTransition);
+				}
+			}
+		}
+	}
+
+	// Update right keyframe's "left-transition" values to be this keyframe's "right-transition" values
+	if(currentKeyframeIndex < viewObjArray.length-1){ // Is there a keyframe to the right?
+		var rightKeyframeElements = viewObjArray[currentKeyframeIndex+1]["elements"];
+
+		// Loop through current keyframe's elements/properties; for each right-transition, update right keyframe's left-transition
+		for(var i = 0; i < viewElementsData.length; i++){
+			var element = viewElementsData[i];
+			var elementBehaviorKeyValues = Object.entries(elementDataFormat);
+			for(var behaviorIndex = 0; behaviorIndex < elementBehaviorKeyValues.length; behaviorIndex++){
+				var behaviorKeyAndValue = elementBehaviorKeyValues[behaviorIndex];
+				var behaviorName = behaviorKeyAndValue[0];
+				//console.log(element[behaviorName]);
+				if(element[behaviorName]){
+					var currentKeyframeBehaviorRightTransition = element[behaviorName]["right-transition"];
+					//rightKeyframeElements[behaviorName]["left-transition"] = currentKeyframeBehaviorRightTransition;
+					rightKeyframeElements[i][behaviorName]["left-transition"] = currentKeyframeBehaviorRightTransition;
+					console.log(currentKeyframeBehaviorRightTransition);
+				}
+			}
+		}
+	}
 };
 
 var writeDataToJSONFile = function(){
@@ -577,6 +636,7 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 			//var isLinearInterpolation = (point1Transition === "smoothRight" || point1Transition === "smoothBoth") && (point2Transition === "smoothLeft" || point2Transition === "smoothBoth");
 			var isLinearInterpolation = (point1Transition === "left-closed-right-closed");
 			if(isLinearInterpolation){
+				console.log("linearInterpolation; behaviorName: " + behaviorName + "; elementSelector: " + elementSelector);
 				var ruleDataObj = {
 					"start": chunkStart,
 					"end": chunkEnd,
@@ -588,6 +648,7 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 				ruleDataObj["valueData"] = valueData;
 				//var index = 2 * i + 2;
 				var index = 2 * pointIndex1 + 2;
+				//console.log("behaviorName: " + behaviorName + "; index: " + index);
 				chunkLineFitData[index] = ruleDataObj;
 			}else{
 				chunksIndicesToBeAddressInSecondIteration.push(i);
@@ -615,6 +676,7 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 			var leftOpenRightClosed = (point1Transition === "left-open-right-closed");
 			//if((point1Transition === "smoothRight" || point1Transition === "smoothBoth") && (point2Transition !== "smoothLeft" && point2Transition !== "smoothBoth")){
 			if(leftClosedRightOpen){
+				console.log("leftClosedRightOpen rule");
 				// If this segment is connected to the left keyframe, but disconnected from the right keyframe
 				var ruleDataObj = {
 					"start": chunkStart,
@@ -626,17 +688,26 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 
 				// Use rule from previous chunk
 				var prevChunkIndex = pointIndex1 * 2;
-				var valueData = chunkLineFitData[prevChunkIndex]["valueData"];
-				// Need to do a deep copy of valueData
-				// but maybe "deepCopy" should be a method on Discrete and Continuous?
+				console.log("prevChunkIndex: " + prevChunkIndex);
+				console.log(chunkLineFitData[prevChunkIndex]);
+				
 				var propertyValue = point1[behaviorName][propertyName];
-				var getDeepCopyFunc = elementDataFormat[behaviorName]["type"]["getDeepCopy"];
-				ruleDataObj["valueData"] = getDeepCopyFunc(valueData, propertyValue);
-				// Need to add this to chunkLineFitData
+				if(chunkLineFitData[prevChunkIndex]){ // If the previous chunk exists, use its rule
+					var valueData = chunkLineFitData[prevChunkIndex]["valueData"];
+					var getDeepCopyFunc = elementDataFormat[behaviorName]["type"]["getDeepCopy"];
+					ruleDataObj["valueData"] = getDeepCopyFunc(valueData, propertyValue);
+				}else{
+					// The previous chunk doesn't exist yet (should only be if index 0 (before first keyframe) isn't defined yet),
+					// so will have to use constant value at the left keyframe
+					var getSingleKeyframeRuleFunc = elementDataFormat[behaviorName]["type"]["getSingleKeyframeRule"];
+					var valueData = getSingleKeyframeRuleFunc(propertyValue);
+					ruleDataObj["valueData"] = valueData;
+				}
 				var ruleIndex = 2 * pointIndex1 + 2;
 				chunkLineFitData[ruleIndex] = ruleDataObj;
 			//}else if((point1Transition !== "smoothRight" && point1Transition !== "smoothBoth") && (point2Transition === "smoothLeft" || point2Transition === "smoothBoth")){
 			}else if(leftOpenRightClosed){
+				console.log("leftOpenRightClosed rule");
 				// If this segment is connected to the right keyframe, but disconnected from the left keyframe
 				var ruleDataObj = {
 					"start": chunkStart,
@@ -648,14 +719,31 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 
 				// Use rule from next chunk
 				var nextChunkIndex = pointIndex2 * 2 + 2;
-				var valueData = chunkLineFitData[nextChunkIndex]["valueData"];
+				console.log(nextChunkIndex);
+				console.log(chunkLineFitData);
+				
 				var propertyValue = point2[behaviorName][propertyName];
-				var getDeepCopyFunc = elementDataFormat[behaviorName]["type"]["getDeepCopy"];
-				ruleDataObj["valueData"] = getDeepCopyFunc(valueData, propertyValue);
+				if(chunkLineFitData[nextChunkIndex]){ // If the next chunk exists, use its rule
+					var valueData = chunkLineFitData[nextChunkIndex]["valueData"];
+					var getDeepCopyFunc = elementDataFormat[behaviorName]["type"]["getDeepCopy"];
+					ruleDataObj["valueData"] = getDeepCopyFunc(valueData, propertyValue);
+				}else{
+					// The next chunk doesn't exist yet, so will have to use constant value at the right keyframe
+					/*ruleDataObj["valueData"] = {
+						"m": 0,
+						"b": propertyValue
+					}*/
+
+					var getSingleKeyframeRuleFunc = elementDataFormat[behaviorName]["type"]["getSingleKeyframeRule"];
+					var valueData = getSingleKeyframeRuleFunc(propertyValue);
+					ruleDataObj["valueData"] = valueData;
+
+				}
 				var ruleIndex = 2 * pointIndex1 + 2;
 				chunkLineFitData[ruleIndex] = ruleDataObj;
 			}else{
 				// This state isn't possible
+				console.log("not possible");
 			}
 
 			// TODO

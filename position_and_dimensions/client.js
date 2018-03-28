@@ -373,6 +373,7 @@ $(document).ready(function() {
     	dataChanged = true;
     });*/
     $("body").on("resizestop dragstop", ".pageElement", function(event, ui){
+    	//updateRightMenuWidgets($(event.target));
     	dataChanged = true;
     });
 
@@ -402,6 +403,7 @@ $(document).ready(function() {
     				var currentTopValue = $("[elementId=" + currentlySelectedElement + "]").offset().top;
     				$("[elementId=" + currentlySelectedElement + "]").offset({ top: currentTopValue + delta });
     			}
+    			//updateRightMenuWidgets($(event.target));
     			dataChanged = true;
     		}
     	}
@@ -421,11 +423,15 @@ $(document).ready(function() {
     	var coords = "(" + element.css("left") + ", " + element.css("top") + ")";
     	$("#" + elementPositionInfoId).text(coords);
 
+    	//updateRightMenuWidgets($(event.target));
+
     	//updateRulesMenu(element);
     });
     $("body").on("dragstop", ".pageElement", function(event, ui){
     	// Remove the relatively positioned box containing the (x, y) coordinates
     	$("#" + elementPositionInfoId).remove();
+
+    	//updateRightMenuWidgets($(event.target));
     });
     // -----------------------------------------------------
 
@@ -444,11 +450,15 @@ $(document).ready(function() {
     	var dimensions = "width: " + element.css("width") + ", height: " + element.css("height");
     	$("#" + elementDimensionsInfoId).text(dimensions);
 
+    	//updateRightMenuWidgets($(event.target));
+
     	//updateRulesMenu(element);
     });
     $("body").on("resizestop", ".pageElement", function(event, ui){
     	// Remove the relatively positioned box containing the dimensions
     	$("#" + elementDimensionsInfoId).remove();
+
+    	//updateRightMenuWidgets($(event.target));
     });
     // -------------------------------------------------------
     
@@ -464,6 +474,14 @@ $(document).ready(function() {
 	//$(".userPage").resizable();
     
     // Probably should have a timer to send updated element data to server to be saved
+    
+    window.setInterval(function(){
+    	if(currentlySelectedElement){
+			var elementObj = $("[elementId=" + currentlySelectedElement + "]");
+			updateRightMenuWidgets(elementObj);
+		}
+    }, 500);
+
     window.setInterval(function(){
     	if(dataChanged){
 			var viewData = captureElementAndPageData();
@@ -540,6 +558,26 @@ $(document).ready(function() {
       slide: function( event, ui ) {
         $( "#heightAmount" ).val( ui.value  + "px" );
         $("[elementId=" + currentlySelectedElement + "]").css("height", ui.value  + "px");
+	    dataChanged = true;
+      }
+    });
+
+    $("#leftSlider").slider({
+      min: 0,
+      max: 1200,
+      slide: function( event, ui ) {
+        $( "#leftAmount" ).val( ui.value  + "px" );
+        $("[elementId=" + currentlySelectedElement + "]").css("left", ui.value + "px");
+	    dataChanged = true;
+      }
+    });
+
+    $("#rightSlider").slider({
+      min: 0,
+      max: 1200,
+      slide: function( event, ui ) {
+        $( "#rightAmount" ).val( ui.value  + "px" );
+        $("[elementId=" + currentlySelectedElement + "]").css("right", ui.value + "px");
 	    dataChanged = true;
       }
     });
@@ -665,6 +703,13 @@ var selectElement = function(element){
 	var selectedElementNum = element.attr("elementId");
 	currentlySelectedElement = selectedElementNum;
 
+	updateRightMenuWidgets(element);
+
+	// Give focus to the element
+	$("[elementId=" + currentlySelectedElement + "]").focus();
+};
+
+var updateRightMenuWidgets = function(element){
 	// Set colorpicker color to that of selected element
 	$("#background_color_colorpicker").spectrum("set", element.css("background-color"));
 	
@@ -691,6 +736,14 @@ var selectElement = function(element){
 	var heightAmount = element.height();
 	$( "#heightSlider" ).slider( "value", heightAmount);
 	$( "#heightAmount" ).val( heightAmount  + "px" );
+
+	var leftAmount = element.offset().left;
+	$( "#leftSlider" ).slider( "value", leftAmount);
+	$( "#leftAmount" ).val( leftAmount  + "px" );
+
+	var rightAmount = $(".userPage").width() - element.width() - element.offset().left;
+	$( "#rightSlider" ).slider( "value", rightAmount);
+	$( "#rightAmount" ).val( rightAmount  + "px" );
 
 	$("#text_color_colorpicker").spectrum("set", element.css("color"));	
 
@@ -734,42 +787,7 @@ var selectElement = function(element){
 			$(this).val("empty");
 		}*/
 	});
-
-	/*// Maybe this should be done per behavior (so handle left and right in the same callback)
-	var selectWidgets = $("select.ruleInferenceSelect");
-	selectWidgets.each(function(index, element){
-		// Update the <select> value given the transition value embedded in the currently selected element
-		//console.log($(this));
-		var behaviorName = $(this).attr("behavior-name");
-		var side = $(this).attr("side");
-		//var behaviorTransitionValue = $("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-transition");
-		var behaviorTransitionValue = $("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-" + side + "-transition");
-		
-		// Now need to set this in the appropriate select widget
-		var selectWidgetId =  $(this).attr("id") + "-button";
-		var selectWidgetImageElement = $("#" + selectWidgetId + " .transition-image");
-		
-		if(behaviorTransitionValue){
-			// First remove all image classes
-			selectWidgetImageElement.removeClass("left-closed-right-closed");
-			selectWidgetImageElement.removeClass("left-open-right-closed");
-			selectWidgetImageElement.removeClass("left-closed-right-open");
-
-			// Now add the correct one
-			console.log(behaviorTransitionValue);
-			console.log(selectWidgetImageElement);
-			selectWidgetImageElement.addClass(behaviorTransitionValue);
-			console.log(selectWidgetImageElement);
-		}else{
-			//$(this).val("empty");
-		}
-	});*/
-
-	//updateRulesMenu(element);
-
-	// Give focus to the element
-	$("[elementId=" + currentlySelectedElement + "]").focus();
-};
+}
 
 var updatePageDimensionsLabel = function(){
 	var element = $(".userPage");

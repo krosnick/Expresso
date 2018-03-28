@@ -147,8 +147,10 @@ body {
 }*/
 
 .propertyWidget {
-	max-width: 170px;
-	min-width: 170px;
+	/*max-width: 170px;
+	min-width: 170px;*/
+	max-width: 150px;
+	min-width: 150px;
 	/*padding-right: 10px;*/
 }
 
@@ -228,6 +230,10 @@ fieldset {
   width: 100% !important;
 }
 
+.propertyHeader {
+	border-bottom: solid 2px;
+}
+
 .propertyRules .ui-selectmenu-button {
 	width: 75px;
 }
@@ -238,4 +244,10 @@ fieldset {
 
 .transitionPiece {
 	float: left;
+}
+
+.widgetsContainer {
+	overflow-y: scroll;
+	max-height: 655px;
+	padding-left: 15px;
 }

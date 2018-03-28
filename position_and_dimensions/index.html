@@ -76,63 +76,89 @@
           </div>
         </div>
 
-        <!--<div class="row propertyTool" widgetName="background_color_colorpicker">-->
-        <div class="row propertyTool" behavior-name="visibility">
-          <div class="col propertyWidget">
-            <label for="visibilityWidget">Visibility</label>
-            <select id="visibilityWidget" behavior-name="visibility">
-              <option value="visible">Visible</option>
-              <option value="hidden">Hidden</option>
-            </select>
-          </div>
-          <div class="col propertyRules">
-          </div>
-        </div>
-        <div class="row propertyTool" behavior-name="width">
-          <div class="col propertyWidget">
-            <label for="widthAmount">Width:</label>
-            <input type="text" id="widthAmount" readonly style="border:0; color:#f6931f; font-weight:bold;"/>
-            <div id="widthSlider" class="sliderWidget"></div>
-          </div>
-          <div class="col propertyRules">
-          </div>
-        </div>
-        <div class="row propertyTool" behavior-name="height">
-          <div class="col propertyWidget">
-            <label for="heightAmount">Height:</label>
-            <input type="text" id="heightAmount" readonly style="border:0; color:#f6931f; font-weight:bold;"/>
-            <div id="heightSlider" class="sliderWidget"></div>
-          </div>
-          <div class="col propertyRules">
-          </div>
-        </div>
-        <div class="row propertyTool" behavior-name="background-color">
-          <div class="col propertyWidget">
-            <label for="background_color_colorpicker">Background color:</label>
-            <input id="background_color_colorpicker"/>
-          </div>
-          <div class="col propertyRules">
-          </div>
-        </div>
-        <div id="fontTools">
-          <!--<div class="row propertyTool" widgetName="font_size">-->
-          <div class="row propertyTool" behavior-name="font-size">
+        <div class="widgetsContainer">
+          <!--<div class="row propertyTool" widgetName="background_color_colorpicker">-->
+          <div class="row propertyTool" behavior-name="visibility">
             <div class="col propertyWidget">
-              <label for="amount">Font-size:</label>
-              <input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;"/>
-              <div id="slider" class="sliderWidget"></div>
+              <label for="visibilityWidget">Visibility</label>
+              <select id="visibilityWidget" behavior-name="visibility">
+                <option value="visible">Visible</option>
+                <option value="hidden">Hidden</option>
+              </select>
+            </div>
+            <div class="col propertyRules">
+            </div>
+          </div>
+          <div class="row propertyTool" behavior-name="width">
+            <div class="col propertyWidget">
+              <label for="widthAmount">Width:</label>
+              <input type="text" id="widthAmount" readonly style="border:0; color:#f6931f; font-weight:bold;"/>
+              <div id="widthSlider" class="sliderWidget"></div>
+            </div>
+            <div class="col propertyRules">
+            </div>
+          </div>
+          <div class="row propertyTool" behavior-name="height">
+            <div class="col propertyWidget">
+              <label for="heightAmount">Height:</label>
+              <input type="text" id="heightAmount" readonly style="border:0; color:#f6931f; font-weight:bold;"/>
+              <div id="heightSlider" class="sliderWidget"></div>
             </div>
             <div class="col propertyRules">
             </div>
           </div>
 
-          <!--<div class="row propertyTool" widgetName="text_color_colorpicker">-->
-          <div class="row propertyTool" behavior-name="color">
+          <!-- x position-->
+          <div>
+            <b>x position</b>
+            <div class="row propertyTool" behavior-name="x" attribute-name="left">
+              <div class="col propertyWidget">
+                <label for="leftAmount">Left:</label>
+                <input type="text" id="leftAmount" readonly style="border:0; color:#f6931f; font-weight:bold;"/>
+                <div id="leftSlider" class="sliderWidget"></div>
+              </div>
+              <div class="col propertyRules">
+              </div>
+            </div>
+            <div class="row propertyTool" behavior-name="x" attribute-name="right">
+              <div class="col propertyWidget">
+                <label for="rightAmount">Right:</label>
+                <input type="text" id="rightAmount" readonly style="border:0; color:#f6931f; font-weight:bold;"/>
+                <div id="rightSlider" class="sliderWidget"></div>
+              </div>
+              <div class="col propertyRules">
+              </div>
+            </div>
+          </div>
+
+          <div class="row propertyTool" behavior-name="background-color">
             <div class="col propertyWidget">
-              <label for="text_color_colorpicker">Text color:</label>
-              <input id="text_color_colorpicker"/>
+              <label for="background_color_colorpicker">Background color:</label>
+              <input id="background_color_colorpicker"/>
             </div>
             <div class="col propertyRules">
+            </div>
+          </div>
+          <div id="fontTools">
+            <!--<div class="row propertyTool" widgetName="font_size">-->
+            <div class="row propertyTool" behavior-name="font-size">
+              <div class="col propertyWidget">
+                <label for="amount">Font-size:</label>
+                <input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;"/>
+                <div id="slider" class="sliderWidget"></div>
+              </div>
+              <div class="col propertyRules">
+              </div>
+            </div>
+
+            <!--<div class="row propertyTool" widgetName="text_color_colorpicker">-->
+            <div class="row propertyTool" behavior-name="color">
+              <div class="col propertyWidget">
+                <label for="text_color_colorpicker">Text color:</label>
+                <input id="text_color_colorpicker"/>
+              </div>
+              <div class="col propertyRules">
+              </div>
             </div>
           </div>
         </div>

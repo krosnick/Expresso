@@ -321,12 +321,10 @@ var updateElementAndPageData = function(viewObj){
 			for(var behaviorIndex = 0; behaviorIndex < elementBehaviorKeyValues.length; behaviorIndex++){
 				var behaviorKeyAndValue = elementBehaviorKeyValues[behaviorIndex];
 				var behaviorName = behaviorKeyAndValue[0];
-				//console.log(element[behaviorName]);
 				if(element[behaviorName]){
 					var currentKeyframeBehaviorLeftTransition = element[behaviorName]["left-transition"];
 					//leftKeyframeElements[behaviorName]["right-transition"] = currentKeyframeBehaviorLeftTransition;
 					leftKeyframeElements[i][behaviorName]["right-transition"] = currentKeyframeBehaviorLeftTransition;
-					console.log(currentKeyframeBehaviorLeftTransition);
 				}
 			}
 		}
@@ -343,12 +341,10 @@ var updateElementAndPageData = function(viewObj){
 			for(var behaviorIndex = 0; behaviorIndex < elementBehaviorKeyValues.length; behaviorIndex++){
 				var behaviorKeyAndValue = elementBehaviorKeyValues[behaviorIndex];
 				var behaviorName = behaviorKeyAndValue[0];
-				//console.log(element[behaviorName]);
 				if(element[behaviorName]){
 					var currentKeyframeBehaviorRightTransition = element[behaviorName]["right-transition"];
 					//rightKeyframeElements[behaviorName]["left-transition"] = currentKeyframeBehaviorRightTransition;
 					rightKeyframeElements[i][behaviorName]["left-transition"] = currentKeyframeBehaviorRightTransition;
-					console.log(currentKeyframeBehaviorRightTransition);
 				}
 			}
 		}
@@ -620,9 +616,6 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 			var point1Transition = point1[behaviorName]["right-transition"];
 			var point2Transition = point2[behaviorName]["left-transition"];
 			// These should be the same! Maybe print out to confirm
-			console.log("point1Transition: " + point1Transition);
-			console.log("point2Transition: " + point2Transition);
-			console.log("point1Transition and point2Transition the same?: " + (point1Transition===point2Transition));
 			// Let's just use point1Transition?
 
 			var chunkStart = point1[axisName];
@@ -636,7 +629,6 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 			//var isLinearInterpolation = (point1Transition === "smoothRight" || point1Transition === "smoothBoth") && (point2Transition === "smoothLeft" || point2Transition === "smoothBoth");
 			var isLinearInterpolation = (point1Transition === "left-closed-right-closed");
 			if(isLinearInterpolation){
-				console.log("linearInterpolation; behaviorName: " + behaviorName + "; elementSelector: " + elementSelector);
 				var ruleDataObj = {
 					"start": chunkStart,
 					"end": chunkEnd,
@@ -648,7 +640,6 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 				ruleDataObj["valueData"] = valueData;
 				//var index = 2 * i + 2;
 				var index = 2 * pointIndex1 + 2;
-				//console.log("behaviorName: " + behaviorName + "; index: " + index);
 				chunkLineFitData[index] = ruleDataObj;
 			}else{
 				chunksIndicesToBeAddressInSecondIteration.push(i);
@@ -676,7 +667,6 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 			var leftOpenRightClosed = (point1Transition === "left-open-right-closed");
 			//if((point1Transition === "smoothRight" || point1Transition === "smoothBoth") && (point2Transition !== "smoothLeft" && point2Transition !== "smoothBoth")){
 			if(leftClosedRightOpen){
-				console.log("leftClosedRightOpen rule");
 				// If this segment is connected to the left keyframe, but disconnected from the right keyframe
 				var ruleDataObj = {
 					"start": chunkStart,
@@ -688,8 +678,6 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 
 				// Use rule from previous chunk
 				var prevChunkIndex = pointIndex1 * 2;
-				console.log("prevChunkIndex: " + prevChunkIndex);
-				console.log(chunkLineFitData[prevChunkIndex]);
 				
 				var propertyValue = point1[behaviorName][propertyName];
 				if(chunkLineFitData[prevChunkIndex]){ // If the previous chunk exists, use its rule
@@ -707,7 +695,6 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 				chunkLineFitData[ruleIndex] = ruleDataObj;
 			//}else if((point1Transition !== "smoothRight" && point1Transition !== "smoothBoth") && (point2Transition === "smoothLeft" || point2Transition === "smoothBoth")){
 			}else if(leftOpenRightClosed){
-				console.log("leftOpenRightClosed rule");
 				// If this segment is connected to the right keyframe, but disconnected from the left keyframe
 				var ruleDataObj = {
 					"start": chunkStart,
@@ -719,8 +706,6 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 
 				// Use rule from next chunk
 				var nextChunkIndex = pointIndex2 * 2 + 2;
-				console.log(nextChunkIndex);
-				console.log(chunkLineFitData);
 				
 				var propertyValue = point2[behaviorName][propertyName];
 				if(chunkLineFitData[nextChunkIndex]){ // If the next chunk exists, use its rule
@@ -750,9 +735,42 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 			// In the second round, do we also need to check whether each keyframe is contained within one of the adjacent chunks?
 				// We would do this only for inner keyframes (i=1 through i=length-2)?
 				// Outer keyframes (i=0 and i=length-1) will at the very least be covered in the third round (where we cover the outer chunks)
-			// We can do this for just point1 in each iteration for example
-			// Doesn't need to be done, but should be done later when we ask the user 2 separate questions per keyframe (about left interval and right interval)
-			// and they could potentially answer discontinuous for both
+			// We can do this for just point1 in each iteration for example;
+			// can check if point1 is contained in the previous chunk rule or the chunk rule being created right now;
+			// if neither, should add a special single point rule for it
+			
+			// Check if contained in before chunk
+			// 2 * pointIndex1
+			//console.log(chunkLineFitData[2 * pointIndex1]);
+			//var chunkBeforeContains = chunkLineFitData[2 * pointIndex1]["containsEnd"];
+			var chunkBeforeContains = false;
+			if(chunkLineFitData[2 * pointIndex1] && chunkLineFitData[2 * pointIndex1]["containsEnd"]){
+				chunkBeforeContains = true;
+			}
+
+			// Check if contained in after chunk
+			// 2 * pointIndex1 + 2;
+			//var chunkAfterContains = chunkLineFitData[2 * pointIndex1 + 2]["containsStart"];
+			var chunkAfterContains = false;
+			if(chunkLineFitData[2 * pointIndex1 + 2] && chunkLineFitData[2 * pointIndex1 + 2]["containsStart"]){
+				chunkAfterContains = true;
+			}
+
+			if(!chunkBeforeContains && !chunkAfterContains){
+				var ruleDataObj = {
+					"start": point1[axisName],
+					"end": point1[axisName],
+					"containsStart": true,
+					"containsEnd": true,
+					"elementSelector": elementSelector
+				};
+				var propertyValue = point1[behaviorName][propertyName];
+				var getSingleKeyframeRuleFunc = elementDataFormat[behaviorName]["type"]["getSingleKeyframeRule"];
+				var valueData = getSingleKeyframeRuleFunc(propertyValue);
+				ruleDataObj["valueData"] = valueData;
+				chunkLineFitData[2 * pointIndex1 + 1] = ruleDataObj;
+			}
+
 		}
 
 		// Third round - outer chunks
@@ -828,6 +846,8 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 		// Combine chunks with same rule
 	}
 
+	console.log(behaviorName);
+	console.log(conciseChunkLineFitData);
 	return conciseChunkLineFitData;
 };
 

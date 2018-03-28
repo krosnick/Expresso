@@ -204,13 +204,10 @@ var convertClientDataToInts = function(viewObj){
 				for(var optionIndex = 0; optionIndex < elementBehaviorListOfOptions.length; optionIndex++){
 					var propertyOptionName = elementBehaviorListOfOptions[optionIndex];
 					var propertyOptionValue = elementBehaviorDictOfOptions[propertyOptionName];
-					//if(typeof(propertyOptionValue) === "string"){
-					if(typeof(propertyOptionValue) === "string" && propertyOptionName !== "transition"){
+					if(typeof(propertyOptionValue) === "string" && propertyOptionName !== "left-transition" && propertyOptionName !== "right-transition"){
 						var parseClientDataFunc = elementDataFormat[behaviorName]["parseClientData"];
 						var parsedClientData = parseClientDataFunc(propertyOptionValue);
 						element[behaviorName][propertyOptionName] = parsedClientData;
-					}else{
-
 					}
 				}
 			}
@@ -232,9 +229,13 @@ var confirmHasTransitionProperty = function(){
 				var behaviorName = behaviorKeyAndValue[0];
 				var elementBehaviorDictOfOptions = element[behaviorName];
 				if(elementBehaviorDictOfOptions){
-					// Doesn't have "transition" property?
-					if(!elementBehaviorDictOfOptions["transition"]){
-						element[behaviorName]["transition"] = defaultTransition;
+					// Doesn't have "left-transition" property?
+					if(!elementBehaviorDictOfOptions["left-transition"]){
+						element[behaviorName]["left-transition"] = defaultTransition;
+					}
+					// Doesn't have "right-transition" property?
+					if(!elementBehaviorDictOfOptions["right-transition"]){
+						element[behaviorName]["right-transition"] = defaultTransition;
 					}
 				}
 			}
@@ -501,353 +502,15 @@ var comparePageHeights = function(a, b) {
   return 0;
 };
 
-/*
 // axisName is "pageWidth" or "pageHeight"
 var determinePattern = function(dataPoints, behaviorName, propertyName, axisName){
 
 	var elementSelector = dataPoints[0]["id"];
 	var chunkLineFitData = [];
-	// Maybe init chunkLineFitData with undefined elements?
-	for(var i = 0; i < dataPoints.length - 1; i++){
-		chunkLineFitData.push(undefined);
-	}
-
-	if(dataPoints.length == 1){
-		// If one point only, assume properties will remain constant throughout all viewport sizes
-
-		var chunkStart = dataPoints[0][axisName];
-		var chunkEnd = dataPoints[0][axisName];
-
-		if(typeof(dataPoints[0][behaviorName][propertyName]) === "object"){
-			var valueAttributes = Object.keys(dataPoints[0][behaviorName][propertyName]);
-			var fitDataObject = {
-				"start": chunkStart,
-				"end": chunkEnd,
-				"containsStart": true,
-				"containsEnd": true,
-				"elementSelector": elementSelector
-			};
-			for(var attrIndex = 0; attrIndex < valueAttributes.length; attrIndex++){
-				var attributeName = valueAttributes[attrIndex];
-				// compute y=mx+b fit for attribute; then create data to add to chunkLineFitData
-				var m = 0;
-				var b = dataPoints[0][behaviorName][propertyName][attributeName];
-				var lineOfBestFit = { "m": m, "b": b, "start": chunkStart, "end": chunkEnd, "elementSelector": elementSelector };
-				fitDataObject[attributeName] = lineOfBestFit;
-			}
-			//chunkLineFitData.push(fitDataObject);
-			chunkLineFitData[0] = fitDataObject;
-		}else{
-			//var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName], point2[axisName], point2[behaviorName][propertyName], chunkStart, chunkEnd, elementSelector);
-			var m = 0;
-			var b = dataPoints[0][behaviorName][propertyName];
-			var lineOfBestFit = {
-				"m": m,
-				"b": b,
-				"start": chunkStart,
-				"end": chunkEnd,
-				"containsStart": true,
-				"containsEnd": true,
-				"elementSelector": elementSelector
-			};
-			//chunkLineFitData.push(lineOfBestFit);
-			chunkLineFitData[0] = lineOfBestFit;
-		}
-
-	}else{
-		// sort dataPoints by pageWidth value
-		dataPoints.sort(comparePageWidths);
-
-		// chunkStartIndices should now just be numbers between 0 and (dataPoints.length-1)
-		var chunkStartIndices = [];
-		for(var i = 0; i < dataPoints.length - 1; i++){
-			chunkStartIndices.push(i);
-		}
-
-		var chunksIndicesToBeAddressInSecondIteration = [];
-
-		// First round of computing rules; only compute for linear interpolation segments and for leftmost and rightmost keyframes
-		for(var i = 0; i < chunkStartIndices.length; i++){
-			// Choose any 2 arbitrary points in the chunk (for ease, just the first two), and fit a line to them
-			// equation: y = m*x + c
-			// matrix multiplication for this? or just quick formula
-			var pointIndex1 = chunkStartIndices[i];
-			var pointIndex2 = pointIndex1 + 1;
-			var point1 = dataPoints[pointIndex1];
-			var point2 = dataPoints[pointIndex2];
-
-			var point1Transition = point1[behaviorName]["transition"];
-			var point2Transition = point2[behaviorName]["transition"];
-
-			var chunkStart = point1[axisName];
-			var chunkEnd;
-			if(i < chunkStartIndices.length - 1){
-				chunkEnd = dataPoints[chunkStartIndices[i+1]][axisName];
-			}else{
-				chunkEnd = dataPoints[dataPoints.length - 1][axisName];
-			}
-
-			// In first round, only compute for linear interpolation segments and for leftmost and rightmost keyframes
-			//if(i == 0 || i == chunkStartIndices.length-1 || ((point1Transition == "smoothRight" || point1Transition == "smoothBoth") && (point2Transition == "smoothLeft" || point2Transition == "smoothBoth"))){
-			if((point1Transition == "smoothRight" || point1Transition == "smoothBoth") && (point2Transition == "smoothLeft" || point2Transition == "smoothBoth")){
-				// Now need to determine what the behavior should be between these 2 keyframes; need to look at the "transition" property
-				// If both are smooth, then linear interpolation
-				// If both are not smooth, then there's a problem (not a valid state)
-				// If one is smooth,
-					// if leftmost keyframe, use the keyframe's value,
-					// if rightmost keyframe, use the keyframe's value,
-					// otherwise, [wait until next iteration; consider neighbor segments]
-
-				var containsStart = true;
-				var containsEnd = true;
-				if(typeof(point1[behaviorName][propertyName]) === "object"){
-					var valueAttributes = Object.keys(point1[behaviorName][propertyName]);
-					var fitDataObject = {
-						"start": chunkStart,
-						"end": chunkEnd,
-						"containsStart": true,
-						"containsEnd": true,
-						"elementSelector": elementSelector
-					};
-					for(var attrIndex = 0; attrIndex < valueAttributes.length; attrIndex++){
-						var attributeName = valueAttributes[attrIndex];
-						// compute y=mx+b fit for attribute; then create data to add to chunkLineFitData
-						var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName][attributeName], point2[axisName], point2[behaviorName][propertyName][attributeName], chunkStart, chunkEnd, containsStart, containsEnd, elementSelector);
-						fitDataObject[attributeName] = lineOfBestFit;
-					}
-					//chunkLineFitData.push(fitDataObject);
-					chunkLineFitData[i] = fitDataObject;
-				}else{
-					var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName], point2[axisName], point2[behaviorName][propertyName], chunkStart, chunkEnd, containsStart, containsEnd, elementSelector);
-					lineOfBestFit["containsStart"] = true;
-					lineOfBestFit["containsEnd"] = true;
-					//chunkLineFitData.push(lineOfBestFit);
-					chunkLineFitData[i] = lineOfBestFit;
-				}
-			}else if(i == 0){
-				// Not linear interpolation, since we didn't pass first condition;
-				// therefore, use point1 keyframe's value as constant b
-				if(typeof(point1[behaviorName][propertyName]) === "object"){
-					var valueAttributes = Object.keys(point1[behaviorName][propertyName]);
-					var fitDataObject = {
-						"start": chunkStart,
-						"end": chunkEnd,
-						"containsStart": true,
-						"containsEnd": false,
-						"elementSelector": elementSelector
-					};
-					for(var attrIndex = 0; attrIndex < valueAttributes.length; attrIndex++){
-						var attributeName = valueAttributes[attrIndex];
-						// compute y=mx+b fit for attribute; then create data to add to chunkLineFitData
-						//var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName][attributeName], point2[axisName], point2[behaviorName][propertyName][attributeName], chunkStart, chunkEnd, elementSelector);
-						var m = 0;
-						var b = point1[behaviorName][propertyName][attributeName];
-						var lineOfBestFit = { "m": m, "b": b, "start": chunkStart, "end": chunkEnd, "elementSelector": elementSelector, "containsStart": true, "containsEnd": false };
-						fitDataObject[attributeName] = lineOfBestFit;
-					}
-					//chunkLineFitData.push(fitDataObject);
-					chunkLineFitData[i] = fitDataObject;
-				}else{
-					//var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName], point2[axisName], point2[behaviorName][propertyName], chunkStart, chunkEnd, elementSelector);
-					var m = 0;
-					var b = point1[behaviorName][propertyName];
-					var lineOfBestFit = {
-						"m": m,
-						"b": b,
-						"start": chunkStart,
-						"end": chunkEnd,
-						"containsStart": true,
-						"containsEnd": false,
-						"elementSelector": elementSelector
-					};
-					//chunkLineFitData.push(lineOfBestFit);
-					chunkLineFitData[i] = lineOfBestFit;
-				}
-			}else if(i == chunkStartIndices.length-1){
-				if(typeof(point2[behaviorName][propertyName]) === "object"){
-					var valueAttributes = Object.keys(point2[behaviorName][propertyName]);
-					var fitDataObject = {
-						"start": chunkStart,
-						"end": chunkEnd,
-						"containsStart": false,
-						"containsEnd": true,
-						"elementSelector": elementSelector
-					};
-					for(var attrIndex = 0; attrIndex < valueAttributes.length; attrIndex++){
-						var attributeName = valueAttributes[attrIndex];
-						// compute y=mx+b fit for attribute; then create data to add to chunkLineFitData
-						//var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName][attributeName], point2[axisName], point2[behaviorName][propertyName][attributeName], chunkStart, chunkEnd, elementSelector);
-						var m = 0;
-						var b = point2[behaviorName][propertyName][attributeName];
-						var lineOfBestFit = { "m": m, "b": b, "start": chunkStart, "end": chunkEnd, "elementSelector": elementSelector, "containsStart": false, "containsEnd": true };
-						fitDataObject[attributeName] = lineOfBestFit;
-					}
-					//chunkLineFitData.push(fitDataObject);
-					chunkLineFitData[i] = fitDataObject;
-				}else{
-					//var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName], point2[axisName], point2[behaviorName][propertyName], chunkStart, chunkEnd, elementSelector);
-					var m = 0;
-					var b = point2[behaviorName][propertyName];
-					var lineOfBestFit = {
-						"m": m,
-						"b": b,
-						"start": chunkStart,
-						"end": chunkEnd,
-						"containsStart": false,
-						"containsEnd": true,
-						"elementSelector": elementSelector
-					};
-					//chunkLineFitData.push(lineOfBestFit);
-					chunkLineFitData[i] = lineOfBestFit;
-				}
-			}else{
-				// Do nothing
-				chunksIndicesToBeAddressInSecondIteration.push(i);
-			}
-		}
-
-		// Iterate through chunksIndicesToBeAddressInSecondIteration and set rules
-
-		for(var i = 0; i < chunksIndicesToBeAddressInSecondIteration.length; i++){
-			var pointIndex1 = chunksIndicesToBeAddressInSecondIteration[i];
-			var pointIndex2 = pointIndex1 + 1;
-			var point1 = dataPoints[pointIndex1];
-			var point2 = dataPoints[pointIndex2];
-
-			var point1Transition = point1[behaviorName]["transition"];
-			var point2Transition = point2[behaviorName]["transition"];
-
-			var chunkStart = point1[axisName];
-			var chunkEnd;
-			if(i < chunksIndicesToBeAddressInSecondIteration.length - 1){
-				chunkEnd = dataPoints[chunksIndicesToBeAddressInSecondIteration[i+1]][axisName];
-			}else{
-				chunkEnd = dataPoints[dataPoints.length - 1][axisName];
-			}
-
-			if((point1Transition == "smoothRight" || point1Transition == "smoothBoth") && (point2Transition !== "smoothLeft" && point2Transition !== "smoothBoth")){
-				// Connected on left but not on right
-				// Use rule from previous chunk (but will need to change start, end, containsStart, containsEnd)
-				// Actually probably should reconstruct (so no issue with pointing to same actual object)
-				// Can retrieve relevant data from previous chunk (i.e., m and b values)
-				var previousChunkRule = chunkLineFitData[pointIndex1-1];
-				if(typeof(point1[behaviorName][propertyName]) === "object"){
-					var valueAttributes = Object.keys(point1[behaviorName][propertyName]);
-					var fitDataObject = {
-						"start": chunkStart,
-						"end": chunkEnd,
-						"containsStart": true,
-						"containsEnd": false,
-						"elementSelector": elementSelector
-					};
-					for(var attrIndex = 0; attrIndex < valueAttributes.length; attrIndex++){
-						var attributeName = valueAttributes[attrIndex];
-						// compute y=mx+b fit for attribute; then create data to add to chunkLineFitData
-						//var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName][attributeName], point2[axisName], point2[behaviorName][propertyName][attributeName], chunkStart, chunkEnd, elementSelector);
-						var m = previousChunkRule[attributeName]["m"];
-						var b = previousChunkRule[attributeName]["b"];
-						var lineOfBestFit = { "m": m, "b": b, "start": chunkStart, "end": chunkEnd, "elementSelector": elementSelector, "containsStart": true, "containsEnd": false };
-						fitDataObject[attributeName] = lineOfBestFit;
-					}
-					//chunkLineFitData.push(fitDataObject);
-					chunkLineFitData[pointIndex1] = fitDataObject;
-				}else{
-					//var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName], point2[axisName], point2[behaviorName][propertyName], chunkStart, chunkEnd, elementSelector);
-					var m = previousChunkRule["m"];
-					var b = previousChunkRule["b"];
-					var lineOfBestFit = {
-						"m": m,
-						"b": b,
-						"start": chunkStart,
-						"end": chunkEnd,
-						"containsStart": true,
-						"containsEnd": false,
-						"elementSelector": elementSelector
-					};
-					//chunkLineFitData.push(lineOfBestFit);
-					chunkLineFitData[pointIndex1] = lineOfBestFit;
-				}
-			}else if((point1Transition !== "smoothRight" && point1Transition !== "smoothBoth") && (point2Transition == "smoothLeft" || point2Transition == "smoothBoth")){
-				// Connected on right but not on left
-				var nextChunkRule = chunkLineFitData[pointIndex1+1];
-				// if nextChunkRule is undefined, then the rule hasn't been defined yet, in which case, use right keyframe constant value
-
-				if(typeof(point2[behaviorName][propertyName]) === "object"){
-					var valueAttributes = Object.keys(point2[behaviorName][propertyName]);
-					var fitDataObject = {
-						"start": chunkStart,
-						"end": chunkEnd,
-						"containsStart": false,
-						"containsEnd": true,
-						"elementSelector": elementSelector
-					};
-					for(var attrIndex = 0; attrIndex < valueAttributes.length; attrIndex++){
-						var attributeName = valueAttributes[attrIndex];
-						// compute y=mx+b fit for attribute; then create data to add to chunkLineFitData
-						//var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName][attributeName], point2[axisName], point2[behaviorName][propertyName][attributeName], chunkStart, chunkEnd, elementSelector);
-						var m;
-						var b;
-						if(nextChunkRule){
-							m = nextChunkRule[attributeName]["m"];
-							b = nextChunkRule[attributeName]["b"];
-						}else{
-							// use right keyframe constant value
-							m = 0;
-							b = point2[behaviorName][propertyName][attributeName];
-						}
-						var lineOfBestFit = { "m": m, "b": b, "start": chunkStart, "end": chunkEnd, "elementSelector": elementSelector, "containsStart": false, "containsEnd": true };
-						fitDataObject[attributeName] = lineOfBestFit;
-					}
-					//chunkLineFitData.push(fitDataObject);
-					chunkLineFitData[pointIndex1] = fitDataObject;
-				}else{
-					//var lineOfBestFit = computeLineOfBestFit(point1[axisName], point1[behaviorName][propertyName], point2[axisName], point2[behaviorName][propertyName], chunkStart, chunkEnd, elementSelector);
-					var m;
-					var b;
-					if(nextChunkRule){
-						m = nextChunkRule["m"];
-						b = nextChunkRule["b"];
-					}else{
-						// use right keyframe constant value
-						m = 0;
-						b = point2[behaviorName][propertyName];
-					}
-					var lineOfBestFit = {
-						"m": m,
-						"b": b,
-						"start": chunkStart,
-						"end": chunkEnd,
-						"containsStart": false,
-						"containsEnd": true,
-						"elementSelector": elementSelector
-					};
-					//chunkLineFitData.push(lineOfBestFit);
-					chunkLineFitData[pointIndex1] = lineOfBestFit;
-				}
-			}else{
-				// Connected at both; invalid state, shouldn't be possible
-			}
-		}
-	}
-
-	// Combine chunks with same rule
-
-	return chunkLineFitData;
-};*/
-
-// axisName is "pageWidth" or "pageHeight"
-var determinePattern = function(dataPoints, behaviorName, propertyName, axisName){
-
-	var elementSelector = dataPoints[0]["id"];
-	var chunkLineFitData = [];
-	/*for(var i = 0; i < dataPoints.length - 1; i++){
-		chunkLineFitData.push(undefined);
-	}*/
 	// Push an undefined for each chunk interval (external and internal) and each keyframe
 	// So there will be 2*(dataPoints.length)+1
 	// Indexing into this to get ith interval: 2*i
 	// Indexing into this to get ith keyframe: 2*i+1
-	//for(var i = 0; i < dataPoints.length - 1; i++){
 	for(var i = 0; i < 2*(dataPoints.length)+1; i++){
 		chunkLineFitData.push(undefined);
 	}
@@ -870,7 +533,6 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 		var getSingleKeyframeRuleFunc = elementDataFormat[behaviorName]["type"]["getSingleKeyframeRule"];
 		var valueData = getSingleKeyframeRuleFunc(dataPoints[0][behaviorName][propertyName]);
 		ruleDataObj["valueData"] = valueData;
-		//chunkLineFitData[0] = ruleDataObj;
 		var keyframeRuleIndex = 2 * 0 + 1; // === 1
 		chunkLineFitData[keyframeRuleIndex] = ruleDataObj;
 		conciseChunkLineFitData.push(ruleDataObj);
@@ -878,39 +540,32 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 		// sort dataPoints by pageWidth value
 		dataPoints.sort(comparePageWidths);
 
-		/*// chunkStartIndices should now just be numbers between 0 and (dataPoints.length-1)
-		var chunkStartIndices = []; // Do we need "chunkStartIndices"?
-		for(var i = 0; i < dataPoints.length - 1; i++){
-			chunkStartIndices.push(i);
-		}*/
 		// a chunk index i represents the behavior between the ith and (i+1)th keyframes 
 
 		var chunksIndicesToBeAddressInSecondIteration = [];
 
 		// First round of computing rules; only compute for linear interpolation segments and for leftmost and rightmost keyframes
-		//for(var i = 0; i < chunkStartIndices.length; i++){
 		for(var i = 0; i < dataPoints.length-1; i++){
-		//for(var i = 1; i < dataPoints.length; i++){
 			// Choose any 2 arbitrary points in the chunk (for ease, just the first two), and fit a line to them
 			// equation: y = m*x + c
 			// matrix multiplication for this? or just quick formula
-			/*var pointIndex1 = chunkStartIndices[i];
-			var pointIndex2 = pointIndex1 + 1;*/
 			var pointIndex1 = i;
 			var pointIndex2 = pointIndex1+1;
 			var point1 = dataPoints[pointIndex1];
 			var point2 = dataPoints[pointIndex2];
 
-			var point1Transition = point1[behaviorName]["transition"];
-			var point2Transition = point2[behaviorName]["transition"];
+			/*var point1Transition = point1[behaviorName]["transition"];
+			var point2Transition = point2[behaviorName]["transition"];*/
 
-			/*var chunkStart = point1[axisName];
-			var chunkEnd;
-			if(i < chunkStartIndices.length - 1){
-				chunkEnd = dataPoints[chunkStartIndices[i+1]][axisName];
-			}else{
-				chunkEnd = dataPoints[dataPoints.length - 1][axisName];
-			}*/
+			// Process one segment transition at a time
+			var point1Transition = point1[behaviorName]["right-transition"];
+			var point2Transition = point2[behaviorName]["left-transition"];
+			// These should be the same! Maybe print out to confirm
+			console.log("point1Transition: " + point1Transition);
+			console.log("point2Transition: " + point2Transition);
+			console.log("point1Transition and point2Transition the same?: " + (point1Transition===point2Transition));
+			// Let's just use point1Transition?
+
 			var chunkStart = point1[axisName];
 			var chunkEnd = point2[axisName];
 
@@ -919,8 +574,8 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 
 			// For continuous behaviors, if linear interpolation
 			// This should only be possible for continuous behaviors; shouldn't happen for discrete behaviors (we won't allow these adjacent rules)
-			var isLinearInterpolation = (point1Transition === "smoothRight" || point1Transition === "smoothBoth") && (point2Transition === "smoothLeft" || point2Transition === "smoothBoth");
-
+			//var isLinearInterpolation = (point1Transition === "smoothRight" || point1Transition === "smoothBoth") && (point2Transition === "smoothLeft" || point2Transition === "smoothBoth");
+			var isLinearInterpolation = (point1Transition === "left-closed-right-closed");
 			if(isLinearInterpolation){
 				var ruleDataObj = {
 					"start": chunkStart,
@@ -929,10 +584,6 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 					"containsEnd": true,
 					"elementSelector": elementSelector
 				};
-				//
-				//var valueData = getLinearInterpolationRule(point1, point2);
-				//var valueData = Continuous["getLinearInterpolationRule"](point1, point2);
-				//function(dataPoint1, dataPoint2, behaviorName, propertyName, axisName
 				var valueData = Continuous["getLinearInterpolationRule"](point1, point2, behaviorName, propertyName, axisName);
 				ruleDataObj["valueData"] = valueData;
 				//var index = 2 * i + 2;
@@ -952,20 +603,18 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 			var point1 = dataPoints[pointIndex1];
 			var point2 = dataPoints[pointIndex2];
 
-			var point1Transition = point1[behaviorName]["transition"];
-			var point2Transition = point2[behaviorName]["transition"];
+			/*var point1Transition = point1[behaviorName]["transition"];
+			var point2Transition = point2[behaviorName]["transition"];*/
+			var point1Transition = point1[behaviorName]["right-transition"];
+			var point2Transition = point2[behaviorName]["left-transition"];
 
 			var chunkStart = point1[axisName];
 			var chunkEnd = point2[axisName];
-			/*var chunkEnd;
-			if(i < chunksIndicesToBeAddressInSecondIteration.length - 1){
-				chunkEnd = dataPoints[chunksIndicesToBeAddressInSecondIteration[i+1]][axisName];
-			}else{
-				chunkEnd = dataPoints[dataPoints.length - 1][axisName];
-			}*/
 
-
-			if((point1Transition === "smoothRight" || point1Transition === "smoothBoth") && (point2Transition !== "smoothLeft" && point2Transition !== "smoothBoth")){
+			var leftClosedRightOpen = (point1Transition === "left-closed-right-open");
+			var leftOpenRightClosed = (point1Transition === "left-open-right-closed");
+			//if((point1Transition === "smoothRight" || point1Transition === "smoothBoth") && (point2Transition !== "smoothLeft" && point2Transition !== "smoothBoth")){
+			if(leftClosedRightOpen){
 				// If this segment is connected to the left keyframe, but disconnected from the right keyframe
 				var ruleDataObj = {
 					"start": chunkStart,
@@ -986,7 +635,8 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 				// Need to add this to chunkLineFitData
 				var ruleIndex = 2 * pointIndex1 + 2;
 				chunkLineFitData[ruleIndex] = ruleDataObj;
-			}else if((point1Transition !== "smoothRight" && point1Transition !== "smoothBoth") && (point2Transition === "smoothLeft" || point2Transition === "smoothBoth")){
+			//}else if((point1Transition !== "smoothRight" && point1Transition !== "smoothBoth") && (point2Transition === "smoothLeft" || point2Transition === "smoothBoth")){
+			}else if(leftOpenRightClosed){
 				// If this segment is connected to the right keyframe, but disconnected from the left keyframe
 				var ruleDataObj = {
 					"start": chunkStart,
@@ -1021,7 +671,8 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 		// Chunk before the first keyframe
 		var pointIndex = 0;
 		var point = dataPoints[pointIndex];
-		var pointTransition = point[behaviorName]["transition"];
+		//var pointTransition = point[behaviorName]["transition"];
+		var pointTransition = point[behaviorName]["right-transition"];
 		var chunkStart = point[axisName]; // On the client will be treated as applying to left of the keyframe too
 		var chunkEnd = point[axisName];
 		var ruleDataObj = {
@@ -1031,7 +682,8 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 			"containsEnd": true,
 			"elementSelector": elementSelector
 		};
-		if(pointTransition === "smoothRight" || pointTransition === "smoothBoth"){
+		//if(pointTransition === "smoothRight" || pointTransition === "smoothBoth"){
+		if(pointTransition === "left-closed-right-closed" || pointTransition === "left-closed-right-open"){
 			// If the first keyframe is connected to its right chunk, then use this rule
 			var rightChunkRuleIndex = 2;
 			var valueData = chunkLineFitData[rightChunkRuleIndex]["valueData"];
@@ -1050,7 +702,8 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 		// Chunk after the last keyframe
 		var pointIndex = dataPoints.length-1;
 		var point = dataPoints[pointIndex];
-		var pointTransition = point[behaviorName]["transition"];
+		//var pointTransition = point[behaviorName]["transition"];
+		var pointTransition = point[behaviorName]["left-transition"];
 		var chunkStart = point[axisName]; // On the client will be treated as applying to left of the keyframe too
 		var chunkEnd = point[axisName];
 		var ruleDataObj = {
@@ -1060,7 +713,8 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 			"containsEnd": true,
 			"elementSelector": elementSelector
 		};
-		if(pointTransition === "smoothLeft" || pointTransition === "smoothBoth"){
+		//if(pointTransition === "smoothLeft" || pointTransition === "smoothBoth"){
+		if(pointTransition === "left-closed-right-closed" || pointTransition === "left-open-right-closed"){
 			// If the last keyframe is connected to its left chunk, then use this rule
 			var leftChunkRuleIndex = 2 * pointIndex;
 			var valueData = chunkLineFitData[leftChunkRuleIndex]["valueData"];
@@ -1087,7 +741,6 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 	}
 
 	return conciseChunkLineFitData;
-	//return chunkLineFitData;
 };
 
 /*var computeLineOfBestFit = function(axisVal1, attributeVal1, axisVal2, attributeVal2, chunkStart, chunkEnd, containsStart, containsEnd, elementSelector){
@@ -1408,8 +1061,10 @@ var elementDataFormat = {
 //var transitionOptions = ["linearInterpolation", "prevKeyframeRule", "nextKeyframeRule", "prevKeyframeConstantValue", "currentKeyframeConstantValue"];
 /*var transitionOptions = ["linearInterpolation", "leftJump", "rightJump"];
 var defaultTransition = "linearInterpolation";*/
-var transitionOptions = ["smoothRight", "smoothLeft", "smoothBoth"];
-var defaultTransition = "smoothBoth";
+
+//var transitionOptions = ["smoothRight", "smoothLeft", "smoothBoth"];
+//var defaultTransition = "smoothBoth";
+var defaultTransition = "left-closed-right-closed";
 
 var properties = [];
 var behaviorObjList = Object.values(elementDataFormat);

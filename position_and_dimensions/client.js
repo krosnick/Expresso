@@ -110,59 +110,10 @@ var elementDataFormat = {
 	]
 };
 
-/*var generateRuleInferenceHTML = function(behaviorName){
-	//var ruleInferenceSelectWidgetHTML = generateRuleInferenceDirectionHTML(widgetName, "Left") + generateRuleInferenceDirectionHTML(widgetName, "Right");
-	//var ruleInferenceSelectWidgetHTML = generateRuleInferenceDirectionHTML(widgetName, "Left");
-	var ruleInferenceSelectWidgetHTML = generateRuleInferenceDirectionHTML(behaviorName);
-	return ruleInferenceSelectWidgetHTML;
-};*/
-
 var generateRuleInferenceHTML = function(behaviorName){
-	//var ruleInferenceSelectWidgetHTML = generateRuleInferenceDirectionHTML(widgetName, "Left") + generateRuleInferenceDirectionHTML(widgetName, "Right");
-	//var ruleInferenceSelectWidgetHTML = generateRuleInferenceDirectionHTML(widgetName, "Left");
-	//var ruleInferenceSelectWidgetHTML = '<div>Left keyframe </div>' + generateRuleInferenceDirectionHTML(behaviorName, "left") + '<div> Current keyframe </div>' + generateRuleInferenceDirectionHTML(behaviorName, "right") + '<div> Right keyframe</div>';
 	var ruleInferenceSelectWidgetHTML = '<div class="transitionPiece">Left </div>' + generateRuleInferenceDirectionHTML(behaviorName, "left") + '<div class="transitionPiece"> Current </div>' + generateRuleInferenceDirectionHTML(behaviorName, "right") + '<div class="transitionPiece"> Right </div>';
 	return ruleInferenceSelectWidgetHTML;
 };
-
-/*var generateRuleInferenceDirectionHTML = function(behaviorName){
-	
-	var optionsHTML = "";
-	optionsHTML += '<option disabled value="empty"></option>';
-	var transitionOptionIds = Object.keys(transitionOptions);
-	for(var i = 0; i < transitionOptionIds.length; i++){
-		var transitionKey = transitionOptionIds[i];
-		var transitionName = transitionOptions[transitionKey];
-		var selectedAttribute = "";
-
-		var optionString = '<option value="' + transitionKey + '"' + selectedAttribute + '>' + transitionName + '</option>';
-		optionsHTML += optionString;
-	}
-
-	var selectHTML = '<select class="ruleInferenceSelect" behavior-name=' + behaviorName +' >' + optionsHTML + '</select>';
-
-	var ruleInferenceDirectionSelectWidgetHTML = selectHTML;
-	return ruleInferenceDirectionSelectWidgetHTML;
-}*/
-
-/*var generateRuleInferenceDirectionHTML = function(behaviorName){
-	
-	var optionsHTML = "";
-	var transitionOptionIds = Object.keys(transitionOptions);
-	for(var i = 0; i < transitionOptionIds.length; i++){
-		var transitionKey = transitionOptionIds[i];
-		var transitionDataClass = transitionOptions[transitionKey];
-		var optionString = '<option value="' + transitionKey + '"data-class="' + transitionDataClass + '">&nbsp;</option>';
-		optionsHTML += optionString;
-	}
-
-	var name = "ruleInferenceSelect_" + behaviorName;
-	var id = "ruleInferenceSelect_" + behaviorName;
-	var selectHTML = '<fieldset><select name="' + name + '" id="' + id + '" class="ruleInferenceSelect" behavior-name=' + behaviorName +' >' + optionsHTML + '</select></fieldset>';
-
-	var ruleInferenceDirectionSelectWidgetHTML = selectHTML;
-	return ruleInferenceDirectionSelectWidgetHTML;
-}*/
 
 var generateRuleInferenceDirectionHTML = function(behaviorName, side){
 	
@@ -183,67 +134,12 @@ var generateRuleInferenceDirectionHTML = function(behaviorName, side){
 	return ruleInferenceDirectionSelectWidgetHTML;
 }
 
-/*var transitionOptions = {
-	"mypodcast": "podcast",
-	"myvideo": "video",
-	"myrss": "rss"
-};*/
 var transitionOptions = {
 	"left-closed-right-closed": "left-closed-right-closed",
 	"left-closed-right-open": "left-closed-right-open",
 	"left-open-right-closed": "left-open-right-closed"
 };
 
-/*var transitionOptions = {
-	"linearInterpolation": "No jump",
-	"leftJump": "Left jump",
-	"rightJump": "Right jump"
-};*/
-
-/*var transitionOptions = {
-	"smoothBoth": "Both smooth",
-	"smoothLeft": "Left smooth",
-	"smoothRight": "Right smooth"
-};*/
-
-/*var transitionOptions = {
-	"smoothBoth": "Continuous left and right",
-	"smoothLeft": "Continuous on left",
-	"smoothRight": "Continuous on right"
-};*/
-
-/*var propertyToCSSStringFunction = {
-	width: function(ruleObject, dimensionValue, elementId, propertyName){
-		return createSingleAttributeCSSString(ruleObject, dimensionValue, elementId, propertyName);
-	},
-	"height": function(ruleObject, dimensionValue, elementId, propertyName){
-		return createSingleAttributeCSSString(ruleObject, dimensionValue, elementId, propertyName);
-	},
-	"left": function(ruleObject, dimensionValue, elementId, propertyName){
-		return createSingleAttributeCSSString(ruleObject, dimensionValue, elementId, propertyName);
-	},
-	"right": function(ruleObject, dimensionValue, elementId, propertyName){
-		return createSingleAttributeCSSString(ruleObject, dimensionValue, elementId, propertyName);
-	},
-	"top": function(ruleObject, dimensionValue, elementId, propertyName){
-		return createSingleAttributeCSSString(ruleObject, dimensionValue, elementId, propertyName);
-	},
-	"bottom": function(ruleObject, dimensionValue, elementId, propertyName){
-		return createSingleAttributeCSSString(ruleObject, dimensionValue, elementId, propertyName);
-	},
-	"font-size": function(ruleObject, dimensionValue, elementId, propertyName){
-		return createSingleAttributeCSSString(ruleObject, dimensionValue, elementId, propertyName);
-	},
-	"background-color": function(ruleObject, dimensionValue, elementId, propertyName){
-		return createRGBCSSString(ruleObject, dimensionValue, elementId, propertyName);
-	},
-	"color": function(ruleObject, dimensionValue, elementId, propertyName){
-		return createRGBCSSString(ruleObject, dimensionValue, elementId, propertyName);
-	},
-	"visibility": function(ruleObject, dimensionValue, elementId, propertyName){
-		return createSingleAttributeCSSString(ruleObject, dimensionValue, elementId, propertyName);
-	}
-};*/
 var propertyToCSSStringFunction = {
 	width: function(ruleObject, elementId, propertyName, dimensionValue, imageRatio){
 		return createSingleAttributeCSSString(ruleObject, elementId, propertyName, dimensionValue, imageRatio);
@@ -322,26 +218,6 @@ $(document).ready(function() {
     // Possibly want to use templates later (store views in json, then render in template)
 
     // This should create a keyframe for the current page size in the "final webpage" view
-    /*$("#cloneButton").on("click", function(event){
-	    $.ajax({
-	        type: "POST",
-	        url: "/cloneOriginal"
-	    }).done(function(data) {
-
-	    	//allElementRules = data["elementRules"];
-
-	    	var newCloneId = data["view"]["id"];
-	    	// Add link for this new clone
-	    	addViewMenuItem(data["view"]);
-
-	    	// Make this link bold
-			makeFontBold($("#view" + newCloneId + " a"), $(".nav-pills a"));
-			
-			// Render this view in the UI
-			updateView(newCloneId);
-	    	
-	    });
-	});*/
 	$("#cloneButton").on("click", function(event){
 	    var viewData = captureElementAndPageData();
 	    $.ajax({
@@ -371,21 +247,6 @@ $(document).ready(function() {
 	    	$("#deleteButton").prop('disabled', false);
 	    });
 	});
-
-		/*var viewData = captureElementAndPageData();
-		dataChanged = false;
-
-		// should element rules be updated here? Or maybe let the server take care of that
-
-		// Send update to server
-		$.ajax({
-	        type: "POST",
-	        url: "/updateData",
-	        data: viewData
-	    }).done(function(data) {
-	    	cssRules = data["cssRules"];
-	    	replaceCSSRules();
-	    });*/
 
 	// Delete current keyframe
 	$("#deleteButton").on("click", function(event){
@@ -670,75 +531,10 @@ $(document).ready(function() {
     	dataChanged = true;
     });
 
-    /*$( ".ruleInferenceSelect" ).iconselectmenu().iconselectmenu( "menuWidget" ).on( "selectmenuchange", function( event, ui ) {
-    	console.log("CHANGED - selectmenuchange");
-    } );*/
-    //ruleInferenceSelect_visibility-button
-
-    //ruleInferenceSelect_visibility-menu
-
-    /*$("body").on("selectmenuchange", "#ruleInferenceSelect_visibility", function( event, ui ) {
-    	console.log("selectmenuchange");
-    });
-
-    $("body").on("selectmenuselect", "#ruleInferenceSelect_visibility", function( event, ui ) {
-    	console.log("selectmenuselect");
-    });*/
-
-    /*$("body").on("selectmenuchange", ".ui-selectmenu-menu", function( event, ui ) {
-    	console.log("selectmenuchange");
-    });
-
-    $("body").on("selectmenuselect", ".ui-selectmenu-menu", function( event, ui ) {
-    	console.log("selectmenuselect");
-    });*/
-
-    //ui-selectmenu-button ui-selectmenu-button-closed ui-corner-all ui-button ui-widget
-
-    /*$("body").on("change", ".ui-selectmenu-button.ui-widget", function( event, ui ) {
-    	console.log(".ui-selectmenu-button.ui-widget changed!");
-    });
-    
-    $("body").on("change", ".ui-selectmenu-text", function( event, ui ) {
-    	console.log(".ui-selectmenu-text changed!");
-    });*/
-
-    //$( ".selector" ).on( "selectmenuchange", function( event, ui ) {} );
-    // Comment out for now?
-    /*$("body").on("change", ".ruleInferenceSelect", function(){
-    	// Transition rule value
-    	var newTransitionRule = $(this).val();
-    	
-    	var behaviorName = $(this).attr("behavior-name");
-    	
-    	// Update widget's "transition" property
-    	//$("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-transition", newTransitionRule);
-    	if(newTransitionRule && newTransitionRule !== "empty"){
-    		$("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-transition", newTransitionRule);
-    	}
-
-    	// Capture data/send to server
-    	dataChanged = true;
-	});*/
-
-    /*$( ".ruleInferenceSelect" ).on( "selectmenuchange", function( event, ui ) {
-    	console.log("CHANGED - selectmenuchange");
-    } );*/
-
-
 	// Fill all .propertyRules divs with dropdown menu HTML
-	//var ruleInferenceQuestions = "<div>Test content</div>";
-	//var ruleInferenceQuestions = var generateRuleInferenceHTML = function(widgetName){
-	//$(".propertyRules").html(ruleInferenceQuestions);
-
 	$(".propertyRules").each(function(index, element){
-
 		var propertyToolAncestor = $(this).closest(".propertyTool");
-		//var widgetName = propertyToolAncestor.attr("widgetName");
 		var behaviorName = propertyToolAncestor.attr("behavior-name");
-		//var selectWidgetId = behaviorName;
-		//var ruleInferenceQuestions = generateRuleInferenceHTML(widgetName);
-		//var ruleInferenceQuestions = generateRuleInferenceHTML(selectWidgetId);
 		var ruleInferenceQuestions = generateRuleInferenceHTML(behaviorName);
 		$(this).html(ruleInferenceQuestions);
 	});
@@ -765,17 +561,17 @@ $(document).ready(function() {
 			var buttonItem = $( "<span>", {
 			/*"class": "ui-selectmenu-text"*/
 			});
-			//console.log(item);
 			//this._setText( buttonItem, item.label );
+
+			console.log(item);
 
 			//buttonItem.css( "background-color", item.value );
 			//.ui-icon.left-closed-right-closed
 			//buttonItem.addClass("ui-icon left-closed-right-closed");
 			buttonItem.addClass("ui-icon");
+			buttonItem.addClass("transition-image");
 			//buttonItem.addClass(item.label);
 			buttonItem.addClass(item.value);
-
-			//console.log("_renderButtonItem is being called");
 
 			return buttonItem;
 		}
@@ -794,11 +590,14 @@ $(document).ready(function() {
 	    	console.log($(this).val());
 	    	
 	    	var behaviorName = $(this).attr("behavior-name");
+	    	var transitionSide = $(this).attr("side");
+	    	console.log("transitionSide: " + transitionSide);
 	    	
 	    	// Update widget's "transition" property
 	    	//$("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-transition", newTransitionRule);
 	    	if(newTransitionRule && newTransitionRule !== "empty"){
-	    		$("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-transition", newTransitionRule);
+	    		//$("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-transition", newTransitionRule);
+	    		$("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-" + transitionSide + "-transition", newTransitionRule);
 	    	}
 
 	    	// Capture data/send to server
@@ -865,17 +664,74 @@ var selectElement = function(element){
 
 	$("#visibilityWidget").val(element.css("visibility"));
 
+	// Maybe this should be done per behavior (so handle left and right in the same callback)
 	var selectWidgets = $("select.ruleInferenceSelect");
 	selectWidgets.each(function(index, element){
 		// Update the <select> value given the transition value embedded in the currently selected element
+		//console.log($(this));
 		var behaviorName = $(this).attr("behavior-name");
-		var behaviorTransitionValue = $("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-transition");
+		var side = $(this).attr("side");
+		//var behaviorTransitionValue = $("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-transition");
+		var behaviorTransitionValue = $("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-" + side + "-transition");
+		
+		// Now need to set this in the appropriate select widget
+		var selectWidgetId =  $(this).attr("id") + "-button";
+		var selectWidgetImageElement = $("#" + selectWidgetId + " .transition-image");
+		
 		if(behaviorTransitionValue){
+			/*// First remove all image classes
+			selectWidgetImageElement.removeClass("left-closed-right-closed");
+			selectWidgetImageElement.removeClass("left-open-right-closed");
+			selectWidgetImageElement.removeClass("left-closed-right-open");
+
+			// Now add the correct one
+			console.log(behaviorTransitionValue);
+			console.log(selectWidgetImageElement);
+			selectWidgetImageElement.addClass(behaviorTransitionValue);
+			console.log(selectWidgetImageElement);*/
+			//$(this)._renderButtonItem({"value": behaviorTransitionValue});
+			$(this).val(behaviorTransitionValue);
+			$(this).iconselectmenu("refresh");
+		}else{
+			//$(this).val("empty");
+		}
+
+		/*if(behaviorTransitionValue){
 			$(this).val(behaviorTransitionValue);
 		}else{
 			$(this).val("empty");
-		}
+		}*/
 	});
+
+	/*// Maybe this should be done per behavior (so handle left and right in the same callback)
+	var selectWidgets = $("select.ruleInferenceSelect");
+	selectWidgets.each(function(index, element){
+		// Update the <select> value given the transition value embedded in the currently selected element
+		//console.log($(this));
+		var behaviorName = $(this).attr("behavior-name");
+		var side = $(this).attr("side");
+		//var behaviorTransitionValue = $("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-transition");
+		var behaviorTransitionValue = $("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-" + side + "-transition");
+		
+		// Now need to set this in the appropriate select widget
+		var selectWidgetId =  $(this).attr("id") + "-button";
+		var selectWidgetImageElement = $("#" + selectWidgetId + " .transition-image");
+		
+		if(behaviorTransitionValue){
+			// First remove all image classes
+			selectWidgetImageElement.removeClass("left-closed-right-closed");
+			selectWidgetImageElement.removeClass("left-open-right-closed");
+			selectWidgetImageElement.removeClass("left-closed-right-open");
+
+			// Now add the correct one
+			console.log(behaviorTransitionValue);
+			console.log(selectWidgetImageElement);
+			selectWidgetImageElement.addClass(behaviorTransitionValue);
+			console.log(selectWidgetImageElement);
+		}else{
+			//$(this).val("empty");
+		}
+	});*/
 
 	//updateRulesMenu(element);
 
@@ -946,9 +802,17 @@ var captureElementData = function(){
 				}
 			}
 			// Capture transition property
-			var transitionValue = jqueryUIElement.attr(behaviorName + "-transition");
+			/*var transitionValue = jqueryUIElement.attr(behaviorName + "-transition");
 			if(transitionValue && transitionValue !== "empty"){
 				uiElementData[behaviorName]["transition"] = transitionValue;
+			}*/
+			var leftTransitionValue = jqueryUIElement.attr(behaviorName + "-left-transition");
+			if(leftTransitionValue && leftTransitionValue !== "empty"){
+				uiElementData[behaviorName]["left-transition"] = leftTransitionValue;
+			}
+			var rightTransitionValue = jqueryUIElement.attr(behaviorName + "-right-transition");
+			if(rightTransitionValue && rightTransitionValue !== "empty"){
+				uiElementData[behaviorName]["right-transition"] = rightTransitionValue;
 			}
 		}
 
@@ -1163,9 +1027,17 @@ var createDOMElement = function(elementData){
 		var behaviorName = behaviorNames[i];
 		var elementDataObject = elementData[behaviorName];
 		if(elementDataObject){
-			var transitionValue = elementDataObject["transition"];
+			/*var transitionValue = elementDataObject["transition"];
 			var elementBehaviorTransitionAttr = behaviorName + "-transition";
-			element.attr(elementBehaviorTransitionAttr, transitionValue);
+			element.attr(elementBehaviorTransitionAttr, transitionValue);*/
+
+			var leftTransitionValue = elementDataObject["left-transition"];
+			var elementBehaviorLeftTransitionAttr = behaviorName + "-left-transition";
+			element.attr(elementBehaviorLeftTransitionAttr, leftTransitionValue);
+
+			var rightTransitionValue = elementDataObject["right-transition"];
+			var elementBehaviorRightTransitionAttr = behaviorName + "-right-transition";
+			element.attr(elementBehaviorRightTransitionAttr, rightTransitionValue);
 		}/*else{
 			var elementBehaviorTransitionAttr = behaviorName + "-transition";
 			element.attr(elementBehaviorTransitionAttr, "empty");

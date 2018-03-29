@@ -262,24 +262,6 @@ var confirmHasVisibilityProperty = function(){
 	}
 };
 
-/*var updateElementAndPageData = function(viewObj){
-	var viewId = viewObj.oldViewId;
-	var viewWidth = viewObj.oldViewWidth;
-	var viewHeight = viewObj.oldViewHeight;
-	var viewElementsData = viewObj.elementsData;
-
-	var oldViewIdAsInt = parseInt(viewId);
-	var oldViewServerObj = views[oldViewIdAsInt];
-	// Updating page width and height of previously displayed view
-	oldViewServerObj["pageWidth"] = parseInt(viewWidth);
-	oldViewServerObj["pageHeight"] = parseInt(viewHeight);
-
-	// Updating elements of previously displayed view, if there are changes
-	if(viewElementsData){ // if undefined, then no updates have been made
-		oldViewServerObj["elements"] = viewElementsData;
-	}
-};*/
-
 var updateElementAndPageData = function(viewObj){
 	var viewId = viewObj.oldViewId;
 	var viewWidth = viewObj.oldViewWidth;
@@ -491,7 +473,7 @@ var updateCSSRules = function(){
 								// Maybe should bring this back if bugs persist
 								
 								// Hacky: For now, if behavior is y and element is an image, only support "top" property
-								if(elementImageRatio && behaviorName === "y"){
+								/*if(elementImageRatio && behaviorName === "y"){
 									if(propertyName === "top"){
 										chosenElementPropertyPattern = elementPropertyPattern;
 										chosenPropertyName = propertyName;
@@ -501,14 +483,14 @@ var updateCSSRules = function(){
 										chosenElementPropertyPattern = elementPropertyPattern;
 										chosenPropertyName = propertyName;
 									}
-								}
+								}*/
 								
-								/*
+								
 								if(chosenElementPropertyPattern === undefined || elementPropertyPattern.length < chosenElementPropertyPattern.length){
 									chosenElementPropertyPattern = elementPropertyPattern;
 									chosenPropertyName = propertyName;
 								}
-								*/
+								
 							}
 						}
 
@@ -546,7 +528,7 @@ var comparePageWidths = function(a, b) {
   return 0;
 };
 
-var comparePageHeights = function(a, b) {
+/*var comparePageHeights = function(a, b) {
   if (a["pageHeight"] < b["pageHeight"]) {
     return -1;
   }
@@ -555,7 +537,7 @@ var comparePageHeights = function(a, b) {
   }
   // a must be equal to b
   return 0;
-};
+};*/
 
 // axisName is "pageWidth" or "pageHeight"
 var determinePattern = function(dataPoints, behaviorName, propertyName, axisName){
@@ -1049,12 +1031,9 @@ var determineLargestId = function(){
 // ------------ Constants ------------
 var constantUnit = "px";
 
-var pageDimensionsAndBehaviorsTheyInfluence = {
+/*var pageDimensionsAndBehaviorsTheyInfluence = {
 	"pageWidth": {
 		"compareFunc": comparePageWidths,
-		/*"behaviorsInfluenced": ["width", "x"],*/
-		/*"behaviorsInfluenced": ["width", "x", "font-size"],*/
-		/*"behaviorsInfluenced": ["width", "x", "font-size", "background-color", "color"],*/
 		"behaviorsInfluenced": ["width", "x", "font-size", "background-color", "color", "visibility"],
 		"mediaMaxProperty": "max-width",
 		"mediaMinProperty": "min-width",
@@ -1065,9 +1044,123 @@ var pageDimensionsAndBehaviorsTheyInfluence = {
 		"mediaMaxProperty": "max-height",
 		"mediaMinProperty": "min-height",
 	}
+};*/
+
+var pageDimensionsAndBehaviorsTheyInfluence = {
+	"pageWidth": {
+		"compareFunc": comparePageWidths,
+		"behaviorsInfluenced": ["width", "x", "font-size", "background-color", "color", "visibility", "height", "y"],
+		"mediaMaxProperty": "max-width",
+		"mediaMinProperty": "min-width",
+	}/*,
+	"pageHeight": {
+		"compareFunc": comparePageHeights,
+		"behaviorsInfluenced": ["height", "y"],
+		"mediaMaxProperty": "max-height",
+		"mediaMinProperty": "min-height",
+	}*/
 };
 
 var elementDataFormat = {
+	"width": {
+		"pageDimension": "pageWidth",
+		"properties": ["width"],
+		parseClientData: function(clientString){
+			return parseInt(clientString);
+		},
+		"type": Continuous
+	},
+	"height": {
+		"pageDimension": "pageWidth",
+		"properties": ["height"],
+		parseClientData: function(clientString){
+			return parseInt(clientString);
+		},
+		"type": Continuous
+	},
+	"x": {
+		"pageDimension": "pageWidth",
+		"properties": ["left", "right"],
+		parseClientData: function(clientString){
+			return parseInt(clientString);
+		},
+		"type": Continuous
+	},
+	"y": {
+		"pageDimension": "pageWidth",
+		"properties": ["top", "bottom"],
+		parseClientData: function(clientString){
+			return parseInt(clientString);
+		},
+		"type": Continuous
+	},
+	"font-size": {
+		"pageDimension": "pageWidth",
+		"properties": ["font-size"],
+		parseClientData: function(clientString){
+			return parseInt(clientString);
+		},
+		"type": Continuous
+	},
+	"background-color": {
+		"pageDimension": "pageWidth",
+		"properties": ["background-color"],
+		parseClientData: function(clientString){
+			//return parseInt(clientString);
+			// extract from rgb(r, g, b)
+			var indexOfOpenParen = clientString.indexOf("(");
+			var indexOfFirstComma = clientString.indexOf(",", indexOfOpenParen+1);
+			var indexOfSecondComma = clientString.indexOf(",", indexOfFirstComma+1);
+			var indexOfCloseParen = clientString.indexOf(")");
+
+			var rString = clientString.substring(indexOfOpenParen + 1, indexOfFirstComma);
+			var gString = clientString.substring(indexOfFirstComma + 1, indexOfSecondComma);
+			var bString = clientString.substring(indexOfSecondComma + 1, indexOfCloseParen);
+			
+			var rgbObject = {
+				"r": parseInt(rString),
+				"g": parseInt(gString),
+				"b": parseInt(bString)
+			};
+			return rgbObject;
+		},
+		"type": Continuous
+	},
+	"color": {
+		"pageDimension": "pageWidth",
+		"properties": ["color"],
+		parseClientData: function(clientString){
+			//return parseInt(clientString);
+			// extract from rgb(r, g, b)
+			var indexOfOpenParen = clientString.indexOf("(");
+			var indexOfFirstComma = clientString.indexOf(",", indexOfOpenParen+1);
+			var indexOfSecondComma = clientString.indexOf(",", indexOfFirstComma+1);
+			var indexOfCloseParen = clientString.indexOf(")");
+
+			var rString = clientString.substring(indexOfOpenParen + 1, indexOfFirstComma);
+			var gString = clientString.substring(indexOfFirstComma + 1, indexOfSecondComma);
+			var bString = clientString.substring(indexOfSecondComma + 1, indexOfCloseParen);
+			
+			var rgbObject = {
+				"r": parseInt(rString),
+				"g": parseInt(gString),
+				"b": parseInt(bString)
+			};
+			return rgbObject;
+		},
+		"type": Continuous
+	},
+	"visibility": {
+		"pageDimension": "pageWidth",
+		"properties": ["visibility"],
+		parseClientData: function(clientString){
+			return clientString;
+		},
+		"type": Discrete
+	}
+};
+
+/*var elementDataFormat = {
 	"width": {
 		"pageDimension": "pageWidth",
 		"properties": ["width"],
@@ -1164,7 +1257,7 @@ var elementDataFormat = {
 		},
 		"type": Discrete
 	}
-};
+};*/
 
 //var transitionOptions = ["linearInterpolation", "prevKeyframeRule", "nextKeyframeRule", "prevKeyframeConstantValue", "currentKeyframeConstantValue"];
 /*var transitionOptions = ["linearInterpolation", "leftJump", "rightJump"];

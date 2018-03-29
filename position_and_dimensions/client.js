@@ -326,7 +326,10 @@ $(document).ready(function() {
     	$("#deleteButton").hide();
 
 		destroyElementModifiable();
-		$(".userPage").resizable();
+		//$(".userPage").resizable();
+		$(".userPage").resizable({
+		  handles: "e"
+		});
 
 		// Let's see if this works
 		replaceCSSRules();
@@ -1131,10 +1134,12 @@ var renderView = function(viewData){
 	
 	//$(".pageElement").resizable();
 	// pageElements that contain an image should get aspectRatio: true
-	$(".pageElement").has("img").resizable({aspectRatio: true});
+	/*$(".pageElement").has("img").resizable({aspectRatio: true});
+	$(".pageElement").not(":has(img)").resizable();*/
 
-	$(".pageElement").not(":has(img)").resizable();
-
+	$(".pageElement").has("img").resizable({aspectRatio: true, handles: "n, e, s, w, ne, se, sw, nw"});
+	$(".pageElement").not(":has(img)").resizable({handles: "n, e, s, w, ne, se, sw, nw"});
+	
     if(currentlySelectedElement){
     	selectElement($("[elementId=" + currentlySelectedElement + "]"));
     }

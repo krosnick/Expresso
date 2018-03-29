@@ -321,9 +321,12 @@ $(document).ready(function() {
 
     	// Update buttons
     	// Make sure the create new keyframe button is shown
-    	$("#cloneButton").show();
+    	/*$("#cloneButton").show();
     	// Make sure the delete keyframe button is hidden
-    	$("#deleteButton").hide();
+    	$("#deleteButton").hide();*/
+
+    	$("#cloneButton").prop('disabled', false);
+    	$("#deleteButton").prop('disabled', true);
 
 		destroyElementModifiable();
 		//$(".userPage").resizable();
@@ -1031,9 +1034,11 @@ var updateView = function(viewId){
 
     	// Update buttons
     	// Make sure the delete keyframe button is shown
-    	$("#deleteButton").show();
+    	/*$("#deleteButton").show();
     	// Make sure the create new keyframe button is hidden
-    	$("#cloneButton").hide();
+    	$("#cloneButton").hide();*/
+    	$("#cloneButton").prop('disabled', true);
+    	$("#deleteButton").prop('disabled', false);
     });
 };
 

@@ -833,7 +833,8 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 		console.log(conciseChunkLineFitData);
 	}*/
 	conciseChunkLineFitData = condenseChunks(conciseChunkLineFitData);
-	if(elementSelector == "8" && (propertyName === "left" || propertyName === "right")){
+	//if(elementSelector == "8" && (propertyName === "left" || propertyName === "right")){
+	if(elementSelector == "0" && propertyName === "background-color"){
 		console.log(propertyName);
 		console.log(conciseChunkLineFitData);
 	}

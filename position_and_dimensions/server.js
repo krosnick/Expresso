@@ -828,10 +828,77 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 		// Combine chunks with same rule
 	}
 
-	console.log(behaviorName);
-	console.log(conciseChunkLineFitData);
+	/*if(elementSelector == "8" && (propertyName === "left" || propertyName === "right")){
+		console.log(propertyName);
+		console.log(conciseChunkLineFitData);
+	}*/
+	conciseChunkLineFitData = condenseChunks(conciseChunkLineFitData);
+	if(elementSelector == "8" && (propertyName === "left" || propertyName === "right")){
+		console.log(propertyName);
+		console.log(conciseChunkLineFitData);
+	}
 	return conciseChunkLineFitData;
 };
+
+var condenseChunks = function(chunkData){
+	// For adjacent keyframes (need to sort by page width), should compare the values to see if they're the same; if the same, combine chunks
+	// compare slopes, identify chunks
+	var outputChunks = [];
+	outputChunks.push(chunkData[0]);
+	for(var i = 1; i < chunkData.length; i++){
+		var point1 = chunkData[i-1]["valueData"];
+		var point2 = chunkData[i]["valueData"];
+		//if(typeof(point1) === "object"){
+		if(point1["r"]){ // hack to see if this is an rgb
+			var allAttributesSame = true;
+			var valueAttributes = Object.keys(point1);
+			for(var attrIndex = 0; attrIndex < valueAttributes.length; attrIndex++){
+				var attributeName = valueAttributes[attrIndex];
+				//if(point1[attributeName] === point2[attributeName]){
+				if(compareData(point1[attributeName], point2[attributeName])){
+					// Same chunk
+					// Update the last chunk in outputChunks to have "end" value of the chunkData[i]'s "end"
+					outputChunks[outputChunks.length-1]["end"] = chunkData[i]["end"];
+				}else{
+					allAttributesSame = false;
+				}
+			}
+			if(allAttributesSame){
+				// Same chunk, nothing to do
+			}else{
+				// Different chunk
+				//chunkStartIndices.push(i);
+				outputChunks.push(chunkData[i]);
+			}
+		}else{
+			//if(point1 == point2){
+			if(compareData(point1, point2)){
+				// Same chunk
+				// Update the last chunk in outputChunks to have "end" value of the chunkData[i]'s "end"
+				outputChunks[outputChunks.length-1]["end"] = chunkData[i]["end"];
+			}else{
+				// Different chunk
+				//chunkStartIndices.push(i);
+				outputChunks.push(chunkData[i]);
+			}
+		}
+	}
+	return outputChunks;
+};
+
+var compareData = function(obj1, obj2){
+	var attributes = Object.keys(obj1);
+	for(var attrIndex = 0; attrIndex < attributes.length; attrIndex++){
+		var attribute = attributes[attrIndex];
+		var obj1Value = obj1[attribute];
+		var obj2Value = obj2[attribute];
+		if(obj1Value !== obj2Value){
+			return false;
+		}
+	}
+	return true;
+};
+
 
 /*var computeLineOfBestFit = function(axisVal1, attributeVal1, axisVal2, attributeVal2, chunkStart, chunkEnd, containsStart, containsEnd, elementSelector){
 	var pointData = [ [axisVal1, attributeVal1], [axisVal2, attributeVal2] ];

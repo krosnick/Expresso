@@ -1,799 +1,1297 @@
 {
     "keyframes": {
-        "0": {
-            "elements": [{
-                "id": "0",
-                "text": "",
-                "width": {
-                    "width": 1467
-                },
-                "height": {
-                    "height": 89
-                },
-                "x": {
-                    "left": 4,
-                    "right": 9
-                },
-                "y": {
-                    "top": 4,
-                    "bottom": 707
-                },
-                "font-size": {
-                    "font-size": 16
-                },
-                "background-color": {
-                    "background-color": {
-                        "r": 12,
-                        "g": 50,
-                        "b": 84
-                    }
-                }
-            }, {
-                "id": "1",
-                "text": "",
-                "width": {
-                    "width": 1466
-                },
-                "height": {
-                    "height": 35
-                },
-                "x": {
-                    "left": 4,
-                    "right": 10
-                },
-                "y": {
-                    "top": 94,
-                    "bottom": 671
-                },
-                "font-size": {
-                    "font-size": 16
-                },
-                "background-color": {
-                    "background-color": {
-                        "r": 56,
-                        "g": 82,
-                        "b": 109
-                    }
-                }
-            }, {
-                "id": "2",
-                "text": "",
-                "image": "images/cse_logo.png",
-                "width": {
-                    "width": 430
-                },
-                "height": {
-                    "height": 82
-                },
-                "x": {
-                    "left": 232,
-                    "right": 817
-                },
-                "y": {
-                    "top": 7,
-                    "bottom": 711
-                },
-                "font-size": {
-                    "font-size": 16
-                }
-            }, {
-                "id": "3",
-                "text": "ACADEMICS+ADMISSIONS",
-                "width": {
-                    "width": 206
-                },
-                "height": {
-                    "height": 21
-                },
-                "x": {
-                    "left": 232,
-                    "right": 1041
-                },
-                "y": {
-                    "top": 99,
-                    "bottom": 680
-                },
-                "font-size": {
-                    "font-size": 11
-                },
-                "color": {
-                    "color": {
-                        "r": 255,
-                        "g": 255,
-                        "b": 255
-                    }
-                }
-            }, {
-                "id": "4",
-                "text": "RESEARCH",
-                "width": {
-                    "width": 92
-                },
-                "height": {
-                    "height": 22
-                },
-                "x": {
-                    "left": 457,
-                    "right": 930
-                },
-                "y": {
-                    "top": 99,
-                    "bottom": 679
-                },
-                "font-size": {
-                    "font-size": 11
-                },
-                "color": {
-                    "color": {
-                        "r": 255,
-                        "g": 255,
-                        "b": 255
-                    }
-                }
-            }, {
-                "id": "5",
-                "text": "PEOPLE",
-                "width": {
-                    "width": 72
-                },
-                "height": {
-                    "height": 21
-                },
-                "x": {
-                    "left": 564,
-                    "right": 843
-                },
-                "y": {
-                    "top": 99,
-                    "bottom": 680
-                },
-                "font-size": {
-                    "font-size": 11
-                },
-                "color": {
-                    "color": {
-                        "r": 255,
-                        "g": 255,
-                        "b": 255
-                    }
-                }
-            }, {
-                "id": "6",
-                "text": "INDUSTRY",
-                "width": {
-                    "width": 90
-                },
-                "height": {
-                    "height": 21
-                },
-                "x": {
-                    "left": 653,
-                    "right": 736
-                },
-                "y": {
-                    "top": 99,
-                    "bottom": 680
-                },
-                "font-size": {
-                    "font-size": 11
-                },
-                "color": {
-                    "color": {
-                        "r": 255,
-                        "g": 255,
-                        "b": 255
-                    }
-                }
-            }, {
-                "id": "7",
-                "text": "NEWS+AWARDS",
-                "width": {
-                    "width": 129
-                },
-                "height": {
-                    "height": 20
-                },
-                "x": {
-                    "left": 762,
-                    "right": 589
-                },
-                "y": {
-                    "top": 99,
-                    "bottom": 681
-                },
-                "font-size": {
-                    "font-size": 11
-                },
-                "color": {
-                    "color": {
-                        "r": 255,
-                        "g": 255,
-                        "b": 255
-                    }
-                }
-            }, {
-                "id": "8",
-                "text": "EVENTS",
-                "width": {
-                    "width": 72
-                },
-                "height": {
-                    "height": 20
-                },
-                "x": {
-                    "left": 903,
-                    "right": 504
-                },
-                "y": {
-                    "top": 99,
-                    "bottom": 681
-                },
-                "font-size": {
-                    "font-size": 11
-                },
-                "color": {
-                    "color": {
-                        "r": 255,
-                        "g": 255,
-                        "b": 255
-                    }
-                }
-            }, {
-                "id": "9",
-                "text": "",
-                "image": "images/cse-slide-dsms3.jpg",
-                "width": {
-                    "width": 1024
-                },
-                "height": {
-                    "height": 381
-                },
-                "image-ratio": 2.687664041994751,
-                "x": {
-                    "left": 236,
-                    "right": 219
-                },
-                "y": {
-                    "top": 211,
-                    "bottom": 208
-                },
-                "font-size": {
-                    "font-size": 16
-                }
-            }],
-            "pageWidth": 1480,
-            "pageHeight": 800,
-            "id": 0
-        },
         "1": {
+            "id": "1",
+            "pageWidth": 1031,
+            "pageHeight": 752,
             "elements": [{
                 "id": "0",
                 "text": "",
                 "width": {
-                    "width": 1018
+                    "width": 1013,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "height": {
-                    "height": 89
+                    "height": 89,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "x": {
                     "left": 4,
-                    "right": 8
+                    "right": 13,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "y": {
                     "top": 4,
-                    "bottom": 707
+                    "bottom": 659,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "font-size": {
-                    "font-size": 16
+                    "font-size": 16,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "background-color": {
                     "background-color": {
                         "r": 12,
                         "g": 50,
                         "b": 84
-                    }
+                    },
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 }
             }, {
                 "id": "1",
                 "text": "",
                 "width": {
-                    "width": 1017
+                    "width": 1012,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "height": {
-                    "height": 35
+                    "height": 35,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "x": {
                     "left": 4,
-                    "right": 9
+                    "right": 14,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "y": {
                     "top": 94,
-                    "bottom": 671
+                    "bottom": 623,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "font-size": {
-                    "font-size": 16
+                    "font-size": 16,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "background-color": {
                     "background-color": {
                         "r": 56,
                         "g": 82,
                         "b": 109
-                    }
+                    },
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 }
             }, {
                 "id": "2",
                 "text": "",
                 "image": "images/cse_logo.png",
                 "width": {
-                    "width": 430
+                    "width": 430,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "height": {
-                    "height": 82
+                    "height": 82,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "x": {
                     "left": 0,
-                    "right": 601
+                    "right": 601,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "y": {
                     "top": 7,
-                    "bottom": 711
+                    "bottom": 663,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "font-size": {
-                    "font-size": 16
+                    "font-size": 16,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 }
             }, {
                 "id": "3",
                 "text": "ACADEMICS+ADMISSIONS",
                 "width": {
-                    "width": 206
+                    "width": 201,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "height": {
-                    "height": 21
+                    "height": 21,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "x": {
                     "left": 0,
-                    "right": 825
+                    "right": 829,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "y": {
                     "top": 99,
-                    "bottom": 680
+                    "bottom": 632,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "font-size": {
-                    "font-size": 11
+                    "font-size": 6,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "color": {
                     "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
-                    }
+                    },
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 }
             }, {
                 "id": "4",
                 "text": "RESEARCH",
                 "width": {
-                    "width": 92
+                    "width": 87,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "height": {
-                    "height": 22
+                    "height": 22,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "x": {
-                    "left": 224,
-                    "right": 714
+                    "left": 221,
+                    "right": 721,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "y": {
                     "top": 99,
-                    "bottom": 679
+                    "bottom": 631,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "font-size": {
-                    "font-size": 11
+                    "font-size": 6,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "color": {
                     "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
-                    }
+                    },
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 }
             }, {
                 "id": "5",
                 "text": "PEOPLE",
                 "width": {
-                    "width": 72
+                    "width": 67,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "height": {
-                    "height": 21
+                    "height": 21,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "x": {
-                    "left": 336,
-                    "right": 622
+                    "left": 331,
+                    "right": 631,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "y": {
                     "top": 99,
-                    "bottom": 680
+                    "bottom": 632,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "font-size": {
-                    "font-size": 11
+                    "font-size": 6,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "color": {
                     "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
-                    }
+                    },
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 }
             }, {
                 "id": "6",
                 "text": "INDUSTRY",
                 "width": {
-                    "width": 90
+                    "width": 85,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "height": {
-                    "height": 21
+                    "height": 21,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "x": {
-                    "left": 429,
-                    "right": 511
+                    "left": 424,
+                    "right": 520,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "y": {
                     "top": 99,
-                    "bottom": 680
+                    "bottom": 632,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "font-size": {
-                    "font-size": 11
+                    "font-size": 6,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "color": {
                     "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
-                    }
+                    },
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 }
             }, {
                 "id": "7",
                 "text": "NEWS+AWARDS",
                 "width": {
-                    "width": 129
+                    "width": 124,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "height": {
-                    "height": 20
+                    "height": 20,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "x": {
-                    "left": 542,
-                    "right": 359
+                    "left": 537,
+                    "right": 368,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "y": {
                     "top": 99,
-                    "bottom": 681
+                    "bottom": 633,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "font-size": {
-                    "font-size": 11
+                    "font-size": 6,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "color": {
                     "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
-                    }
+                    },
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 }
             }, {
                 "id": "8",
                 "text": "EVENTS",
                 "width": {
-                    "width": 72
+                    "width": 67,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "height": {
-                    "height": 20
+                    "height": 20,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "x": {
-                    "left": 688,
-                    "right": 270
+                    "left": 963,
+                    "right": 0,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "y": {
                     "top": 99,
-                    "bottom": 681
+                    "bottom": 633,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "font-size": {
-                    "font-size": 11
+                    "font-size": 6,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "color": {
                     "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
-                    }
+                    },
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 }
             }, {
                 "id": "9",
                 "text": "",
                 "image": "images/cse-slide-dsms3.jpg",
+                "image-ratio": "2.687664041994751",
                 "width": {
-                    "width": 1024
+                    "width": 1019,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "height": {
-                    "height": 381
+                    "height": 379,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
-                "image-ratio": 2.687664041994751,
                 "x": {
                     "left": 0,
-                    "right": 11
+                    "right": 11,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "y": {
                     "top": 211,
-                    "bottom": 424
+                    "bottom": 161,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "font-size": {
-                    "font-size": 16
+                    "font-size": 16,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 }
-            }],
-            "pageWidth": 1031,
-            "pageHeight": 800,
-            "id": 1
+            }]
         },
         "5": {
+            "id": "5",
+            "pageWidth": 662,
+            "pageHeight": 752,
             "elements": [{
                 "id": "0",
                 "text": "",
                 "width": {
-                    "width": 652
+                    "width": 648,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "height": {
-                    "height": 89
+                    "height": 89,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "x": {
                     "left": 4,
-                    "right": 5
+                    "right": 9,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "y": {
                     "top": 4,
-                    "bottom": 707
+                    "bottom": 659,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "font-size": {
-                    "font-size": 16
+                    "font-size": 16,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "background-color": {
                     "background-color": {
                         "r": 12,
                         "g": 50,
                         "b": 84
-                    }
+                    },
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 }
             }, {
                 "id": "1",
                 "text": "",
                 "width": {
-                    "width": 651
+                    "width": 647,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "height": {
-                    "height": 35
+                    "height": 35,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "x": {
                     "left": 4,
-                    "right": 6
+                    "right": 10,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "y": {
                     "top": 94,
-                    "bottom": 671
+                    "bottom": 623,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "font-size": {
-                    "font-size": 16
+                    "font-size": 16,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "background-color": {
                     "background-color": {
                         "r": 56,
                         "g": 82,
                         "b": 109
-                    }
+                    },
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 }
             }, {
                 "id": "2",
                 "text": "",
                 "image": "images/cse_logo.png",
                 "width": {
-                    "width": 430
+                    "width": 430,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "height": {
-                    "height": 82
+                    "height": 82,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "x": {
                     "left": 3,
-                    "right": 228
+                    "right": 228,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "y": {
                     "top": 7,
-                    "bottom": 711
+                    "bottom": 663,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "font-size": {
-                    "font-size": 16
+                    "font-size": 16,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 }
             }, {
                 "id": "3",
                 "text": "ACADEMICS+ADMISSIONS",
                 "width": {
-                    "width": 154
+                    "width": 150,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "height": {
-                    "height": 21
+                    "height": 21,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "x": {
                     "left": 3,
-                    "right": 504
+                    "right": 508,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "y": {
                     "top": 99,
-                    "bottom": 680
+                    "bottom": 632,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "font-size": {
-                    "font-size": 7
+                    "font-size": 3,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "color": {
                     "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
-                    }
+                    },
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 }
             }, {
                 "id": "4",
                 "text": "RESEARCH",
                 "width": {
-                    "width": 66
+                    "width": 62,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "height": {
-                    "height": 22
+                    "height": 22,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "x": {
-                    "left": 172,
-                    "right": 422
+                    "left": 170,
+                    "right": 429,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "y": {
                     "top": 99,
-                    "bottom": 679
+                    "bottom": 631,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "font-size": {
-                    "font-size": 7
+                    "font-size": 3,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "color": {
                     "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
-                    }
+                    },
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 }
             }, {
                 "id": "5",
                 "text": "PEOPLE",
                 "width": {
-                    "width": 49
+                    "width": 45,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "height": {
-                    "height": 21
+                    "height": 21,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "x": {
-                    "left": 254,
-                    "right": 357
+                    "left": 250,
+                    "right": 366,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "y": {
                     "top": 99,
-                    "bottom": 680
+                    "bottom": 632,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "font-size": {
-                    "font-size": 7
+                    "font-size": 3,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "color": {
                     "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
-                    }
+                    },
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 }
             }, {
                 "id": "6",
                 "text": "INDUSTRY",
                 "width": {
-                    "width": 64
+                    "width": 60,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "height": {
-                    "height": 21
+                    "height": 21,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "x": {
-                    "left": 318,
-                    "right": 278
+                    "left": 314,
+                    "right": 287,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "y": {
                     "top": 99,
-                    "bottom": 680
+                    "bottom": 632,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "font-size": {
-                    "font-size": 7
+                    "font-size": 3,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "color": {
                     "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
-                    }
+                    },
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 }
             }, {
                 "id": "7",
                 "text": "NEWS+AWARDS",
                 "width": {
-                    "width": 92
+                    "width": 88,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "height": {
-                    "height": 20
+                    "height": 20,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "x": {
-                    "left": 401,
-                    "right": 167
+                    "left": 397,
+                    "right": 176,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "y": {
                     "top": 99,
-                    "bottom": 681
+                    "bottom": 633,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "font-size": {
-                    "font-size": 7
+                    "font-size": 3,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "color": {
                     "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
-                    }
+                    },
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 }
             }, {
                 "id": "8",
                 "text": "EVENTS",
                 "width": {
-                    "width": 53
+                    "width": 49,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "height": {
-                    "height": 20
+                    "height": 20,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "x": {
-                    "left": 510,
-                    "right": 97
+                    "left": 612,
+                    "right": 0,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "y": {
                     "top": 99,
-                    "bottom": 681
+                    "bottom": 633,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "font-size": {
-                    "font-size": 7
+                    "font-size": 3,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "color": {
                     "color": {
                         "r": 255,
                         "g": 255,
                         "b": 255
-                    }
+                    },
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 }
             }, {
                 "id": "9",
                 "text": "",
                 "image": "images/cse-slide-dsms3.jpg",
+                "image-ratio": "2.687664041994751",
                 "width": {
-                    "width": 643
+                    "width": 639,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "height": {
-                    "height": 239
+                    "height": 237,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
-                "image-ratio": 2.687664041994751,
                 "x": {
                     "left": 3,
-                    "right": 15
+                    "right": 19,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "y": {
                     "top": 211,
-                    "bottom": 424
+                    "bottom": 303,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 },
                 "font-size": {
-                    "font-size": 16
+                    "font-size": 16,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
                 }
-            }],
-            "pageWidth": 662,
-            "pageHeight": 800,
-            "id": 5
+            }]
+        },
+        "6": {
+            "id": "6",
+            "pageWidth": 1200,
+            "pageHeight": 752,
+            "elements": [{
+                "id": "0",
+                "text": "",
+                "width": {
+                    "width": 1180,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "height": {
+                    "height": 89,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "x": {
+                    "left": 4,
+                    "right": 15,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "y": {
+                    "top": 4,
+                    "bottom": 659,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "font-size": {
+                    "font-size": 16,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "background-color": {
+                    "background-color": {
+                        "r": 12,
+                        "g": 50,
+                        "b": 84
+                    },
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                }
+            }, {
+                "id": "1",
+                "text": "",
+                "width": {
+                    "width": 1179,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "height": {
+                    "height": 35,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "x": {
+                    "left": 4,
+                    "right": 16,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "y": {
+                    "top": 94,
+                    "bottom": 623,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "font-size": {
+                    "font-size": 16,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "background-color": {
+                    "background-color": {
+                        "r": 56,
+                        "g": 82,
+                        "b": 109
+                    },
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                }
+            }, {
+                "id": "2",
+                "text": "",
+                "image": "images/cse_logo.png",
+                "width": {
+                    "width": 430,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "height": {
+                    "height": 82,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "x": {
+                    "left": -1,
+                    "right": 771,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "y": {
+                    "top": 7,
+                    "bottom": 663,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "font-size": {
+                    "font-size": 16,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                }
+            }, {
+                "id": "3",
+                "text": "ACADEMICS+ADMISSIONS",
+                "width": {
+                    "width": 224,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "height": {
+                    "height": 21,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "x": {
+                    "left": -1,
+                    "right": 976,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "y": {
+                    "top": 99,
+                    "bottom": 632,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "font-size": {
+                    "font-size": 7,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "color": {
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255
+                    },
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                }
+            }, {
+                "id": "4",
+                "text": "RESEARCH",
+                "width": {
+                    "width": 98,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "height": {
+                    "height": 22,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "x": {
+                    "left": 246,
+                    "right": 854,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "y": {
+                    "top": 99,
+                    "bottom": 631,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "font-size": {
+                    "font-size": 7,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "color": {
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255
+                    },
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                }
+            }, {
+                "id": "5",
+                "text": "PEOPLE",
+                "width": {
+                    "width": 78,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "height": {
+                    "height": 21,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "x": {
+                    "left": 368,
+                    "right": 752,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "y": {
+                    "top": 99,
+                    "bottom": 632,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "font-size": {
+                    "font-size": 7,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "color": {
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255
+                    },
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                }
+            }, {
+                "id": "6",
+                "text": "INDUSTRY",
+                "width": {
+                    "width": 96,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "height": {
+                    "height": 21,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "x": {
+                    "left": 474,
+                    "right": 628,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "y": {
+                    "top": 99,
+                    "bottom": 632,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "font-size": {
+                    "font-size": 7,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "color": {
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255
+                    },
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                }
+            }, {
+                "id": "7",
+                "text": "NEWS+AWARDS",
+                "width": {
+                    "width": 139,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "height": {
+                    "height": 20,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "x": {
+                    "left": 601,
+                    "right": 458,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "y": {
+                    "top": 99,
+                    "bottom": 633,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "font-size": {
+                    "font-size": 7,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "color": {
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255
+                    },
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                }
+            }, {
+                "id": "8",
+                "text": "EVENTS",
+                "width": {
+                    "width": 75,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "height": {
+                    "height": 20,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "x": {
+                    "left": 1124,
+                    "right": 0,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "y": {
+                    "top": 99,
+                    "bottom": 633,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "font-size": {
+                    "font-size": 7,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "color": {
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255
+                    },
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                }
+            }, {
+                "id": "9",
+                "text": "",
+                "image": "images/cse-slide-dsms3.jpg",
+                "image-ratio": "2.687664041994751",
+                "width": {
+                    "width": 1020,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "height": {
+                    "height": 379,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "x": {
+                    "left": 94,
+                    "right": 84,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "y": {
+                    "top": 211,
+                    "bottom": 161,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "font-size": {
+                    "font-size": 16,
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                },
+                "visibility": {
+                    "visibility": "visible",
+                    "left-transition": "left-closed-right-closed",
+                    "right-transition": "left-closed-right-closed"
+                }
+            }]
         }
     }
 }

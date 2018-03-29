@@ -1139,7 +1139,7 @@ var renderView = function(viewData){
 
 	$(".pageElement").has("img").resizable({aspectRatio: true, handles: "n, e, s, w, ne, se, sw, nw"});
 	$(".pageElement").not(":has(img)").resizable({handles: "n, e, s, w, ne, se, sw, nw"});
-	
+
     if(currentlySelectedElement){
     	selectElement($("[elementId=" + currentlySelectedElement + "]"));
     }
@@ -1220,7 +1220,7 @@ var replaceCSSRules = function(){
 	$("#" + elementCSSRules).empty();
 	var cssRulesString = "";
 
-	//console.log(cssRules);
+	console.log(cssRules);
 
 	for(var i = 0; i < cssRules.length; i++){
 

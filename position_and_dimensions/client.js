@@ -1,5 +1,7 @@
 var currentViewId = 0; // Should this start as 0?
 var dataChanged = false;
+var resizingElement = false;
+var repositioningElement = false;
 
 /*var elementPositionInfoId = "elementPositionInfo";
 var elementDimensionsInfoId = "elementDimensionsInfo";*/
@@ -426,7 +428,11 @@ $(document).ready(function() {
     	selectElement($(event.target));
     });
     $("body").on("drag", ".pageElement", function(event){
-    	dataChanged = true;
+    	// Don't need to do dataChanged = true here (since we don't need to send the data to the server immediately)
+    	// but let's somewhat frequently update the rightmenu widget at least. We'll have a second variable for this
+    	repositioningElement = true;
+
+    	//dataChanged = true;
     	/*// Update element's (x, y) position in the box shown
     	var element = $(event.target);
     	var coords = "(" + element.css("left") + ", " + element.css("top") + ")";
@@ -451,7 +457,10 @@ $(document).ready(function() {
     	selectElement($(event.target));
     });
     $("body").on("resize", ".pageElement", function(event){
-    	dataChanged = true;
+    	// Don't need to do dataChanged = true here (since we don't need to send the data to the server immediately)
+    	// but let's somewhat frequently update the rightmenu widget at least. We'll have a second variable for this
+    	resizingElement = true;
+
     	/*// Update element's width, height in the box shown
     	var element = $(event.target);
     	var dimensions = "width: " + element.css("width") + ", height: " + element.css("height");
@@ -497,6 +506,8 @@ $(document).ready(function() {
 
 			var viewData = captureElementAndPageData();
 			dataChanged = false;
+			resizingElement = false;
+			repositioningElement = false;
 
 			// should element rules be updated here? Or maybe let the server take care of that
 
@@ -509,6 +520,22 @@ $(document).ready(function() {
 		    	cssRules = data["cssRules"];
 		    	replaceCSSRules();
 		    });
+    	}else if(resizingElement){
+    		// Update the element width and height widgets in the right menu
+    		var element = $("[elementId=" + currentlySelectedElement + "]");
+    		var widthAmount = element.width();
+			$( "#widthAmount" ).html( Math.round(widthAmount)  + "px" );
+			var heightAmount = element.height();
+			$( "#heightAmount" ).html( Math.round(heightAmount)  + "px" );
+    		resizingElement = false;
+    	}else if(repositioningElement){
+    		// Update the element x and y position widgets in the right menu
+    		var element = $("[elementId=" + currentlySelectedElement + "]");
+    		var leftAmount = element.offset().left;
+			$( "#leftAmount" ).html( Math.round(leftAmount)  + "px" );
+			var topAmount = element.offset().top;
+			$( "#topAmount" ).html( Math.round(topAmount)  + "px" );
+    		repositioningElement = false;
     	}
     }, 1000);
     //}, 10000);
@@ -843,11 +870,11 @@ var updateRightMenuWidgets = function(element){
 	//$( "#leftAmount" ).val( Math.round(leftAmount)  + "px" );
 	$( "#leftAmount" ).html( Math.round(leftAmount)  + "px" );
 
-	var rightAmount = $(".userPage").width() - element.width() - element.offset().left;
+	/*var rightAmount = $(".userPage").width() - element.width() - element.offset().left;
 	//$( "#rightSlider" ).slider( "value", rightAmount);
 	//$( "#rightAmount" ).val( rightAmount  + "px" );
 	//$( "#rightAmount" ).val( Math.round(rightAmount)  + "px" );
-	$( "#rightAmount" ).html( Math.round(rightAmount)  + "px" );
+	$( "#rightAmount" ).html( Math.round(rightAmount)  + "px" );*/
 
 
 
@@ -859,11 +886,11 @@ var updateRightMenuWidgets = function(element){
 	//$( "#topAmount" ).val( Math.round(topAmount)  + "px" );
 	$( "#topAmount" ).html( Math.round(topAmount)  + "px" );
 
-	var bottomAmount = $(".userPage").height() - element.height() - element.offset().top;
+	/*var bottomAmount = $(".userPage").height() - element.height() - element.offset().top;
 	//$( "#bottomSlider" ).slider( "value", bottomAmount);
 	//$( "#bottomAmount" ).val( bottomAmount  + "px" );
 	//$( "#bottomAmount" ).val( Math.round(bottomAmount)  + "px" );
-	$( "#bottomAmount" ).html( Math.round(bottomAmount)  + "px" );
+	$( "#bottomAmount" ).html( Math.round(bottomAmount)  + "px" );*/
 
 
 	$("#text_color_colorpicker").spectrum("set", element.css("color"));	

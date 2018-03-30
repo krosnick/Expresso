@@ -132,6 +132,10 @@ body {
 	box-shadow: 0px 0px 2px 4px black;
 }
 
+.pageElement.ui-draggable {
+	cursor: move;
+}
+
 #selectedElementRules {
 	display: none;
 }

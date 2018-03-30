@@ -652,9 +652,7 @@ $(document).ready(function() {
     	dataChanged = true;
     });
 
-    $("body").on("change", "[name='xPosition']", function(event){
-    	/*console.log("radio button changed!");
-    	console.log($(event.target).val());*/
+    /*$("body").on("change", "[name='xPosition']", function(event){
     	// switch which widget is visible
     	var selectedRadioButtonValue = $(event.target).val();
     	if(selectedRadioButtonValue === "left"){
@@ -667,8 +665,6 @@ $(document).ready(function() {
     });
 
     $("body").on("change", "[name='yPosition']", function(event){
-    	/*console.log("radio button changed!");
-    	console.log($(event.target).val());*/
     	// switch which widget is visible
     	var selectedRadioButtonValue = $(event.target).val();
     	if(selectedRadioButtonValue === "top"){
@@ -678,7 +674,7 @@ $(document).ready(function() {
     		$(".topWidgets").hide();
     		$(".bottomWidgets").show();
     	}
-    });
+    });*/
 
 
 	// Fill all .propertyRules divs with dropdown menu HTML

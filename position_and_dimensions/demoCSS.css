@@ -136,9 +136,9 @@ body {
 	display: none;
 }
 
-#amount {
+/*#amount {
 	width: 100%;
-}
+}*/
 
 .sliderWidget {
 	margin: 10px;
@@ -244,6 +244,7 @@ fieldset {
 
 .propertyHeader {
 	border-bottom: solid 2px;
+	font-size: 16px;
 }
 
 .propertyRules .ui-selectmenu-button {
@@ -262,16 +263,16 @@ fieldset {
 	overflow-y: scroll;
 	overflow-x: hidden;
 	max-height: 655px;
-	padding-left: 15px;
+	/*padding-left: 15px;*/
 }
 
-.rightWidgets { /* starts out hidden */
+/*.rightWidgets {
 	display: none;
 }
 
-.bottomWidgets { /* starts out hidden */
+.bottomWidgets {
 	display: none;
-}
+}*/
 
 /*[type='radio'] {
 	font-size: 15px;
@@ -295,5 +296,5 @@ fieldset {
 	cursor: default;
 	padding-left: 3px;
 	padding-right: 3px;
-	font-size: 12px;
+	/*font-size: 12px;*/
 }

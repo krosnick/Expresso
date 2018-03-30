@@ -89,7 +89,7 @@ body {
 	position: absolute; /* Later on we'll need to make sure to include this in the returned rules/output of the system */
 }
 
-#elementPositionInfo {
+/*#elementPositionInfo {
 	position: absolute;
 	top: 10px;
 	left: 10px;
@@ -107,7 +107,7 @@ body {
 	color: black;
 	padding: 2px;
 	border: 1px solid black;
-}
+}*/
 
 #pageDimensionsInfo {
 	position: absolute;

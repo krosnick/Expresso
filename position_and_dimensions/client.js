@@ -1,7 +1,9 @@
 var currentViewId = 0; // Should this start as 0?
 var dataChanged = false;
-var elementPositionInfoId = "elementPositionInfo";
-var elementDimensionsInfoId = "elementDimensionsInfo";
+
+/*var elementPositionInfoId = "elementPositionInfo";
+var elementDimensionsInfoId = "elementDimensionsInfo";*/
+
 var pageDimensionsInfoId = "pageDimensionsInfo";
 //var allElementRules;
 var emptyElementName = "(select an element to see)";
@@ -417,55 +419,51 @@ $(document).ready(function() {
 
     // ------------- Behavior on element drag  -------------
     $("body").on("dragstart", ".pageElement", function(event, ui){
-    	// Create a relatively positioned box containing the (x, y) coordinates?
+    	/*// Create a relatively positioned box containing the (x, y) coordinates?
     	var dragInfo = $("<div id=" + elementPositionInfoId + "></div>");
-    	$(event.target).append(dragInfo);
+    	$(event.target).append(dragInfo);*/
 
     	selectElement($(event.target));
     });
     $("body").on("drag", ".pageElement", function(event){
-    	// Update element's (x, y) position in the box shown
+    	dataChanged = true;
+    	/*// Update element's (x, y) position in the box shown
     	var element = $(event.target);
     	var coords = "(" + element.css("left") + ", " + element.css("top") + ")";
     	$("#" + elementPositionInfoId).text(coords);
-
     	//updateRightMenuWidgets($(event.target));
-
-    	//updateRulesMenu(element);
+    	//updateRulesMenu(element);*/
     });
-    $("body").on("dragstop", ".pageElement", function(event, ui){
+    /*$("body").on("dragstop", ".pageElement", function(event, ui){
     	// Remove the relatively positioned box containing the (x, y) coordinates
     	$("#" + elementPositionInfoId).remove();
-
     	//updateRightMenuWidgets($(event.target));
-    });
+    });*/
     // -----------------------------------------------------
 
 
     // ------------- Behavior on element resize  -------------
     $("body").on("resizestart", ".pageElement", function(event, ui){
-    	// Create a relatively positioned box containing the (x, y) coordinates?
+    	/*// Create a relatively positioned box containing the (x, y) coordinates?
     	var resizeInfo = $("<div id=" + elementDimensionsInfoId + "></div>");
-    	$(event.target).append(resizeInfo);
+    	$(event.target).append(resizeInfo);*/
 
     	selectElement($(event.target));
     });
     $("body").on("resize", ".pageElement", function(event){
-    	// Update element's width, height in the box shown
+    	dataChanged = true;
+    	/*// Update element's width, height in the box shown
     	var element = $(event.target);
     	var dimensions = "width: " + element.css("width") + ", height: " + element.css("height");
     	$("#" + elementDimensionsInfoId).text(dimensions);
-
     	//updateRightMenuWidgets($(event.target));
-
-    	//updateRulesMenu(element);
+    	//updateRulesMenu(element);*/
     });
-    $("body").on("resizestop", ".pageElement", function(event, ui){
+    /*$("body").on("resizestop", ".pageElement", function(event, ui){
     	// Remove the relatively positioned box containing the dimensions
     	$("#" + elementDimensionsInfoId).remove();
-
     	//updateRightMenuWidgets($(event.target));
-    });
+    });*/
     // -------------------------------------------------------
     
 

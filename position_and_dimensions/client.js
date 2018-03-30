@@ -557,7 +557,7 @@ $(document).ready(function() {
       }
     });
 
-    $("#widthSlider").slider({
+    /*$("#widthSlider").slider({
       min: 1,
       max: 1200,
       slide: function( event, ui ) {
@@ -582,8 +582,6 @@ $(document).ready(function() {
     });
 
     $("#leftSlider").slider({
-      /*min: 0,
-      max: 1200,*/
       min: -1200,
       max: 1200,
       slide: function( event, ui ) {
@@ -600,8 +598,6 @@ $(document).ready(function() {
     });
 
     $("#rightSlider").slider({
-      /*min: 0,
-      max: 1200,*/
       min: -1200,
       max: 1200,
       slide: function( event, ui ) {
@@ -618,8 +614,6 @@ $(document).ready(function() {
     });
 
     $("#topSlider").slider({
-      /*min: 0,
-      max: 1200,*/
       min: -800,
       max: 800,
       slide: function( event, ui ) {
@@ -636,8 +630,6 @@ $(document).ready(function() {
     });
 
     $("#bottomSlider").slider({
-      /*min: 0,
-      max: 1200,*/
       min: -800,
       max: 800,
       slide: function( event, ui ) {
@@ -651,7 +643,7 @@ $(document).ready(function() {
         });
 	    dataChanged = true;
       }
-    });
+    });*/
 
     $("#visibilityWidget").on("change", function(event){
     	// Based on the value, update the element's "visibility" property
@@ -831,26 +823,26 @@ var updateRightMenuWidgets = function(element){
 	
 	// Width slider
 	var widthAmount = element.width();
-	$( "#widthSlider" ).slider( "value", widthAmount);
+	//$( "#widthSlider" ).slider( "value", widthAmount);
 	//$( "#widthAmount" ).val( widthAmount  + "px" );
 	//$( "#widthAmount" ).val( Math.round(widthAmount)  + "px" );
 	$( "#widthAmount" ).html( Math.round(widthAmount)  + "px" );
 
 	// Height slider
 	var heightAmount = element.height();
-	$( "#heightSlider" ).slider( "value", heightAmount);
+	//$( "#heightSlider" ).slider( "value", heightAmount);
 	//$( "#heightAmount" ).val( heightAmount  + "px" );
 	//$( "#heightAmount" ).val( Math.round(heightAmount)  + "px" );
 	$( "#heightAmount" ).html( Math.round(heightAmount)  + "px" );
 
 	var leftAmount = element.offset().left;
-	$( "#leftSlider" ).slider( "value", leftAmount);
+	//$( "#leftSlider" ).slider( "value", leftAmount);
 	//$( "#leftAmount" ).val( leftAmount  + "px" );
 	//$( "#leftAmount" ).val( Math.round(leftAmount)  + "px" );
 	$( "#leftAmount" ).html( Math.round(leftAmount)  + "px" );
 
 	var rightAmount = $(".userPage").width() - element.width() - element.offset().left;
-	$( "#rightSlider" ).slider( "value", rightAmount);
+	//$( "#rightSlider" ).slider( "value", rightAmount);
 	//$( "#rightAmount" ).val( rightAmount  + "px" );
 	//$( "#rightAmount" ).val( Math.round(rightAmount)  + "px" );
 	$( "#rightAmount" ).html( Math.round(rightAmount)  + "px" );
@@ -860,13 +852,13 @@ var updateRightMenuWidgets = function(element){
 	// top, bottom
 
 	var topAmount = element.offset().top;
-	$( "#topSlider" ).slider( "value", topAmount);
+	//$( "#topSlider" ).slider( "value", topAmount);
 	//$( "#topAmount" ).val( topAmount  + "px" );
 	//$( "#topAmount" ).val( Math.round(topAmount)  + "px" );
 	$( "#topAmount" ).html( Math.round(topAmount)  + "px" );
 
 	var bottomAmount = $(".userPage").height() - element.height() - element.offset().top;
-	$( "#bottomSlider" ).slider( "value", bottomAmount);
+	//$( "#bottomSlider" ).slider( "value", bottomAmount);
 	//$( "#bottomAmount" ).val( bottomAmount  + "px" );
 	//$( "#bottomAmount" ).val( Math.round(bottomAmount)  + "px" );
 	$( "#bottomAmount" ).html( Math.round(bottomAmount)  + "px" );

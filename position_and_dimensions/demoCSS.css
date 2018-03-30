@@ -6,7 +6,8 @@ body {
 	/*height: 50px;*/
 	height: 100px;
     bottom: 0px;
-    background-color: #f5f5dc;
+    /*background-color: #f5f5dc;*/
+    background-color: #ffffee;
     position: fixed;
     width: 100%;
     left: 0px;
@@ -30,7 +31,8 @@ body {
 	width: 480px;
 	/*height: calc(100% - 50px);*/
 	height: calc(100% - 100px);
-	background-color: #f5f5dc;
+	/*background-color: #f5f5dc;*/
+	background-color: #ffffee;
 	position: fixed;
 	right: 0px;
 	top: 0px;
@@ -258,6 +260,7 @@ fieldset {
 
 .widgetsContainer {
 	overflow-y: scroll;
+	overflow-x: hidden;
 	max-height: 655px;
 	padding-left: 15px;
 }
@@ -292,4 +295,5 @@ fieldset {
 	cursor: default;
 	padding-left: 3px;
 	padding-right: 3px;
+	font-size: 12px;
 }

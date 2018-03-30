@@ -549,7 +549,9 @@ $(document).ready(function() {
       min: 8,
       max: 96,
       slide: function( event, ui ) {
-        $( "#amount" ).val( ui.value  + "px" );
+        //$( "#amount" ).val( ui.value  + "px" );
+        //$( "#amount" ).val( Math.round(ui.value)  + "px" );
+        $( "#amount" ).html( Math.round(ui.value)  + "px" );
         $("[elementId=" + currentlySelectedElement + "]").css("font-size", ui.value  + "px");
 	    dataChanged = true;
       }
@@ -559,7 +561,9 @@ $(document).ready(function() {
       min: 1,
       max: 1200,
       slide: function( event, ui ) {
-        $( "#widthAmount" ).val( ui.value  + "px" );
+        //$( "#widthAmount" ).val( ui.value  + "px" );
+        //$( "#widthAmount" ).val( Math.round(ui.value)  + "px" );
+        $( "#widthAmount" ).html( Math.round(ui.value)  + "px" );
         $("[elementId=" + currentlySelectedElement + "]").css("width", ui.value  + "px");
 	    dataChanged = true;
       }
@@ -569,7 +573,9 @@ $(document).ready(function() {
       min: 1,
       max: 800,
       slide: function( event, ui ) {
-        $( "#heightAmount" ).val( ui.value  + "px" );
+        //$( "#heightAmount" ).val( ui.value  + "px" );
+        //$( "#heightAmount" ).val( Math.round(ui.value)  + "px" );
+        $( "#heightAmount" ).html( Math.round(ui.value)  + "px" );
         $("[elementId=" + currentlySelectedElement + "]").css("height", ui.value  + "px");
 	    dataChanged = true;
       }
@@ -581,7 +587,9 @@ $(document).ready(function() {
       min: -1200,
       max: 1200,
       slide: function( event, ui ) {
-        $( "#leftAmount" ).val( ui.value  + "px" );
+        //$( "#leftAmount" ).val( ui.value  + "px" );
+        //$( "#leftAmount" ).val( Math.round(ui.value)  + "px" );
+        $( "#leftAmount" ).html( Math.round(ui.value)  + "px" );
         //$("[elementId=" + currentlySelectedElement + "]").css("left", ui.value + "px");
         $("[elementId=" + currentlySelectedElement + "]").css({
         	"left": ui.value + "px",
@@ -597,7 +605,9 @@ $(document).ready(function() {
       min: -1200,
       max: 1200,
       slide: function( event, ui ) {
-        $( "#rightAmount" ).val( ui.value  + "px" );
+        //$( "#rightAmount" ).val( ui.value  + "px" );
+        //$( "#rightAmount" ).val( Math.round(ui.value)  + "px" );
+        $( "#rightAmount" ).html( Math.round(ui.value)  + "px" );
         //$("[elementId=" + currentlySelectedElement + "]").css("right", ui.value + "px");
         $("[elementId=" + currentlySelectedElement + "]").css({
         	"left": "auto",
@@ -613,7 +623,9 @@ $(document).ready(function() {
       min: -800,
       max: 800,
       slide: function( event, ui ) {
-        $( "#topAmount" ).val( ui.value  + "px" );
+        //$( "#topAmount" ).val( ui.value  + "px" );
+        //$( "#topAmount" ).val( Math.round(ui.value)  + "px" );
+        $( "#topAmount" ).html( Math.round(ui.value)  + "px" );
         //$("[elementId=" + currentlySelectedElement + "]").css("left", ui.value + "px");
         $("[elementId=" + currentlySelectedElement + "]").css({
         	"top": ui.value + "px",
@@ -629,7 +641,9 @@ $(document).ready(function() {
       min: -800,
       max: 800,
       slide: function( event, ui ) {
-        $( "#bottomAmount" ).val( ui.value  + "px" );
+        //$( "#bottomAmount" ).val( ui.value  + "px" );
+        //$( "#bottomAmount" ).val( Math.round(ui.value)  + "px" );
+        $( "#bottomAmount" ).html( Math.round(ui.value)  + "px" );
         //$("[elementId=" + currentlySelectedElement + "]").css("right", ui.value + "px");
         $("[elementId=" + currentlySelectedElement + "]").css({
         	"top": "auto",
@@ -811,25 +825,35 @@ var updateRightMenuWidgets = function(element){
 	// Font size slider
 	var fontSize = extractPixelValue(element.css("font-size"));
 	$( "#slider" ).slider( "value", fontSize );
-	$( "#amount" ).val( fontSize  + "px" );
+	//$( "#amount" ).val( Math.round(fontSize)  + "px" );
+	$( "#amount" ).html( Math.round(fontSize)  + "px" );
+	//$( "#amount" ).val( fontSize  + "px" );
 	
 	// Width slider
 	var widthAmount = element.width();
 	$( "#widthSlider" ).slider( "value", widthAmount);
-	$( "#widthAmount" ).val( widthAmount  + "px" );
+	//$( "#widthAmount" ).val( widthAmount  + "px" );
+	//$( "#widthAmount" ).val( Math.round(widthAmount)  + "px" );
+	$( "#widthAmount" ).html( Math.round(widthAmount)  + "px" );
 
 	// Height slider
 	var heightAmount = element.height();
 	$( "#heightSlider" ).slider( "value", heightAmount);
-	$( "#heightAmount" ).val( heightAmount  + "px" );
+	//$( "#heightAmount" ).val( heightAmount  + "px" );
+	//$( "#heightAmount" ).val( Math.round(heightAmount)  + "px" );
+	$( "#heightAmount" ).html( Math.round(heightAmount)  + "px" );
 
 	var leftAmount = element.offset().left;
 	$( "#leftSlider" ).slider( "value", leftAmount);
-	$( "#leftAmount" ).val( leftAmount  + "px" );
+	//$( "#leftAmount" ).val( leftAmount  + "px" );
+	//$( "#leftAmount" ).val( Math.round(leftAmount)  + "px" );
+	$( "#leftAmount" ).html( Math.round(leftAmount)  + "px" );
 
 	var rightAmount = $(".userPage").width() - element.width() - element.offset().left;
 	$( "#rightSlider" ).slider( "value", rightAmount);
-	$( "#rightAmount" ).val( rightAmount  + "px" );
+	//$( "#rightAmount" ).val( rightAmount  + "px" );
+	//$( "#rightAmount" ).val( Math.round(rightAmount)  + "px" );
+	$( "#rightAmount" ).html( Math.round(rightAmount)  + "px" );
 
 
 
@@ -837,11 +861,15 @@ var updateRightMenuWidgets = function(element){
 
 	var topAmount = element.offset().top;
 	$( "#topSlider" ).slider( "value", topAmount);
-	$( "#topAmount" ).val( topAmount  + "px" );
+	//$( "#topAmount" ).val( topAmount  + "px" );
+	//$( "#topAmount" ).val( Math.round(topAmount)  + "px" );
+	$( "#topAmount" ).html( Math.round(topAmount)  + "px" );
 
 	var bottomAmount = $(".userPage").height() - element.height() - element.offset().top;
 	$( "#bottomSlider" ).slider( "value", bottomAmount);
-	$( "#bottomAmount" ).val( bottomAmount  + "px" );
+	//$( "#bottomAmount" ).val( bottomAmount  + "px" );
+	//$( "#bottomAmount" ).val( Math.round(bottomAmount)  + "px" );
+	$( "#bottomAmount" ).html( Math.round(bottomAmount)  + "px" );
 
 
 	$("#text_color_colorpicker").spectrum("set", element.css("color"));	

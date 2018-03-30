@@ -98,7 +98,8 @@
             <div class="row propertyTool" behavior-name="width">
               <div class="col propertyWidget">
                 <label for="widthAmount">Width:</label>
-                <input type="text" id="widthAmount" readonly style="border:0; color:#f6931f; font-weight:bold;"/>
+                <!--<input type="text" id="widthAmount" readonly style="border:0; color:#f6931f; font-weight:bold;"/>-->
+                <div id="widthAmount" class="propertyValueText"></div>
                 <div id="widthSlider" class="sliderWidget"></div>
               </div>
               <div class="col propertyRules">
@@ -109,7 +110,8 @@
             <div class="row propertyTool" behavior-name="height">
               <div class="col propertyWidget">
                 <label for="heightAmount">Height:</label>
-                <input type="text" id="heightAmount" readonly style="border:0; color:#f6931f; font-weight:bold;"/>
+                <!--<input type="text" id="heightAmount" readonly style="border:0; color:#f6931f; font-weight:bold;"/>-->
+                <div id="heightAmount" class="propertyValueText"></div>
                 <div id="heightSlider" class="sliderWidget"></div>
               </div>
               <div class="col propertyRules">
@@ -118,26 +120,27 @@
           </div>
 
           <div class="propertyInfo">
-            <div>x position: </div>
             <div class="row propertyTool" behavior-name="x">
               <div class="col propertyWidget">
-                
+                <div class="leftWidgets">
+                  <!--<label for="leftAmount">Left:</label>-->
+                  <!--<input type="text" id="leftAmount" readonly style="border:0; color:#f6931f; font-weight:bold;"/>-->
+                  <label for="leftAmount">x position:</label>
+                  <div id="leftAmount" class="propertyValueText"></div>
+                  <div id="leftSlider" class="sliderWidget"></div>
+                </div>
+                <div class="rightWidgets">
+                  <!--<label for="rightAmount">Right:</label>-->
+                  <!--<input type="text" id="rightAmount" readonly style="border:0; color:#f6931f; font-weight:bold;"/>-->
+                  <label for="rightAmount">x position:</label>
+                  <div id="rightAmount" class="propertyValueText"></div>
+                  <div id="rightSlider" class="sliderWidget"></div>
+                </div>
 
                 <input type="radio" id="leftRadioButton" name="xPosition" value="left" checked>
                 <label for="leftRadioButton">Left</label>
                 <input type="radio" id="rightRadioButton" name="xPosition" value="right">
                 <label for="rightRadioButton">Right</label>
-
-                <div class="leftWidgets">
-                  <!--<label for="leftAmount">Left:</label>-->
-                  <input type="text" id="leftAmount" readonly style="border:0; color:#f6931f; font-weight:bold;"/>
-                  <div id="leftSlider" class="sliderWidget"></div>
-                </div>
-                <div class="rightWidgets">
-                  <!--<label for="rightAmount">Right:</label>-->
-                  <input type="text" id="rightAmount" readonly style="border:0; color:#f6931f; font-weight:bold;"/>
-                  <div id="rightSlider" class="sliderWidget"></div>
-                </div>
               </div>
               <div class="col propertyRules">
               </div>
@@ -145,26 +148,27 @@
           </div>
 
           <div class="propertyInfo">
-            <div>y position: </div>
             <div class="row propertyTool" behavior-name="y">
               <div class="col propertyWidget">
-                
+                <div class="topWidgets">
+                  <!--<label for="leftAmount">Left:</label>-->
+                  <!--<input type="text" id="topAmount" readonly style="border:0; color:#f6931f; font-weight:bold;"/>-->
+                  <label for="topAmount">y position:</label>
+                  <div id="topAmount" class="propertyValueText"></div>
+                  <div id="topSlider" class="sliderWidget"></div>
+                </div>
+                <div class="bottomWidgets">
+                  <!--<label for="rightAmount">Right:</label>-->
+                  <!--<input type="text" id="bottomAmount" readonly style="border:0; color:#f6931f; font-weight:bold;"/>-->
+                  <label for="bottomAmount">y position:</label>
+                  <div id="bottomAmount" class="propertyValueText"></div>
+                  <div id="bottomSlider" class="sliderWidget"></div>
+                </div>
 
                 <input type="radio" id="topRadioButton" name="yPosition" value="top" checked>
                 <label for="topRadioButton">Top</label>
                 <input type="radio" id="bottomRadioButton" name="yPosition" value="bottom">
                 <label for="bottomRadioButton">Bottom</label>
-
-                <div class="topWidgets">
-                  <!--<label for="leftAmount">Left:</label>-->
-                  <input type="text" id="topAmount" readonly style="border:0; color:#f6931f; font-weight:bold;"/>
-                  <div id="topSlider" class="sliderWidget"></div>
-                </div>
-                <div class="bottomWidgets">
-                  <!--<label for="rightAmount">Right:</label>-->
-                  <input type="text" id="bottomAmount" readonly style="border:0; color:#f6931f; font-weight:bold;"/>
-                  <div id="bottomSlider" class="sliderWidget"></div>
-                </div>
               </div>
               <div class="col propertyRules">
               </div>
@@ -208,7 +212,8 @@
               <div class="row propertyTool" behavior-name="font-size">
                 <div class="col propertyWidget">
                   <label for="amount">Font-size:</label>
-                  <input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;"/>
+                  <!--<input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;"/>-->
+                  <div id="amount" class="propertyValueText"></div>
                   <div id="slider" class="sliderWidget"></div>
                 </div>
                 <div class="col propertyRules">

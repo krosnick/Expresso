@@ -277,3 +277,19 @@ fieldset {
 #toolsMenu {
 	font-size: 14px;
 }
+
+.propertyWidget input[type="text"] {
+	cursor: default;
+	width: auto;
+}
+
+.propertyValueText {
+	color:#f6931f;
+	font-weight:bold;
+	background-color: white;
+	display:inline-block;
+	text-align:center;
+	cursor: default;
+	padding-left: 3px;
+	padding-right: 3px;
+}

@@ -834,6 +834,11 @@ var determinePattern = function(dataPoints, behaviorName, propertyName, axisName
 	}*/
 	conciseChunkLineFitData = condenseChunks(conciseChunkLineFitData);
 	//if(elementSelector == "8" && (propertyName === "left" || propertyName === "right")){
+	//if(elementSelector == "0" && propertyName === "background-color"){
+	if(elementSelector == "3" && propertyName === "font-size"){
+		console.log(propertyName);
+		console.log(conciseChunkLineFitData);
+	}
 	if(elementSelector == "0" && propertyName === "background-color"){
 		console.log(propertyName);
 		console.log(conciseChunkLineFitData);
@@ -860,6 +865,7 @@ var condenseChunks = function(chunkData){
 					// Same chunk
 					// Update the last chunk in outputChunks to have "end" value of the chunkData[i]'s "end"
 					outputChunks[outputChunks.length-1]["end"] = chunkData[i]["end"];
+					outputChunks[outputChunks.length-1]["containsEnd"] = chunkData[i]["containsEnd"];
 				}else{
 					allAttributesSame = false;
 				}
@@ -877,6 +883,7 @@ var condenseChunks = function(chunkData){
 				// Same chunk
 				// Update the last chunk in outputChunks to have "end" value of the chunkData[i]'s "end"
 				outputChunks[outputChunks.length-1]["end"] = chunkData[i]["end"];
+				outputChunks[outputChunks.length-1]["containsEnd"] = chunkData[i]["containsEnd"];
 			}else{
 				// Different chunk
 				//chunkStartIndices.push(i);

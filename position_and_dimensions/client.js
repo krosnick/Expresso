@@ -1312,6 +1312,13 @@ var createSingleAttributeCSSString = function(ruleObject, elementId, propertyNam
 	var b = ruleObject["b"];*/
 	var computedValue = m * dimensionValue + b;
 
+	if(propertyName === "font-size"){
+		// Putting a min on the font-size
+		if(computedValue < 8){
+			computedValue = 8;
+		}
+	}
+
 	// Construct CSS rule string
 	var singleRule = "#element" + elementId + "{";
 	//singleRule += createPropertyValueString(propertyName, computedValue);

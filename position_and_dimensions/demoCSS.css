@@ -220,17 +220,8 @@ fieldset {
   width: 24px;
   top: 0.1em;
 }
-/*.ui-icon.video {
-  background: url("images/24-video-square.png") 0 0 no-repeat;
-}
-.ui-icon.podcast {
-  background: url("images/24-podcast-square.png") 0 0 no-repeat;
-}
-.ui-icon.rss {
-  background: url("images/24-rss-square.png") 0 0 no-repeat;
-}*/
 
-.ui-icon.left-closed-right-closed {
+/*.ui-icon.left-closed-right-closed {
   background: url("tool_icons/line_both_closed.png") 0 0 no-repeat;
   background-size: contain;
   width: 100% !important;
@@ -244,7 +235,40 @@ fieldset {
   background: url("tool_icons/line_left_open_right_closed.png") 0 0 no-repeat;
   background-size: contain;
   width: 100% !important;
+}*/
+
+.ui-icon.left-closed-right-closed_leftSide {
+  background: url("tool_icons/line_both_closed_leftSide.png") 0 0 no-repeat;
+  background-size: contain;
+  width: 100% !important;
 }
+.ui-icon.left-closed-right-open_leftSide {
+  background: url("tool_icons/line_left_closed_right_open_leftSide.png") 0 0 no-repeat;
+  background-size: contain;
+  width: 100% !important;
+}
+.ui-icon.left-open-right-closed_leftSide {
+  background: url("tool_icons/line_left_open_right_closed_leftSide.png") 0 0 no-repeat;
+  background-size: contain;
+  width: 100% !important;
+}
+
+.ui-icon.left-closed-right-closed_rightSide {
+  background: url("tool_icons/line_both_closed_rightSide.png") 0 0 no-repeat;
+  background-size: contain;
+  width: 100% !important;
+}
+.ui-icon.left-closed-right-open_rightSide {
+  background: url("tool_icons/line_left_closed_right_open_rightSide.png") 0 0 no-repeat;
+  background-size: contain;
+  width: 100% !important;
+}
+.ui-icon.left-open-right-closed_rightSide {
+  background: url("tool_icons/line_left_open_right_closed_rightSide.png") 0 0 no-repeat;
+  background-size: contain;
+  width: 100% !important;
+}
+
 
 .propertyHeader {
 	border-bottom: solid 2px;
@@ -301,4 +325,23 @@ fieldset {
 	padding-left: 3px;
 	padding-right: 3px;
 	/*font-size: 12px;*/
+}
+
+.textLabel {
+	border: black 1px dotted;
+    padding: 2px;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.textLabelLeft {
+	background-color: #ffcffb;
+}
+
+.textLabelCenter {
+	background-color: #cfffe7;
+}
+
+.textLabelRight {
+	background-color: #ffe1cf;
 }

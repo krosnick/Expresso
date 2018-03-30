@@ -115,7 +115,8 @@ var elementDataFormat = {
 };
 
 var generateRuleInferenceHTML = function(behaviorName){
-	var ruleInferenceSelectWidgetHTML = '<div class="transitionPiece">Left </div>' + generateRuleInferenceDirectionHTML(behaviorName, "left") + '<div class="transitionPiece"> Current </div>' + generateRuleInferenceDirectionHTML(behaviorName, "right") + '<div class="transitionPiece"> Right </div>';
+	//var ruleInferenceSelectWidgetHTML = '<div class="transitionPiece">Left </div>' + generateRuleInferenceDirectionHTML(behaviorName, "left") + '<div class="transitionPiece"> Current </div>' + generateRuleInferenceDirectionHTML(behaviorName, "right") + '<div class="transitionPiece"> Right </div>';
+	var ruleInferenceSelectWidgetHTML = '<div class="transitionPiece textLabel textLabelLeft">Left </div>' + generateRuleInferenceDirectionHTML(behaviorName, "left") + '<div class="transitionPiece textLabel textLabelCenter"> Current </div>' + generateRuleInferenceDirectionHTML(behaviorName, "right") + '<div class="transitionPiece textLabel textLabelRight"> Right </div>';
 	return ruleInferenceSelectWidgetHTML;
 };
 
@@ -126,7 +127,8 @@ var generateRuleInferenceDirectionHTML = function(behaviorName, side){
 	for(var i = 0; i < transitionOptionIds.length; i++){
 		var transitionKey = transitionOptionIds[i];
 		var transitionDataClass = transitionOptions[transitionKey];
-		var optionString = '<option value="' + transitionKey + '"data-class="' + transitionDataClass + '">&nbsp;</option>';
+		//var optionString = '<option value="' + transitionKey + '"data-class="' + transitionDataClass + '">&nbsp;</option>';
+		var optionString = '<option value="' + transitionKey + '"data-class="' + transitionDataClass + "_" + side +  'Side" side="' + side + '">&nbsp;</option>';
 		optionsHTML += optionString;
 	}
 
@@ -138,9 +140,14 @@ var generateRuleInferenceDirectionHTML = function(behaviorName, side){
 	return ruleInferenceDirectionSelectWidgetHTML;
 }
 
-var transitionOptions = {
+/*var transitionOptions = {
 	"left-closed-right-closed": "left-closed-right-closed",
 	"left-closed-right-open": "left-closed-right-open",
+	"left-open-right-closed": "left-open-right-closed"
+};*/
+var transitionOptions = {
+	"left-closed-right-open": "left-closed-right-open",
+	"left-closed-right-closed": "left-closed-right-closed",
 	"left-open-right-closed": "left-open-right-closed"
 };
 
@@ -734,7 +741,7 @@ $(document).ready(function() {
 			});
 			//this._setText( buttonItem, item.label );
 
-			//console.log(item);
+			console.log(item);
 
 			//buttonItem.css( "background-color", item.value );
 			//.ui-icon.left-closed-right-closed
@@ -742,7 +749,10 @@ $(document).ready(function() {
 			buttonItem.addClass("ui-icon");
 			buttonItem.addClass("transition-image");
 			//buttonItem.addClass(item.label);
-			buttonItem.addClass(item.value);
+			//buttonItem.addClass(item.value);
+			var dropdownClass = item.element[0]["dataset"]["class"];
+			//buttonItem.addClass(item.value + "_" + item.side + "Side");
+			buttonItem.addClass(dropdownClass);
 
 			return buttonItem;
 		}

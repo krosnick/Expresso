@@ -243,7 +243,7 @@ var confirmHasTransitionProperty = function(){
 	}
 };
 
-var confirmHasVisibilityProperty = function(){
+/*var confirmHasVisibilityProperty = function(){
 	var viewIds = Object.keys(views);
 	for(var keyframeIndex = 0; keyframeIndex < viewIds.length; keyframeIndex++){
 		var viewId = viewIds[keyframeIndex];
@@ -260,7 +260,7 @@ var confirmHasVisibilityProperty = function(){
 			}
 		}
 	}
-};
+};*/
 
 var updateElementAndPageData = function(viewObj){
 	var viewId = viewObj.oldViewId;
@@ -1117,16 +1117,11 @@ var constantUnit = "px";
 var pageDimensionsAndBehaviorsTheyInfluence = {
 	"pageWidth": {
 		"compareFunc": comparePageWidths,
-		"behaviorsInfluenced": ["width", "x", "font-size", "background-color", "color", "visibility", "height", "y"],
+		/*"behaviorsInfluenced": ["width", "x", "font-size", "background-color", "color", "visibility", "height", "y"],*/
+		"behaviorsInfluenced": ["width", "x", "font-size", "background-color", "color", "height", "y"],
 		"mediaMaxProperty": "max-width",
 		"mediaMinProperty": "min-width",
-	}/*,
-	"pageHeight": {
-		"compareFunc": comparePageHeights,
-		"behaviorsInfluenced": ["height", "y"],
-		"mediaMaxProperty": "max-height",
-		"mediaMinProperty": "min-height",
-	}*/
+	}
 };
 
 var elementDataFormat = {
@@ -1217,7 +1212,7 @@ var elementDataFormat = {
 			return rgbObject;
 		},
 		"type": Continuous
-	},
+	}/*,
 	"visibility": {
 		"pageDimension": "pageWidth",
 		"properties": ["visibility"],
@@ -1225,7 +1220,7 @@ var elementDataFormat = {
 			return clientString;
 		},
 		"type": Discrete
-	}
+	}*/
 };
 
 /*var elementDataFormat = {
@@ -1361,7 +1356,7 @@ fs.readFile(dataFile, function(err, data){
 
     	// Confirm that element property of each keyframe has a "transition" property; if one doesn't, then set it to defaultTransition
     	// Later will probably want to have a specific defaultTransition per property type (e.g., "prevKeyframeConstantValue" for img src, "linearInterpolation" for element width)
-    	confirmHasVisibilityProperty();
+    	//confirmHasVisibilityProperty();
     	confirmHasTransitionProperty();
     	writeDataToJSONFile();
 

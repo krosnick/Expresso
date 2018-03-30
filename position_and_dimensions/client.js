@@ -99,7 +99,7 @@ var elementDataFormat = {
 				}
 			}
 		}
-	],
+	]/*,
 	"visibility": [
 		{
 			"property": "visibility",
@@ -107,7 +107,7 @@ var elementDataFormat = {
 				return this.css("visibility");
 			}
 		}
-	]
+	]*/
 };
 
 var generateRuleInferenceHTML = function(behaviorName){
@@ -167,10 +167,10 @@ var propertyToCSSStringFunction = {
 	},
 	"color": function(ruleObject, elementId, propertyName, dimensionValue, imageRatio){
 		return createRGBCSSString(ruleObject, elementId, propertyName, dimensionValue, imageRatio);
-	},
+	}/*,
 	"visibility": function(ruleObject, elementId, propertyName, dimensionValue, imageRatio){
 		return createDiscreteSingleAttributeCSSString(ruleObject, elementId, propertyName, dimensionValue, imageRatio);
-	}
+	}*/
 };
 
 
@@ -645,12 +645,12 @@ $(document).ready(function() {
       }
     });*/
 
-    $("#visibilityWidget").on("change", function(event){
+    /*$("#visibilityWidget").on("change", function(event){
     	// Based on the value, update the element's "visibility" property
     	var visibilityWidgetValue = $("#visibilityWidget").val();
     	$("[elementId=" + currentlySelectedElement + "]").css("visibility", visibilityWidgetValue);
     	dataChanged = true;
-    });
+    });*/
 
     /*$("body").on("change", "[name='xPosition']", function(event){
     	// switch which widget is visible
@@ -799,7 +799,15 @@ var selectElement = function(element){
 
 var updateRightMenuWidgets = function(element){
 	// Set colorpicker color to that of selected element
-	$("#background_color_colorpicker").spectrum("set", element.css("background-color"));
+	
+	// If the element is an image, hide the color picker; otherwise, show and set it
+	//if(element.has("img")){
+	if(element.children("img").length > 0){
+		$("#backgroundColorRow").hide();
+	}else{
+		$("#backgroundColorRow").show();
+		$("#background_color_colorpicker").spectrum("set", element.css("background-color"));
+	}
 	
 	// Ensure tools menu is shown
 	$("#toolsMenu").show();
@@ -862,7 +870,7 @@ var updateRightMenuWidgets = function(element){
 
 	$("#text_color_colorpicker").spectrum("set", element.css("color"));	
 
-	$("#visibilityWidget").val(element.css("visibility"));
+	//$("#visibilityWidget").val(element.css("visibility"));
 
 	// Maybe this should be done per behavior (so handle left and right in the same callback)
 	var selectWidgets = $("select.ruleInferenceSelect");

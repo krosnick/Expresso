@@ -352,30 +352,39 @@ $(document).ready(function() {
 		$("#selectedElementRules").css("display", "none"); // This element may not be used anymore
 	});
 
-    $(".userPage").on("click", function(event){
-    	// Unselect any other selected elements (if there are any)
-    	$(".pageElement.selected").removeClass("selected");
-    	$("#toolsMenu").hide();
-    	/*if($(event.target).hasClass("pageElement")){
-	    	selectElement($(event.target));
+    //$(".userPage").on("click", function(event){
+    //$("body").on("click", function(event){
+    // Not ideal selector; later on add a container for the .userPage and the gray area (for when the .userPage doesn't take up full 1200px area)
+    $("body").on("click", function(event){
+    	// Check and see if the clicked element is #viewsMenu or #rightMenu, or is a child of one of those; if so, then do not unselect the element
+    	// Only unselect the element if the clicked area is not in #viewsMenu or #rightMenu
+    	if($(event.target).attr("id") === "viewsMenu" || $(event.target).attr("id") === "rightMenu" || $(event.target).parents("#viewsMenu").length > 0 || $(event.target).parents("#rightMenu").length > 0){
+    		// Do nothing. The currently selected element (if there is one) should remain selected
     	}else{
-    		currentlySelectedElement = undefined;
-    		// Clear rules menu
-    		$("#selectedElementRules").css("display", "none");
-    	}*/
-    	// Only even consider selecting the element if we are in keyframe mode (so not when the page is resizable)
-    	if(!$(".userPage").hasClass("ui-resizable")){
-	    	if($(event.target).hasClass("pageElement")){
+    		// Unselect any other selected elements (if there are any)
+	    	$(".pageElement.selected").removeClass("selected");
+	    	$("#toolsMenu").hide();
+	    	/*if($(event.target).hasClass("pageElement")){
 		    	selectElement($(event.target));
-	    	}else if($(event.target).parent(".pageElement").length > 0){
-	    		// This means the user has clicked on an <img> element. We should select its parent
-	    		selectElement($(event.target).parent(".pageElement"));
 	    	}else{
 	    		currentlySelectedElement = undefined;
 	    		// Clear rules menu
 	    		$("#selectedElementRules").css("display", "none");
-	    	}
-	    }
+	    	}*/
+	    	// Only even consider selecting the element if we are in keyframe mode (so not when the page is resizable)
+	    	if(!$(".userPage").hasClass("ui-resizable")){
+		    	if($(event.target).hasClass("pageElement")){
+			    	selectElement($(event.target));
+		    	}else if($(event.target).parent(".pageElement").length > 0){
+		    		// This means the user has clicked on an <img> element. We should select its parent
+		    		selectElement($(event.target).parent(".pageElement"));
+		    	}else{
+		    		currentlySelectedElement = undefined;
+		    		// Clear rules menu
+		    		$("#selectedElementRules").css("display", "none");
+		    	}
+		    }
+    	}
     });
 
     $("body").on("resize", ".userPage", function(event, ui){
@@ -421,6 +430,16 @@ $(document).ready(function() {
     				$("[elementId=" + currentlySelectedElement + "]").offset({ top: currentTopValue + delta });
     			}
     			//updateRightMenuWidgets($(event.target));
+    			//dataChanged = true;
+    		}
+    	}
+    });
+
+    $("body").on("keyup", ".pageElement", function(event){
+    	// If an element is currently selected, move it in the direction of pressed arrow key
+    	if(currentlySelectedElement){
+    		if(event.originalEvent.which >= 37 && event.originalEvent.which <= 40){
+    			// The user was using the arrow keys to move the element around. Now that they've let go, let's update the data
     			dataChanged = true;
     		}
     	}
@@ -741,8 +760,6 @@ $(document).ready(function() {
 			});
 			//this._setText( buttonItem, item.label );
 
-			console.log(item);
-
 			//buttonItem.css( "background-color", item.value );
 			//.ui-icon.left-closed-right-closed
 			//buttonItem.addClass("ui-icon left-closed-right-closed");
@@ -761,18 +778,13 @@ $(document).ready(function() {
 	$( ".ruleInferenceSelect" )
       .iconselectmenu({
       	change: function( event, ui ) {
-      		//console.log("Change has actually been called this time");
       		// Use this as the event handler for updating element attributes, updating transition rules
       		
-      		//console.log($(this));
-
 	    	// Transition rule value
 	    	var newTransitionRule = $(this).val();
-	    	//console.log($(this).val());
 	    	
 	    	var behaviorName = $(this).attr("behavior-name");
 	    	var transitionSide = $(this).attr("side");
-	    	//console.log("transitionSide: " + transitionSide);
 	    	
 	    	// Update widget's "transition" property
 	    	//$("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-transition", newTransitionRule);
@@ -797,7 +809,6 @@ $(document).ready(function() {
     /*var selectMenuObj = $( ".ruleInferenceSelect" )
       .iconselectmenu()
       .iconselectmenu( "menuWidget" );
-      console.log(selectMenuObj);
       selectMenuObj.addClass( "ui-menu-icons customicons" );*/
 
     //$( "#amount" ).val( $( "#slider" ).slider( "value" ) + "px" );
@@ -911,7 +922,6 @@ var updateRightMenuWidgets = function(element){
 	var selectWidgets = $("select.ruleInferenceSelect");
 	selectWidgets.each(function(index, element){
 		// Update the <select> value given the transition value embedded in the currently selected element
-		//console.log($(this));
 		var behaviorName = $(this).attr("behavior-name");
 		var side = $(this).attr("side");
 		//var behaviorTransitionValue = $("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-transition");
@@ -928,10 +938,7 @@ var updateRightMenuWidgets = function(element){
 			selectWidgetImageElement.removeClass("left-closed-right-open");
 
 			// Now add the correct one
-			console.log(behaviorTransitionValue);
-			console.log(selectWidgetImageElement);
 			selectWidgetImageElement.addClass(behaviorTransitionValue);
-			console.log(selectWidgetImageElement);*/
 			//$(this)._renderButtonItem({"value": behaviorTransitionValue});
 			$(this).val(behaviorTransitionValue);
 			$(this).iconselectmenu("refresh");
@@ -1284,7 +1291,7 @@ var replaceCSSRules = function(){
 	$("#" + elementCSSRules).empty();
 	var cssRulesString = "";
 
-	console.log(cssRules);
+	//console.log(cssRules);
 
 	for(var i = 0; i < cssRules.length; i++){
 
@@ -1302,7 +1309,6 @@ var replaceCSSRules = function(){
 var createDiscreteSingleAttributeCSSString = function(ruleObject, elementId, propertyName, dimensionValue, imageRatio){
 	//var computedValue = ruleObject["value"];
 	var computedValue = ruleObject["valueData"]["value"];
-	console.log(computedValue);
 	// Construct CSS rule string
 	var singleRule = "#element" + elementId + "{";
 	//singleRule += createPropertyValueString(propertyName, computedValue);

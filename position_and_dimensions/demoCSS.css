@@ -345,3 +345,15 @@ fieldset {
 .textLabelRight {
 	background-color: #ffe1cf;
 }
+
+
+/* Probably not best practice, but...*/
+html {
+	width: 100%;
+	height: 100%;
+}
+
+body {
+	width: 100%;
+	height: 100%;
+}

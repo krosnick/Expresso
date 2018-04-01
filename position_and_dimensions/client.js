@@ -143,6 +143,8 @@ var generateRuleInferenceDirectionHTML = function(behaviorName, side){
 		optionsHTML += optionString;
 	}
 
+	optionsHTML += '<option value="empty" data-class="empty" disabled>&nbsp;</option>';
+
 	var name = "ruleInferenceSelect_" + behaviorName;
 	var id = "ruleInferenceSelect_" + behaviorName;
 	var selectHTML = '<fieldset class="transitionPiece"><select name="' + name + '" id="' + id + '" class="ruleInferenceSelect" behavior-name=' + behaviorName +' side="' + side + '">' + optionsHTML + '</select></fieldset>';
@@ -372,7 +374,10 @@ $(document).ready(function() {
     $("body").on("click", function(event){
     	// Check and see if the clicked element is #viewsMenu or #rightMenu, or is a child of one of those; if so, then do not unselect the element
     	// Only unselect the element if the clicked area is not in #viewsMenu or #rightMenu
+    	console.log($(event.target).parents("ui-selectmenu-menu").length);	
     	if($(event.target).attr("id") === "viewsMenu" || $(event.target).attr("id") === "rightMenu" || $(event.target).parents("#viewsMenu").length > 0 || $(event.target).parents("#rightMenu").length > 0){
+    		// Do nothing. The currently selected element (if there is one) should remain selected
+    	}else if($(event.target).hasClass("ui-icon")){
     		// Do nothing. The currently selected element (if there is one) should remain selected
     	}else{
 
@@ -410,6 +415,8 @@ $(document).ready(function() {
 			    		// Clear rules menu
 			    		$("#selectedElementRules").css("display", "none");
 			    		$(".pageElement.selected").removeClass("selected");
+			    		console.log("being removed");
+			    		console.log($(event.target));
 		    		}
 		    	}
 
@@ -934,6 +941,10 @@ $(document).ready(function() {
 	        if ( item.disabled ) {
 	          li.addClass( "ui-state-disabled" );
 	        }
+
+	        if(item.value === "empty"){
+	        	li.hide();
+	        }
 	 
 	        $( "<span>", {
 	          style: item.element.attr( "data-style" ),
@@ -1386,7 +1397,8 @@ var updateRightMenuWidgets = function(){
 				$(this).iconselectmenu("refresh");
 			}else{
 				// Set to empty?
-				console.log("Inconsistent behavior transition values for: " + behaviorName + "-" + side);
+				$(this).val("empty");
+				$(this).iconselectmenu("refresh");
 			}
 		});
 	}else{

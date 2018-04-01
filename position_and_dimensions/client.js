@@ -384,8 +384,7 @@ $(document).ready(function() {
     	}else if($(event.target).hasClass("ui-icon")){
     		// Do nothing. The currently selected element (if there is one) should remain selected
     	}else{
-
-    		if(!$(".userPage").hasClass("ui-resizable")){ // Keyframe mode
+    		if(currentViewId !== null && currentViewId !== undefined){ // Keyframe mode
     			var elementToSelect;
     			if($(event.target).hasClass("pageElement")){
 			    	elementToSelect = $(event.target);
@@ -428,36 +427,11 @@ $(document).ready(function() {
     		}
 
     		updateRightMenuWidgets();
-
-    		/*// Unselect any other selected elements (if there are any)
-	    	$(".pageElement.selected").removeClass("selected");
-	    	$("#toolsMenu").hide();
-	    	// Only even consider selecting the element if we are in keyframe mode (so not when the page is resizable)
-	    	if(!$(".userPage").hasClass("ui-resizable")){
-		    	if($(event.target).hasClass("pageElement")){
-			    	selectElement($(event.target));
-		    	}else if($(event.target).parent(".pageElement").length > 0){
-		    		// This means the user has clicked on an <img> element. We should select its parent
-		    		selectElement($(event.target).parent(".pageElement"));
-		    	}else{
-		    		currentlySelectedElement = undefined;
-		    		// Clear rules menu
-		    		$("#selectedElementRules").css("display", "none");
-		    	}
-		    }*/
     	}
     });
 
-    /*$("body").on("resize", ".userPage", function(event, ui){
-    	replaceCSSRules();
-
-    	// Show page's width, height
-    	updatePageDimensionsLabel();
-    });*/
-
     $("body").on("resizestart", ".userPage", function(event, ui){
     	// If in keyframe mode, switch to "final webpage" mode"
-    	console.log(currentViewId);
     	if(currentViewId != null && currentViewId != undefined){
     		switchFromKeyframeToFinalWepageMode();
     	}

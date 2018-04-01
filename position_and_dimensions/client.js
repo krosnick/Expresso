@@ -479,7 +479,8 @@ $(document).ready(function() {
     // Should we support ctrl-a?
     $(document).on('keydown', function(event){
     	//if(event.ctrlKey) {
-		if(event.ctrlKey || event.metaKey) {
+		//if(event.ctrlKey || event.metaKey) {
+		if(event.ctrlKey || event.metaKey || event.shiftKey) {
 			ctrlKeyDown = true;
 		}
 	});

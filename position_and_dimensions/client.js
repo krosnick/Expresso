@@ -430,20 +430,41 @@ $(document).ready(function() {
     	}
     });
 
-    $("body").on("resizestart", ".userPage", function(event, ui){
+    /*$("body").on("resizestart", ".userPage", function(event, ui){
     	// If in keyframe mode, switch to "final webpage" mode"
     	if(currentViewId != null && currentViewId != undefined){
     		switchFromKeyframeToFinalWepageMode();
+    	}
+    });*/
+
+    $("body").on("resizestart", ".userPage", function(event, ui){
+    	// If not page element
+    	if(!$(event.target).hasClass("pageElement")){
+    		// If in keyframe mode, switch to "final webpage" mode"
+	    	if(currentViewId != null && currentViewId != undefined){
+	    		switchFromKeyframeToFinalWepageMode();
+	    	}
     	}
     });
 
     $("body").on("resize", ".userPage", function(event, ui){
 
+    	// If not page element
+    	if(!$(event.target).hasClass("pageElement")){
+	    	replaceCSSRules();
+
+	    	// Show page's width, height
+	    	updatePageDimensionsLabel();
+    	}
+    });
+
+    /*$("body").on("resize", ".userPage", function(event, ui){
+
     	replaceCSSRules();
 
     	// Show page's width, height
     	updatePageDimensionsLabel();
-    });
+    });*/
 
     $("body").on("resizestop dragstop", ".pageElement", function(event, ui){
     	dataChanged = true;

@@ -9,9 +9,20 @@ var elementDimensionsInfoId = "elementDimensionsInfo";*/
 var pageDimensionsInfoId = "pageDimensionsInfo";
 //var allElementRules;
 var emptyElementName = "(select an element to see)";
-var currentlySelectedElement;
+
+//var currentlySelectedElement;
+var selectedElementNums = [];
+var ctrlKeyDown = false;
+
 var elementCSSRules = "elementCSSRules";
 var cssRules = [];
+
+var draggedElementX = undefined;
+var draggedElementY = undefined;
+
+var resizedElementWidth = undefined;
+var resizedElementHeight = undefined;
+
 
 var getPageWidth = function(){
 	return $(".userPage").width();
@@ -289,12 +300,15 @@ $(document).ready(function() {
 	    	// Let's try this - yes this worked
 	    	replaceCSSRules();
 
-	    	if(currentlySelectedElement){
+	    	/*if(currentlySelectedElement){
 		    	selectElement($("[elementId=" + currentlySelectedElement + "]"));
+		    }*/
+		    if(selectedElementNums.length > 0){
+		    	selectMultipleElements();
 		    }
 
-	    	// Now select what was currentlySelectedElement before
-	    	$("[elementId=" + currentlySelectedElement + "]").addClass("selected");
+	    	/*// Now select what was currentlySelectedElement before
+	    	$("[elementId=" + currentlySelectedElement + "]").addClass("selected");*/
 
 	    	// If only one keyframe left, disable the delete button (we don't want to allow deleting the last keyframe; current version of our tool relies on having at least one keyframe)
 	    	if($(".clone").length == 1){
@@ -315,7 +329,8 @@ $(document).ready(function() {
 	// Need a on-click for #viewOnlyMode
 	$("#viewOnlyMode").on("click", "a", function(event){
 
-		currentlySelectedElement = undefined;
+		//currentlySelectedElement = undefined;
+		selectedElementNums = [];
 		dataChanged = false;
 		currentViewId = null;
 
@@ -353,7 +368,6 @@ $(document).ready(function() {
 	});
 
     //$(".userPage").on("click", function(event){
-    //$("body").on("click", function(event){
     // Not ideal selector; later on add a container for the .userPage and the gray area (for when the .userPage doesn't take up full 1200px area)
     $("body").on("click", function(event){
     	// Check and see if the clicked element is #viewsMenu or #rightMenu, or is a child of one of those; if so, then do not unselect the element
@@ -361,16 +375,52 @@ $(document).ready(function() {
     	if($(event.target).attr("id") === "viewsMenu" || $(event.target).attr("id") === "rightMenu" || $(event.target).parents("#viewsMenu").length > 0 || $(event.target).parents("#rightMenu").length > 0){
     		// Do nothing. The currently selected element (if there is one) should remain selected
     	}else{
-    		// Unselect any other selected elements (if there are any)
+
+    		if(!$(".userPage").hasClass("ui-resizable")){ // Keyframe mode
+    			var elementToSelect;
+    			if($(event.target).hasClass("pageElement")){
+			    	elementToSelect = $(event.target);
+		    	}else if($(event.target).parent(".pageElement").length > 0){
+		    		// This means the user has clicked on an <img> element. We should select its parent
+		    		elementToSelect = $(event.target).parent(".pageElement");
+		    	}
+		    	if(elementToSelect){
+		    		if(ctrlKeyDown){
+		    			var elementId = elementToSelect.attr("elementId");
+		    			if(selectedElementNums.includes(elementId)){
+		    				// If elementToSelect's id is already in selectedElementNums, then we want to remove it and deselect it
+		    				var indexOfElementId = selectedElementNums.indexOf(elementId);
+		    				selectedElementNums.splice(indexOfElementId, 1);
+		    				elementToSelect.removeClass("selected");
+
+		    				// Give focus to another element
+		    				$("[elementId=" + selectedElementNums[selectedElementNums.length-1] + "]").focus();
+		    			}else{
+		    				selectElement(elementToSelect);
+		    			}
+		    		}else{
+		    			selectElement(elementToSelect);
+		    		}
+		    	}else{
+		    		//currentlySelectedElement = undefined;
+		    		if(ctrlKeyDown){
+		    			// Do nothing. The already selected elements should remain selected
+		    		}else{
+		    			selectedElementNums = [];
+			    		// Clear rules menu
+			    		$("#selectedElementRules").css("display", "none");
+			    		$(".pageElement.selected").removeClass("selected");
+		    		}
+		    	}
+
+    		}else{ // "Final page" mode
+	    		$(".pageElement.selected").removeClass("selected");
+		    	$("#toolsMenu").hide();
+    		}
+
+    		/*// Unselect any other selected elements (if there are any)
 	    	$(".pageElement.selected").removeClass("selected");
 	    	$("#toolsMenu").hide();
-	    	/*if($(event.target).hasClass("pageElement")){
-		    	selectElement($(event.target));
-	    	}else{
-	    		currentlySelectedElement = undefined;
-	    		// Clear rules menu
-	    		$("#selectedElementRules").css("display", "none");
-	    	}*/
 	    	// Only even consider selecting the element if we are in keyframe mode (so not when the page is resizable)
 	    	if(!$(".userPage").hasClass("ui-resizable")){
 		    	if($(event.target).hasClass("pageElement")){
@@ -383,7 +433,7 @@ $(document).ready(function() {
 		    		// Clear rules menu
 		    		$("#selectedElementRules").css("display", "none");
 		    	}
-		    }
+		    }*/
     	}
     });
 
@@ -394,23 +444,32 @@ $(document).ready(function() {
     	updatePageDimensionsLabel();
     });
 
-    // Should this only be on non-.userPage elements?
-    /*$("body").on("resizestop dragstop", ".modifiable", function(event, ui){
-    	dataChanged = true;
-    });*/
     $("body").on("resizestop dragstop", ".pageElement", function(event, ui){
-    	//updateRightMenuWidgets($(event.target));
     	dataChanged = true;
+
+    	draggedElementX = undefined;
+    	draggedElementY = undefined;
+
+    	resizedElementWidth = undefined;
+    	resizedElementHeight = undefined;
     });
 
-    $("body").on("keypress", ".pageElement", function(event){
-    	console.log("keypress");
-    });
+    // Should we support ctrl-a?
+    $(document).on('keydown', function(event){
+    	//if(event.ctrlKey) {
+		if(event.ctrlKey || event.metaKey) {
+			ctrlKeyDown = true;
+		}
+	});
+
+	$(document).on('keyup', function(event){
+		ctrlKeyDown = false;
+	});
 
     $("body").on("keydown", ".pageElement", function(event){
-    	console.log("keydown");
     	// If an element is currently selected, move it in the direction of pressed arrow key
-    	if(currentlySelectedElement){
+    	//if(currentlySelectedElement){
+    	if(selectedElementNums.length > 0){
     		if(event.originalEvent.which >= 37 && event.originalEvent.which <= 40){
     			var deltaMagnitude = 4;
     			if(event.originalEvent.which === 37 || event.originalEvent.which === 39){ // If left/right arrow
@@ -420,9 +479,11 @@ $(document).ready(function() {
     				}else{ // 39
     					delta = 1 * deltaMagnitude;
     				}
-    				// Move element appropriately
-    				var currentLeftValue = $("[elementId=" + currentlySelectedElement + "]").offset().left;
-    				$("[elementId=" + currentlySelectedElement + "]").offset({ left: currentLeftValue + delta });
+    				// Move elements appropriately
+    				selectedElementNums.forEach(function(elementNum){
+    					var currentLeftValue = $("[elementId=" + elementNum + "]").offset().left;
+    					$("[elementId=" + elementNum + "]").offset({ left: currentLeftValue + delta });
+    				});
     			}else{ // If up/down arrow (38 or 40)
     				var delta;
     				if(event.originalEvent.which === 38){
@@ -431,19 +492,21 @@ $(document).ready(function() {
     					delta = 1 * deltaMagnitude;
     				}
     				// Move element appropriately
-    				var currentTopValue = $("[elementId=" + currentlySelectedElement + "]").offset().top;
-    				$("[elementId=" + currentlySelectedElement + "]").offset({ top: currentTopValue + delta });
+    				selectedElementNums.forEach(function(elementNum){
+    					var currentTopValue = $("[elementId=" + elementNum + "]").offset().top;
+    					$("[elementId=" + elementNum + "]").offset({ top: currentTopValue + delta });
+    				});
     			}
-    			//updateRightMenuWidgets($(event.target));
-    			//dataChanged = true;
+    			/*//updateRightMenuWidgets($(event.target));
+    			//dataChanged = true;*/
     		}
     	}
     });
 
     $("body").on("keyup", ".pageElement", function(event){
-    	console.log("keyup");
     	// If an element is currently selected, move it in the direction of pressed arrow key
-    	if(currentlySelectedElement){
+    	//if(currentlySelectedElement){
+    	if(selectedElementNums.length > 0){
     		if(event.originalEvent.which >= 37 && event.originalEvent.which <= 40){
     			// The user was using the arrow keys to move the element around. Now that they've let go, let's update the data
     			dataChanged = true;
@@ -457,14 +520,38 @@ $(document).ready(function() {
     	var dragInfo = $("<div id=" + elementPositionInfoId + "></div>");
     	$(event.target).append(dragInfo);*/
 
-    	selectElement($(event.target));
+    	var elementId = $(event.target).attr("elementId");
+		if(!selectedElementNums.includes(elementId)){
+			// If this element is not part of the currently selected list, select this element (and deselect the rest)
+			selectElement($(event.target));
+		}
+    	// If this element is part of the currently selected list, then just drag all of them (do not thing special here)
+    	
+    	draggedElementX = $(event.target).offset().left;
+    	draggedElementY = $(event.target).offset().top;
     });
     $("body").on("drag", ".pageElement", function(event){
     	// Don't need to do dataChanged = true here (since we don't need to send the data to the server immediately)
     	// but let's somewhat frequently update the rightmenu widget at least. We'll have a second variable for this
     	repositioningElement = true;
 
-    	//dataChanged = true;
+    	var xDiff = $(event.target).offset().left - draggedElementX;
+    	var yDiff = $(event.target).offset().top - draggedElementY;
+
+    	// Update all the other selected elements in this way
+    	selectedElementNums.forEach(function(elementNum){
+    		if(elementNum != $(event.target).attr("elementId")){
+    			var currentLeftValue = $("[elementId=" + elementNum + "]").offset().left;
+				$("[elementId=" + elementNum + "]").offset({ left: currentLeftValue + xDiff });
+
+				var currentTopValue = $("[elementId=" + elementNum + "]").offset().top;
+				$("[elementId=" + elementNum + "]").offset({ top: currentTopValue + yDiff });
+    		}
+		});
+
+    	draggedElementX = $(event.target).offset().left;
+    	draggedElementY = $(event.target).offset().top;
+
     	/*// Update element's (x, y) position in the box shown
     	var element = $(event.target);
     	var coords = "(" + element.css("left") + ", " + element.css("top") + ")";
@@ -486,12 +573,72 @@ $(document).ready(function() {
     	var resizeInfo = $("<div id=" + elementDimensionsInfoId + "></div>");
     	$(event.target).append(resizeInfo);*/
 
-    	selectElement($(event.target));
+    	//selectElement($(event.target));
+
+    	var elementId = $(event.target).attr("elementId");
+		if(!selectedElementNums.includes(elementId)){
+			// If this element is not part of the currently selected list, select this element (and deselect the rest)
+			selectElement($(event.target));
+		}
+
+		resizedElementWidth = $(event.target).width();
+		resizedElementHeight = $(event.target).height();
     });
     $("body").on("resize", ".pageElement", function(event){
     	// Don't need to do dataChanged = true here (since we don't need to send the data to the server immediately)
     	// but let's somewhat frequently update the rightmenu widget at least. We'll have a second variable for this
     	resizingElement = true;
+
+    	var widthDiff = $(event.target).width() - resizedElementWidth;
+    	var heightDiff = $(event.target).height() - resizedElementHeight;
+
+    	var widthRatioChange = 1.0 * widthDiff / resizedElementWidth;
+    	var heightRatioChange = 1.0 * heightDiff / resizedElementHeight;
+
+    	// Update all the other selected elements with the same ratio change
+    	selectedElementNums.forEach(function(elementNum){
+    		if(elementNum != $(event.target).attr("elementId")){
+    			var element = $("[elementId=" + elementNum + "]");
+    			var elementChildren = element.children("img");
+    			if(elementChildren.length > 0){
+    				// If element is an image, then only widthRatioChange or heightRatioChange should be directly applied;
+	    			// the other dimension should follow to keep the fixed aspect ratio
+	    			// Let's choose the dimension that had a larger percentage change
+
+	    			if(Math.abs(widthRatioChange) > Math.abs(heightRatioChange)){
+	    				// Use widthRatioChange to update the width, and then set the height accordingly
+	    				var currentWidthValue = element.width();
+		    			var newWidthValue = currentWidthValue * (1.0 + widthRatioChange);
+						element.width(newWidthValue);
+
+						var imageRatio = elementChildren.attr("image-ratio");
+						var newHeightValue = 1.0 * newWidthValue / imageRatio;
+						element.height(newHeightValue);
+	    			}else{
+	    				// Use heightRatioChange to update the height, and then set the width accordingly
+	    				var currentHeightValue = element.height();
+		    			var newHeightValue = currentHeightValue * (1.0 + heightRatioChange);
+						element.height(newHeightValue);
+
+						var imageRatio = elementChildren.attr("image-ratio");
+						var newWidthValue = newHeightValue * imageRatio;
+						element.width(newWidthValue);
+	    			}
+
+    			}else{
+	    			var currentWidthValue = element.width();
+	    			var newWidthValue = currentWidthValue * (1.0 + widthRatioChange);
+					element.width(newWidthValue);
+
+					var currentHeightValue = element.height();
+	    			var newHeightValue = currentHeightValue * (1.0 + heightRatioChange);
+					element.height(newHeightValue);
+    			}
+    		}
+		});
+
+		resizedElementWidth = $(event.target).width();
+		resizedElementHeight = $(event.target).height();
 
     	/*// Update element's width, height in the box shown
     	var element = $(event.target);
@@ -531,9 +678,11 @@ $(document).ready(function() {
     window.setInterval(function(){
     	if(dataChanged){
 			
-			if(currentlySelectedElement){
-				var elementObj = $("[elementId=" + currentlySelectedElement + "]");
-				updateRightMenuWidgets(elementObj);
+			//if(currentlySelectedElement){
+			if(selectedElementNums.length > 0){
+				// Need to update all elements here
+				/*var elementObj = $("[elementId=" + currentlySelectedElement + "]");
+				updateRightMenuWidgets(elementObj);*/
 			}
 
 			var viewData = captureElementAndPageData();
@@ -554,19 +703,37 @@ $(document).ready(function() {
 		    });
     	}else if(resizingElement){
     		// Update the element width and height widgets in the right menu
-    		var element = $("[elementId=" + currentlySelectedElement + "]");
+    		
+    		selectedElementNums.forEach(function(elementNum){
+    			var element = $("[elementId=" + elementNum + "]");
+	    		var widthAmount = element.width();
+				$( "#widthAmount" ).html( Math.round(widthAmount)  + "px" );
+				var heightAmount = element.height();
+				$( "#heightAmount" ).html( Math.round(heightAmount)  + "px" );
+    		});
+
+    		/*var element = $("[elementId=" + currentlySelectedElement + "]");
     		var widthAmount = element.width();
 			$( "#widthAmount" ).html( Math.round(widthAmount)  + "px" );
 			var heightAmount = element.height();
-			$( "#heightAmount" ).html( Math.round(heightAmount)  + "px" );
+			$( "#heightAmount" ).html( Math.round(heightAmount)  + "px" );*/
     		resizingElement = false;
     	}else if(repositioningElement){
     		// Update the element x and y position widgets in the right menu
-    		var element = $("[elementId=" + currentlySelectedElement + "]");
+    		
+    		selectedElementNums.forEach(function(elementNum){
+    			var element = $("[elementId=" + elementNum + "]");
+	    		var leftAmount = element.offset().left;
+				$( "#leftAmount" ).html( Math.round(leftAmount)  + "px" );
+				var topAmount = element.offset().top;
+				$( "#topAmount" ).html( Math.round(topAmount)  + "px" );
+    		});
+
+    		/*var element = $("[elementId=" + currentlySelectedElement + "]");
     		var leftAmount = element.offset().left;
 			$( "#leftAmount" ).html( Math.round(leftAmount)  + "px" );
 			var topAmount = element.offset().top;
-			$( "#topAmount" ).html( Math.round(topAmount)  + "px" );
+			$( "#topAmount" ).html( Math.round(topAmount)  + "px" );*/
     		repositioningElement = false;
     	}
     }, 1000);
@@ -582,7 +749,11 @@ $(document).ready(function() {
 	    move: function(color) {
 	    	// update selected element color
 	    	var hexColorString = color.toHexString();
-	    	$("[elementId=" + currentlySelectedElement + "]").css("background-color", hexColorString);
+
+	    	selectedElementNums.forEach(function(elementNum){
+	    		$("[elementId=" + elementNum + "]").css("background-color", hexColorString);
+	    	});
+	    	//$("[elementId=" + currentlySelectedElement + "]").css("background-color", hexColorString);
 	    	dataChanged = true;
 	    }
 	});
@@ -597,7 +768,11 @@ $(document).ready(function() {
 	    move: function(color) {
 	    	// update selected element color
 	    	var hexColorString = color.toHexString();
-	    	$("[elementId=" + currentlySelectedElement + "]").css("color", hexColorString);
+	    	
+	    	selectedElementNums.forEach(function(elementNum){
+	    		$("[elementId=" + elementNum + "]").css("color", hexColorString);
+	    	});
+	    	//$("[elementId=" + currentlySelectedElement + "]").css("color", hexColorString);
 	    	dataChanged = true;
 	    }
 	});
@@ -609,7 +784,12 @@ $(document).ready(function() {
         //$( "#amount" ).val( ui.value  + "px" );
         //$( "#amount" ).val( Math.round(ui.value)  + "px" );
         $( "#amount" ).html( Math.round(ui.value)  + "px" );
-        $("[elementId=" + currentlySelectedElement + "]").css("font-size", ui.value  + "px");
+
+        selectedElementNums.forEach(function(elementNum){
+    		$("[elementId=" + elementNum + "]").css("font-size", ui.value  + "px");
+    	});
+
+        //$("[elementId=" + currentlySelectedElement + "]").css("font-size", ui.value  + "px");
 	    dataChanged = true;
       }
     });
@@ -796,7 +976,12 @@ $(document).ready(function() {
 	    	//$("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-transition", newTransitionRule);
 	    	if(newTransitionRule && newTransitionRule !== "empty"){
 	    		//$("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-transition", newTransitionRule);
-	    		$("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-" + transitionSide + "-transition", newTransitionRule);
+	    		
+	    		selectedElementNums.forEach(function(elementNum){
+	    			$("[elementId=" + elementNum + "]").attr(behaviorName + "-" + transitionSide + "-transition", newTransitionRule);
+	    		});
+
+	    		//$("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-" + transitionSide + "-transition", newTransitionRule);
 	    	}
 
 	    	// Capture data/send to server
@@ -837,6 +1022,41 @@ var extractPixelValue = function(fontSizeString){
 };
 
 var selectElement = function(element){
+	var selectedElementNum = element.attr("elementId");
+	if(ctrlKeyDown){
+		// Currently selected elements should remain selected
+	}else{
+		// Currently selected elements should now be unselected
+		$(".pageElement.selected").removeClass("selected");
+		selectedElementNums = [];
+	}
+	selectedElementNums.push(selectedElementNum);
+
+	// Select this element (put box shadow around it)
+	element.addClass("selected");
+
+	//updateRightMenuWidgets(element);
+	//updateRightMenuWidgets(); // Should update right menu based on all the elements in selectedElementNums 
+
+	// Give focus to the element
+	//$("[elementId=" + currentlySelectedElement + "]").focus();
+	$("[elementId=" + selectedElementNum + "]").focus();
+};
+
+var selectMultipleElements = function(){
+	// Select all elements in selectedElementNums
+	selectedElementNums.forEach(function(elementNum) {
+		var element = $("[elementId=" + elementNum + "]");
+		element.addClass("selected");
+	});
+	//updateRightMenuWidgets(); // Should update right menu based on all the elements in selectedElementNums
+
+	// We'll give focus to the last element in selectedElementNums
+	var element = $("[elementId=" + selectedElementNums[selectedElementNums.length-1] + "]");
+	element.focus();
+}
+
+/*var selectElement = function(element){
 	// Select this element (put box shadow around it)
 	element.addClass("selected");
 
@@ -847,7 +1067,7 @@ var selectElement = function(element){
 
 	// Give focus to the element
 	$("[elementId=" + currentlySelectedElement + "]").focus();
-};
+};*/
 
 var updateRightMenuWidgets = function(element){
 	// Set colorpicker color to that of selected element
@@ -1094,15 +1314,18 @@ var updateView = function(viewId){
 
     	replaceCSSRules();
 
-    	if(currentlySelectedElement){
+    	/*if(currentlySelectedElement){
 	    	selectElement($("[elementId=" + currentlySelectedElement + "]"));
+	    }*/
+	    if(selectedElementNums.length > 0){
+	    	selectMultipleElements();
 	    }
 
     	// Commenting this out, since initially a keyframe is shown, and the page size should not be resizable
 		//$(".userPage").resizable();
     	
-    	// Now select what was currentlySelectedElement before
-    	$("[elementId=" + currentlySelectedElement + "]").addClass("selected");
+    	/*// Now select what was currentlySelectedElement before
+    	$("[elementId=" + currentlySelectedElement + "]").addClass("selected");*/
 
     	// Update buttons
     	// Make sure the delete keyframe button is shown
@@ -1217,8 +1440,11 @@ var renderView = function(viewData){
 	$(".pageElement").has("img").resizable({aspectRatio: true, handles: "n, e, s, w, ne, se, sw, nw"});
 	$(".pageElement").not(":has(img)").resizable({handles: "n, e, s, w, ne, se, sw, nw"});
 
-    if(currentlySelectedElement){
+    /*if(currentlySelectedElement){
     	selectElement($("[elementId=" + currentlySelectedElement + "]"));
+    }*/
+    if(selectedElementNums.length > 0){
+    	selectMultipleElements();
     }
 
     // Determine if we need to disable/enable left-transition and right-transition selectmenus

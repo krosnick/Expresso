@@ -403,7 +403,12 @@ $(document).ready(function() {
     	dataChanged = true;
     });
 
+    $("body").on("keypress", ".pageElement", function(event){
+    	console.log("keypress");
+    });
+
     $("body").on("keydown", ".pageElement", function(event){
+    	console.log("keydown");
     	// If an element is currently selected, move it in the direction of pressed arrow key
     	if(currentlySelectedElement){
     		if(event.originalEvent.which >= 37 && event.originalEvent.which <= 40){
@@ -436,6 +441,7 @@ $(document).ready(function() {
     });
 
     $("body").on("keyup", ".pageElement", function(event){
+    	console.log("keyup");
     	// If an element is currently selected, move it in the direction of pressed arrow key
     	if(currentlySelectedElement){
     		if(event.originalEvent.which >= 37 && event.originalEvent.which <= 40){
@@ -938,7 +944,7 @@ var updateRightMenuWidgets = function(element){
 			selectWidgetImageElement.removeClass("left-closed-right-open");
 
 			// Now add the correct one
-			selectWidgetImageElement.addClass(behaviorTransitionValue);
+			selectWidgetImageElement.addClass(behaviorTransitionValue);*/
 			//$(this)._renderButtonItem({"value": behaviorTransitionValue});
 			$(this).val(behaviorTransitionValue);
 			$(this).iconselectmenu("refresh");

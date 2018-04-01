@@ -325,6 +325,8 @@ fieldset {
 	padding-left: 3px;
 	padding-right: 3px;
 	/*font-size: 12px;*/
+	min-width: 20px;
+	min-height: 20px;
 }
 
 .textLabel {

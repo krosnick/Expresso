@@ -1276,7 +1276,7 @@ var updateRightMenuWidgets = function(){
 		if(widthAmount){
 			$( "#widthAmount" ).html( Math.round(widthAmount)  + "px" );
 		}else{
-			$( "#widthAmount" ).html();
+			$( "#widthAmount" ).html(" ");
 		}
 		/*var widthAmount = element.width();
 		$( "#widthAmount" ).html( Math.round(widthAmount)  + "px" );*/
@@ -1300,7 +1300,7 @@ var updateRightMenuWidgets = function(){
 		if(heightAmount){
 			$( "#heightAmount" ).html( Math.round(heightAmount)  + "px" );
 		}else{
-			$( "#heightAmount" ).html();
+			$( "#heightAmount" ).html(" ");
 		}
 		/*var heightAmount = element.height();
 		$( "#heightAmount" ).html( Math.round(heightAmount)  + "px" );*/
@@ -1324,7 +1324,7 @@ var updateRightMenuWidgets = function(){
 		if(leftAmount){
 			$( "#leftAmount" ).html( Math.round(leftAmount)  + "px" );
 		}else{
-			$( "#leftAmount" ).html();
+			$( "#leftAmount" ).html(" ");
 		}
 
 		/*var leftAmount = element.offset().left;
@@ -1348,7 +1348,7 @@ var updateRightMenuWidgets = function(){
 		if(topAmount){
 			$( "#topAmount" ).html( Math.round(topAmount)  + "px" );
 		}else{
-			$( "#topAmount" ).html();
+			$( "#topAmount" ).html(" ");
 		}
 		/*var topAmount = element.offset().top;
 		$( "#topAmount" ).html( Math.round(topAmount)  + "px" );*/

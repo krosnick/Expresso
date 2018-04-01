@@ -418,6 +418,8 @@ $(document).ready(function() {
 		    	$("#toolsMenu").hide();
     		}
 
+    		updateRightMenuWidgets();
+
     		/*// Unselect any other selected elements (if there are any)
 	    	$(".pageElement.selected").removeClass("selected");
 	    	$("#toolsMenu").hide();
@@ -683,6 +685,7 @@ $(document).ready(function() {
 				// Need to update all elements here
 				/*var elementObj = $("[elementId=" + currentlySelectedElement + "]");
 				updateRightMenuWidgets(elementObj);*/
+				updateRightMenuWidgets();
 			}
 
 			var viewData = captureElementAndPageData();
@@ -1036,7 +1039,7 @@ var selectElement = function(element){
 	element.addClass("selected");
 
 	//updateRightMenuWidgets(element);
-	//updateRightMenuWidgets(); // Should update right menu based on all the elements in selectedElementNums 
+	updateRightMenuWidgets(); // Should update right menu based on all the elements in selectedElementNums 
 
 	// Give focus to the element
 	//$("[elementId=" + currentlySelectedElement + "]").focus();
@@ -1049,31 +1052,17 @@ var selectMultipleElements = function(){
 		var element = $("[elementId=" + elementNum + "]");
 		element.addClass("selected");
 	});
-	//updateRightMenuWidgets(); // Should update right menu based on all the elements in selectedElementNums
+	updateRightMenuWidgets(); // Should update right menu based on all the elements in selectedElementNums
 
 	// We'll give focus to the last element in selectedElementNums
 	var element = $("[elementId=" + selectedElementNums[selectedElementNums.length-1] + "]");
 	element.focus();
 }
 
-/*var selectElement = function(element){
-	// Select this element (put box shadow around it)
-	element.addClass("selected");
-
-	var selectedElementNum = element.attr("elementId");
-	currentlySelectedElement = selectedElementNum;
-
-	updateRightMenuWidgets(element);
-
-	// Give focus to the element
-	$("[elementId=" + currentlySelectedElement + "]").focus();
-};*/
-
-var updateRightMenuWidgets = function(element){
+/*var updateRightMenuWidgets = function(element){
 	// Set colorpicker color to that of selected element
 	
 	// If the element is an image, hide the color picker; otherwise, show and set it
-	//if(element.has("img")){
 	if(element.children("img").length > 0){
 		$("#backgroundColorRow").hide();
 	}else{
@@ -1093,56 +1082,24 @@ var updateRightMenuWidgets = function(element){
 	// Font size slider
 	var fontSize = extractPixelValue(element.css("font-size"));
 	$( "#slider" ).slider( "value", fontSize );
-	//$( "#amount" ).val( Math.round(fontSize)  + "px" );
 	$( "#amount" ).html( Math.round(fontSize)  + "px" );
-	//$( "#amount" ).val( fontSize  + "px" );
 	
 	// Width slider
 	var widthAmount = element.width();
-	//$( "#widthSlider" ).slider( "value", widthAmount);
-	//$( "#widthAmount" ).val( widthAmount  + "px" );
-	//$( "#widthAmount" ).val( Math.round(widthAmount)  + "px" );
 	$( "#widthAmount" ).html( Math.round(widthAmount)  + "px" );
 
 	// Height slider
 	var heightAmount = element.height();
-	//$( "#heightSlider" ).slider( "value", heightAmount);
-	//$( "#heightAmount" ).val( heightAmount  + "px" );
-	//$( "#heightAmount" ).val( Math.round(heightAmount)  + "px" );
 	$( "#heightAmount" ).html( Math.round(heightAmount)  + "px" );
 
 	var leftAmount = element.offset().left;
-	//$( "#leftSlider" ).slider( "value", leftAmount);
-	//$( "#leftAmount" ).val( leftAmount  + "px" );
-	//$( "#leftAmount" ).val( Math.round(leftAmount)  + "px" );
 	$( "#leftAmount" ).html( Math.round(leftAmount)  + "px" );
 
-	/*var rightAmount = $(".userPage").width() - element.width() - element.offset().left;
-	//$( "#rightSlider" ).slider( "value", rightAmount);
-	//$( "#rightAmount" ).val( rightAmount  + "px" );
-	//$( "#rightAmount" ).val( Math.round(rightAmount)  + "px" );
-	$( "#rightAmount" ).html( Math.round(rightAmount)  + "px" );*/
-
-
-
 	// top, bottom
-
 	var topAmount = element.offset().top;
-	//$( "#topSlider" ).slider( "value", topAmount);
-	//$( "#topAmount" ).val( topAmount  + "px" );
-	//$( "#topAmount" ).val( Math.round(topAmount)  + "px" );
 	$( "#topAmount" ).html( Math.round(topAmount)  + "px" );
 
-	/*var bottomAmount = $(".userPage").height() - element.height() - element.offset().top;
-	//$( "#bottomSlider" ).slider( "value", bottomAmount);
-	//$( "#bottomAmount" ).val( bottomAmount  + "px" );
-	//$( "#bottomAmount" ).val( Math.round(bottomAmount)  + "px" );
-	$( "#bottomAmount" ).html( Math.round(bottomAmount)  + "px" );*/
-
-
 	$("#text_color_colorpicker").spectrum("set", element.css("color"));	
-
-	//$("#visibilityWidget").val(element.css("visibility"));
 
 	// Maybe this should be done per behavior (so handle left and right in the same callback)
 	var selectWidgets = $("select.ruleInferenceSelect");
@@ -1150,7 +1107,6 @@ var updateRightMenuWidgets = function(element){
 		// Update the <select> value given the transition value embedded in the currently selected element
 		var behaviorName = $(this).attr("behavior-name");
 		var side = $(this).attr("side");
-		//var behaviorTransitionValue = $("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-transition");
 		var behaviorTransitionValue = $("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-" + side + "-transition");
 		
 		// Now need to set this in the appropriate select widget
@@ -1158,27 +1114,285 @@ var updateRightMenuWidgets = function(element){
 		var selectWidgetImageElement = $("#" + selectWidgetId + " .transition-image");
 		
 		if(behaviorTransitionValue){
-			/*// First remove all image classes
-			selectWidgetImageElement.removeClass("left-closed-right-closed");
-			selectWidgetImageElement.removeClass("left-open-right-closed");
-			selectWidgetImageElement.removeClass("left-closed-right-open");
-
-			// Now add the correct one
-			selectWidgetImageElement.addClass(behaviorTransitionValue);*/
-			//$(this)._renderButtonItem({"value": behaviorTransitionValue});
 			$(this).val(behaviorTransitionValue);
 			$(this).iconselectmenu("refresh");
+		}
+	});
+};*/
+
+var updateRightMenuWidgets = function(){
+
+	if(selectedElementNums.length > 0){
+	
+		// Ensure tools menu is shown
+		$("#toolsMenu").show();
+
+		// Set colorpicker color to that of selected element
+		// Background color
+		var backgroundColorValue = undefined;
+		var existsAnImage = false;
+		selectedElementNums.forEach(function(elementNum){
+			var element = $("[elementId=" + elementNum + "]");
+			var elementImageChildren = element.children("img");
+			if(elementImageChildren.length > 0){
+				// If there's an image, there's no background color
+				existsAnImage = true;
+			}else{
+				if(backgroundColorValue === undefined){
+					backgroundColorValue = element.css("background-color");
+				}else{
+					if(backgroundColorValue === false){
+						// remain false
+					}else{
+						var thisElementBackgroundColor = element.css("background-color");
+						if(backgroundColorValue === thisElementBackgroundColor){
+							// keep backgroundColorValue the same
+						}else{
+							backgroundColorValue = false;
+						}
+					}
+				}
+			}
+		});
+
+		if(!existsAnImage){ // Only include background color widget if none of the selected elements are images
+			$("#backgroundColorRow").show();
+			if(backgroundColorValue !== false){
+				// All elements had the same background color, so show that widget
+				$("#background_color_colorpicker").spectrum("set", backgroundColorValue);
+			}else{
+				// Set to empty
+				$("#background_color_colorpicker").spectrum("set", "");
+			}
 		}else{
-			//$(this).val("empty");
+			$("#backgroundColorRow").hide();
 		}
 
-		/*if(behaviorTransitionValue){
-			$(this).val(behaviorTransitionValue);
+		/*// If the element is an image, hide the color picker; otherwise, show and set it
+		if(element.children("img").length > 0){
+			$("#backgroundColorRow").hide();
 		}else{
-			$(this).val("empty");
+			$("#backgroundColorRow").show();
+			$("#background_color_colorpicker").spectrum("set", element.css("background-color"));
 		}*/
-	});
-}
+
+
+
+		// Check if all elements have text
+		var haveText = true;
+		selectedElementNums.forEach(function(elementNum){
+			var element = $("[elementId=" + elementNum + "]");
+			if(element.text().trim().length == 0){
+				haveText = false;
+			}
+		});
+
+		if(haveText){
+			$("#fontTools").show();
+		}else{
+			$("#fontTools").hide();
+		}
+		/*// Only show font tools menu if the currently selected element has text
+		if(element.text().trim().length > 0){
+			$("#fontTools").show();
+		}else{
+			$("#fontTools").hide();
+		}*/
+
+
+		if(haveText){
+			var fontSize = undefined;
+			selectedElementNums.forEach(function(elementNum){
+				if(fontSize != false){
+					var element = $("[elementId=" + elementNum + "]");
+					if(fontSize === undefined){
+						fontSize = extractPixelValue(element.css("font-size"));
+					}else{
+						var thisElementFontSize = extractPixelValue(element.css("font-size"));
+						if(fontSize == thisElementFontSize){
+							// Nothing
+						}else{
+							fontSize = false;
+						}
+					}
+				}
+			});
+			if(fontSize){
+				$( "#slider" ).slider( "value", fontSize );
+				$( "#amount" ).html( Math.round(fontSize)  + "px" );
+			}else{
+				$("#fontTools").hide();
+			}
+
+
+
+			var fontColor = undefined;
+			selectedElementNums.forEach(function(elementNum){
+				if(fontColor != false){
+					var element = $("[elementId=" + elementNum + "]");
+					if(fontColor === undefined){
+						fontColor = element.css("color");
+					}else{
+						var thisElementFontColor = element.css("color");
+						if(fontColor == thisElementFontColor){
+							// Nothing
+						}else{
+							fontColor = false;
+						}
+					}
+				}
+			});
+			if(fontColor){
+				$("#text_color_colorpicker").spectrum("set", fontColor);
+			}else{
+				// Set to empty
+				$("#text_color_colorpicker").spectrum("set", "");
+			}
+
+		}
+
+		/*// Font size slider
+		var fontSize = extractPixelValue(element.css("font-size"));
+		$( "#slider" ).slider( "value", fontSize );
+		$( "#amount" ).html( Math.round(fontSize)  + "px" );*/
+		
+		//$("#text_color_colorpicker").spectrum("set", element.css("color"));	
+
+		// Width slider
+		var widthAmount = undefined;
+		selectedElementNums.forEach(function(elementNum){
+			if(widthAmount != false){
+				var element = $("[elementId=" + elementNum + "]");
+				if(widthAmount === undefined){
+					widthAmount = element.width();
+				}else{
+					var thisElementWidth = element.width();
+					if(widthAmount != thisElementWidth){
+						widthAmount = false
+					}
+				}
+			}
+		});
+		if(widthAmount){
+			$( "#widthAmount" ).html( Math.round(widthAmount)  + "px" );
+		}else{
+			$( "#widthAmount" ).html();
+		}
+		/*var widthAmount = element.width();
+		$( "#widthAmount" ).html( Math.round(widthAmount)  + "px" );*/
+
+
+		// Height slider
+		var heightAmount = undefined;
+		selectedElementNums.forEach(function(elementNum){
+			if(heightAmount != false){
+				var element = $("[elementId=" + elementNum + "]");
+				if(heightAmount === undefined){
+					heightAmount = element.height();
+				}else{
+					var thisElementHeight = element.width();
+					if(heightAmount != thisElementHeight){
+						heightAmount = false
+					}
+				}
+			}
+		});
+		if(heightAmount){
+			$( "#heightAmount" ).html( Math.round(heightAmount)  + "px" );
+		}else{
+			$( "#heightAmount" ).html();
+		}
+		/*var heightAmount = element.height();
+		$( "#heightAmount" ).html( Math.round(heightAmount)  + "px" );*/
+
+
+		// Left
+		var leftAmount = undefined;
+		selectedElementNums.forEach(function(elementNum){
+			if(leftAmount != false){
+				var element = $("[elementId=" + elementNum + "]");
+				if(leftAmount === undefined){
+					leftAmount = element.offset().left;
+				}else{
+					var thisElementLeft = element.offset().left;
+					if(leftAmount != thisElementLeft){
+						leftAmount = false
+					}
+				}
+			}
+		});
+		if(leftAmount){
+			$( "#leftAmount" ).html( Math.round(leftAmount)  + "px" );
+		}else{
+			$( "#leftAmount" ).html();
+		}
+
+		/*var leftAmount = element.offset().left;
+		$( "#leftAmount" ).html( Math.round(leftAmount)  + "px" );*/
+
+		// top, bottom
+		var topAmount = undefined;
+		selectedElementNums.forEach(function(elementNum){
+			if(topAmount != false){
+				var element = $("[elementId=" + elementNum + "]");
+				if(topAmount === undefined){
+					topAmount = element.offset().top;
+				}else{
+					var thisElementTop = element.offset().top;
+					if(topAmount != thisElementTop){
+						topAmount = false
+					}
+				}
+			}
+		});
+		if(topAmount){
+			$( "#topAmount" ).html( Math.round(topAmount)  + "px" );
+		}else{
+			$( "#topAmount" ).html();
+		}
+		/*var topAmount = element.offset().top;
+		$( "#topAmount" ).html( Math.round(topAmount)  + "px" );*/
+
+		// Update transition widgets based on the values for all selected elements
+			// Do we need to add an "empty" option? (for when not all the same)
+		// Maybe this should be done per behavior (so handle left and right in the same callback)
+		var selectWidgets = $("select.ruleInferenceSelect");
+		selectWidgets.each(function(index, element){
+			// Update the <select> value given the transition value embedded in the currently selected element
+			var behaviorName = $(this).attr("behavior-name");
+			var side = $(this).attr("side");
+			
+			var behaviorTransitionValue = undefined;
+			selectedElementNums.forEach(function(elementNum){
+				var element = $("[elementId=" + elementNum + "]");
+				if(behaviorTransitionValue === undefined){
+					behaviorTransitionValue = element.attr(behaviorName + "-" + side + "-transition");
+				}else{
+					var thisElementBehaviorTransitionValue = element.attr(behaviorName + "-" + side + "-transition");
+					if(behaviorTransitionValue != thisElementBehaviorTransitionValue){
+						behaviorTransitionValue = false;
+					}
+				}
+
+			});
+			//var behaviorTransitionValue = $("[elementId=" + currentlySelectedElement + "]").attr(behaviorName + "-" + side + "-transition");
+			
+			// Now need to set this in the appropriate select widget
+			var selectWidgetId =  $(this).attr("id") + "-button";
+			var selectWidgetImageElement = $("#" + selectWidgetId + " .transition-image");
+			
+			if(behaviorTransitionValue){
+				$(this).val(behaviorTransitionValue);
+				$(this).iconselectmenu("refresh");
+			}else{
+				// Set to empty?
+				console.log("Inconsistent behavior transition values for: " + behaviorName + "-" + side);
+			}
+		});
+	}else{
+		$("#toolsMenu").hide();
+	}
+};
 
 var updatePageDimensionsLabel = function(){
 	var element = $(".userPage");

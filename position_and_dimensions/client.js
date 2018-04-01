@@ -237,6 +237,10 @@ $(document).ready(function() {
 
 		// Commenting this out, since initially a keyframe is shown, and the page size should not be resizable
 		//$(".userPage").resizable();
+		// Adding this back
+		$(".userPage").resizable({
+		  handles: "e"
+		});
     });
 
     // Possibly want to use templates later (store views in json, then render in template)
@@ -331,6 +335,9 @@ $(document).ready(function() {
 	// Need a on-click for #viewOnlyMode
 	$("#viewOnlyMode").on("click", "a", function(event){
 
+		switchFromKeyframeToFinalWepageMode();
+
+		/*
 		//currentlySelectedElement = undefined;
 		selectedElementNums = [];
 		dataChanged = false;
@@ -349,9 +356,6 @@ $(document).ready(function() {
 
     	// Update buttons
     	// Make sure the create new keyframe button is shown
-    	/*$("#cloneButton").show();
-    	// Make sure the delete keyframe button is hidden
-    	$("#deleteButton").hide();*/
 
     	$("#cloneButton").prop('disabled', false);
     	$("#deleteButton").prop('disabled', true);
@@ -367,6 +371,7 @@ $(document).ready(function() {
 
 		// Clear rules menu
 		$("#selectedElementRules").css("display", "none"); // This element may not be used anymore
+		*/
 	});
 
     //$(".userPage").on("click", function(event){
@@ -374,7 +379,6 @@ $(document).ready(function() {
     $("body").on("click", function(event){
     	// Check and see if the clicked element is #viewsMenu or #rightMenu, or is a child of one of those; if so, then do not unselect the element
     	// Only unselect the element if the clicked area is not in #viewsMenu or #rightMenu
-    	console.log($(event.target).parents("ui-selectmenu-menu").length);	
     	if($(event.target).attr("id") === "viewsMenu" || $(event.target).attr("id") === "rightMenu" || $(event.target).parents("#viewsMenu").length > 0 || $(event.target).parents("#rightMenu").length > 0){
     		// Do nothing. The currently selected element (if there is one) should remain selected
     	}else if($(event.target).hasClass("ui-icon")){
@@ -415,8 +419,6 @@ $(document).ready(function() {
 			    		// Clear rules menu
 			    		$("#selectedElementRules").css("display", "none");
 			    		$(".pageElement.selected").removeClass("selected");
-			    		console.log("being removed");
-			    		console.log($(event.target));
 		    		}
 		    	}
 
@@ -446,7 +448,23 @@ $(document).ready(function() {
     	}
     });
 
+    /*$("body").on("resize", ".userPage", function(event, ui){
+    	replaceCSSRules();
+
+    	// Show page's width, height
+    	updatePageDimensionsLabel();
+    });*/
+
+    $("body").on("resizestart", ".userPage", function(event, ui){
+    	// If in keyframe mode, switch to "final webpage" mode"
+    	console.log(currentViewId);
+    	if(currentViewId != null && currentViewId != undefined){
+    		switchFromKeyframeToFinalWepageMode();
+    	}
+    });
+
     $("body").on("resize", ".userPage", function(event, ui){
+
     	replaceCSSRules();
 
     	// Show page's width, height
@@ -1019,6 +1037,48 @@ $(document).ready(function() {
     //$( "#amount" ).val( $( "#slider" ).slider( "value" ) + "px" );
 
 });
+
+var switchFromKeyframeToFinalWepageMode = function(){
+	selectedElementNums = [];
+	dataChanged = false;
+	currentViewId = null;
+
+	// Perhaps also send updated keyframe view (before this point) to the server, to make sure it's update to date?
+	//---------------------
+
+	//makeFontBold($("#viewOnlyMode"), $(".nav-pills a"));
+	makeFontBold($("#viewOnlyMode .nav-link"), $(".nav-pills a"));
+
+	// There's no particular view to select though. But we need to update the view to show the "view only" view;
+	// elements not editable, but keyframe size is
+
+	$(".pageElement.selected").removeClass("selected");
+	$("#toolsMenu").hide();
+
+	// Update buttons
+	// Make sure the create new keyframe button is shown
+	/*$("#cloneButton").show();
+	// Make sure the delete keyframe button is hidden
+	$("#deleteButton").hide();*/
+
+	$("#cloneButton").prop('disabled', false);
+	$("#deleteButton").prop('disabled', true);
+
+	destroyElementModifiable();
+	
+
+	//$(".userPage").resizable();
+	
+	/*$(".userPage").resizable({
+	  handles: "e"
+	});*/
+
+	// Let's see if this works
+	replaceCSSRules();
+
+	// Clear rules menu
+	$("#selectedElementRules").css("display", "none"); // This element may not be used anymore
+};
 
 var comparePageWidths = function(a, b) {
   if (a["pageWidth"] < b["pageWidth"]) {
@@ -1634,9 +1694,11 @@ var renderView = function(viewData){
 	
 	// When a particular keyframe is shown, the page size should not be resizable
 	//$(".userPage").resizable("destroy");
-	if($(".userPage").hasClass("ui-resizable")){
+	
+	// We're now keeping userPage resizable all the time. Resizing it just doesn't affect particular keyframe dimensions
+	/*if($(".userPage").hasClass("ui-resizable")){
 		$(".userPage").resizable("destroy");
-	}
+	}*/
 
 	var viewWidth = viewData["pageWidth"];
 	var viewHeight = viewData["pageHeight"];

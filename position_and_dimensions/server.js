@@ -243,6 +243,22 @@ var confirmHasTransitionProperty = function(){
 	}
 };
 
+var confirmHasRatioForImages = function(){
+	var viewIds = Object.keys(views);
+	for(var keyframeIndex = 0; keyframeIndex < viewIds.length; keyframeIndex++){
+		var viewId = viewIds[keyframeIndex];
+		var viewObj = views[viewId];
+		var elementsData = viewObj["elements"];
+		for(var i = 0; i < elementsData.length; i++){
+			var element = elementsData[i];
+			if(element["image"] && element["image"].length > 0){
+				//element["image-ratio"] = 1.0 * parseInt(element["width"]) / parseInt(element["height"]);
+				element["image-ratio"] = 1.0 * element["width"]["width"] / element["height"]["height"];
+			}
+		}
+	}
+};
+
 /*var confirmHasVisibilityProperty = function(){
 	var viewIds = Object.keys(views);
 	for(var keyframeIndex = 0; keyframeIndex < viewIds.length; keyframeIndex++){
@@ -1365,6 +1381,7 @@ fs.readFile(dataFile, function(err, data){
     	// Later will probably want to have a specific defaultTransition per property type (e.g., "prevKeyframeConstantValue" for img src, "linearInterpolation" for element width)
     	//confirmHasVisibilityProperty();
     	confirmHasTransitionProperty();
+    	confirmHasRatioForImages();
     	writeDataToJSONFile();
 
     	//viewCounter = Object.keys(views).length;
